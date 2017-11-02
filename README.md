@@ -1,7 +1,7 @@
-# formater-skeleton-vjs
+# isgi-component-vjs
 
 
-Just a component with a button used to begin a component
+Component to connect ISGI service
 
  
 
@@ -29,7 +29,7 @@ For detailed explanation on how things work, consult the [docs for vue-loader](h
 Use your own repository and edit package.json in particular `name`, `version`, `main`, `preproduction.url` and `production.url` used to build js files:
 
 ``` json
-  "name": "formater-skeleton-vjs",
+  "name": "isgi-component-vjs",
   "version": "0.0.1",
   "preproduction": {
 	  "url": "https://rawgit.com/terresolide/"
@@ -42,9 +42,4 @@ Use your own repository and edit package.json in particular `name`, `version`, `
 
 
 
-## Example 
-```
-
-  <formater-skeleton  ></formater-skeleton>
-  <script src="https://cdn.rawgit.com/terresolide/formater-skeleton-vjs/0.0.1/dist/formater-skeleton-vjs_0.0.1.js"></script> 
 
