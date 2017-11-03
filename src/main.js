@@ -14,8 +14,8 @@ Vue.use(VueI18n);
 
 
 
-import Skeleton from './formater-skeleton.vue';
-
+import Isgindex from './isgi-index-select.vue';
+import IsgiForm from './isgi-form.vue';
 
 ljs.addAliases({
 	dep: [//'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', 
@@ -35,8 +35,10 @@ ljs.load('dep', function() {
 	}
 	
 	
-	Vue.customElement('formater-skeleton', Skeleton);
-	window.registredAerisElements.push('formater-skeleton');
+	Vue.customElement('isgi-index-select', Isgindex);
+	window.registredAerisElements.push('isgi-index-select');
+	Vue.customElement('isgi-form', IsgiForm);
+    window.registredAerisElements.push('isgi-form');
 	
 })
 
