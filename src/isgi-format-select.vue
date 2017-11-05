@@ -1,18 +1,18 @@
 <i18n>
 {
    "en":{
-       "index": 		"index"
+       "output_format": "Output Format"
    },
    "fr":{
-       "index": 		"index"
+      "output_format": "Format de sortie"
    }
 }
 </i18n>
 
 <template>
 <div>
-	<label for="index">{{$t('index') }}</label>
-	<select name="index">
+	<label>{{$t('output_format') }}</label>
+	<select name="format">
 		<option v-for="item in indexes" :value="item">{{ item}}</option>
 	</select>
 </div>
@@ -32,7 +32,7 @@ export default {
   },
   data () {
 		return {
-  			indexes: new Array('aa', 'am', 'Kp', 'Dst', 'PC', 'AE',	'SC', 'SFE', 'Qdays', 'CKdays')
+  			indexes: new Array('IAGA2002')
 		}
   },
  
@@ -53,11 +53,5 @@ export default {
 
 </script>
 <style>
-label{
-  padding-left:26px;
-    width:125px;
-    text-transform: uppercase;
-    display:inline-block;
-	min-width:200px;
-}
+
 </style>

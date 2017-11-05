@@ -10,5 +10,6 @@ yarn-error.log
 *.njsproj
 *.sln
 /.project
+/.tern-project
 .settings/
 npm-debug.log*
