@@ -2,11 +2,13 @@
 {
    "en":{
        "time_slot": 	"time slot",
-       "output_format": "Output Format"
+       "output_format": "Output Format",
+       "search": "search"
    },
    "fr":{
         "time_slot": 	"intervalle de temps",
-        "output_format": "Format de sortie"
+        "output_format": "Format de sortie",
+        "search": "rechercher"
    }
 }
 </i18n>
@@ -14,15 +16,15 @@
 <template>
 	
 	<span class="isgi-container">
-		<input type="hidden" name="user" value="user_formater" />
+		<input type="hidden" name="user" value="cnrs-formater610" />
 		<isgi-search-box header-icon-class="fa fa-bars" :title="$t('index')" >
 			<isgi-index-select></isgi-index-select>
 		</isgi-search-box>
 		<isgi-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true">	
 		 <isgi-temporal-search></isgi-temporal-search>
 		</isgi-search-box>
-		<isgi-search-box header-icon-class="fa fa-file-o" :title="$t('output_format')" >	<isgi-format-select></isgi-format-select></isgi-search-box>
-	
+		<isgi-search-box header-icon-class="fa fa-file" :title="$t('output_format')" >	<isgi-format-select></isgi-format-select></isgi-search-box>
+	    <input class="isgi-search-button" type="button" :value="$t('search')" @click="search"/>
 		
 	</span>
 </template>
@@ -50,9 +52,8 @@ export default {
   },
  
   methods: {
-		message: function() {
-
-			alert( this.$i18n.t('mynameis')+ " " +  this.$i18n.t(this.name) );
+		search:function(){
+		    console.log("search");
 		},
 		 handleTheme: function(theme) {
 		  		this.theme = theme.detail
@@ -81,114 +82,42 @@ export default {
 }
 
 </script>
+
 <style>
 
-.isgi-container input{
-	min-width:200px;
+
+.isgi-container .isgi-search-button{
+ background-color: #ff0000;
 }
 
-
-
-.isgi-select select{
-    font-size: inherit; /* inherit size from .custom-dropdown */
-    padding: .5em; /* add some space*/
-    margin: 0; /* remove default margins */
-    background-color: rgba(172,220,238,0.3); 
+.isgi-container input[type="button"]{
+	margin: 0px 7px 3px 0;
+  padding: 3px 12px;
+  white-space: normal;
+  text-align: center;
+  background: #DD9946;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 1px;
+  font-size: 16px;
+  line-height:1.7;
+  border-color: #e5b171 #cb8025 #cb8025;
+  color: #fff;
+  text-decoration: none;
+  text-shadow: 0 -1px 1px #a0651d, 1px 0 1px #cb8025, 0 1px 1px #cb8025, -1px 0 1px #a0651d;
+  vertical-align: top;
+  cursor: pointer;
+  pointer-events: auto;
+  box-sizing: border-box;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
+}
+.isgi-container input[type="button"]:first-letter{
+	text-transform: uppercase;
 }
 
-
-
-@supports (pointer-events: none) and
-      ((-webkit-appearance: none) or
-      (-moz-appearance: none) or
-      (appearance: none)) {
-
-    .isgi-select {
-        position: relative;
-        display: inline-block;
-        vertical-align: middle;
-    }
-
-    .isgi-select select{
-        padding-right: 2.5em; /* accommodate with the pseudo elements for the dropdown arrow */
-        border: 0;
-        border-radius: 1px;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none; 
-        
-        width:260px;  
-    }
-
-    .isgi-select::before,
-    .isgi-select::after {
-        content: "";
-        position: absolute;
-        pointer-events: none;
-    }
-
-    .isgi-select::after { /*  Custom dropdown arrow */
-        content: "\25BC";
-        height: 1em;
-        font-size: .625em;
-        line-height: 1;
-        right: 1.2em;
-        top: 50%; margin-top: -.5em;
-    }
-
-    .isgi-select::before { /*  Custom dropdown arrow cover */
-        width: 2em;
-        right: 0; top: 0; bottom: 0;
-        border-radius: 0 3px 3px 0;
-    }
-
-    .isgi-select select[disabled] {
-        color: rgba(0,0,0,.3);
-    }
-
-    .isgi-select select[disabled]::after {
-        color: rgba(0,0,0,.1);
-    }
-
-
-    /* FF only temp fix */
-    @-moz-document url-prefix() {
-        .isgi-select select             { padding-right: .9em }
-    }
-}
-/*.isgi-container .isgi-select select{
-	min-width:200px;
+.isgi-container .isgi-select select,
+.isgi-container .isgi-temporal-search .isgi-input-group{
+    background-color: rgba(221,153,70,0.2); 
 }
 
-.isgi-select {
-   background: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 96% 0;
-   height: 29px;
-   overflow: hidden;
-   width: 260px;
-}
-.isgi-select::after{
-font-family:FontAwesome;
-content:"\f0d7";
-}
-.isgi-container .isgi-select select {
-   background: transparent;
-   border: none;
-   font-size: 14px;
-   height: 29px;
-   padding: 5px; 
-   width: 260px;
-}
-
-.isgi-select{
-   background: url(http://i62.tinypic.com/2e3ybe1.jpg) no-repeat right center;
-   height: 34px;
-   width: 260px;
-}
-
-.isgi-container .isgi-select select {
-   border: 1px solid #ccc;
-   font-size: 16px;
-   height: 34px;
-   width: 260px;
-}*/
 </style>

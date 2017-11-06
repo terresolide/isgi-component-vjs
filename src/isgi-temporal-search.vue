@@ -119,7 +119,7 @@ export default {
 
 .isgi-temporal-search .isgi-input-group {
     border: none;
-    background-color: rgba(172,220,238,0.3);
+     background-color: rgba(223,208, 166); 
 }
 
 .isgi-temporal-search .isgi-input-group input {
@@ -129,7 +129,7 @@ export default {
 	outline: none;
 }
 	
-.isgi-temporal-search .isgi-input-group aeris-datepicker {
+/*.isgi-temporal-search .isgi-input-group aeris-datepicker {
     position: absolute;
     top: 100%;
     left: 0;
@@ -141,7 +141,7 @@ export default {
     top: 100%;
     left: 0;
     z-index: 999;
-}
+}*/
 .isgi-temporal-search .isgi-input-group span:first-letter {
    text-transform: uppercase;
 }
