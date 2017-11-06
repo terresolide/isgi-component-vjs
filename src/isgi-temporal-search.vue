@@ -15,12 +15,12 @@
 <span class="isgi-temporal-search">
 <div class="isgi-input-group">
    <span class="right">{{$t('from')}}</span>
-  <input id="StartTime" v-model="StartTime">
+  <input id="StartTime" name="StartTime">
 </div>
 <aeris-datepicker for="input#StartTime" format="YYYY-MM-DD"></aeris-datepicker>
 	<div class="isgi-input-group">
 		<span class="right">{{$t('to')}}</span>
-  <input id="EndTime" v-model="EndTime">
+  <input id="EndTime" name="EndTime">
   </div>
   <aeris-datepicker for="input#EndTime" format="YYYY-MM-DD"></aeris-datepicker> 
 <span class="error-message" v-if="errorMessage">{{errorMessage}}</span>
@@ -38,25 +38,21 @@ export default {
     }
   },
   
-  watch: {
-    lang (value) {
-	      this.$i18n.locale = value
-    }
-  },
+  
   
   destroyed: function() {
-	  document.removeEventListener('aerisCatalogueResetEvent', this.catalogueResetListener);
-	  this.catalogueResetListener = null;
-	  document.removeEventListener('aerisCatalogueSearchEvent', this.aerisCatalogueSearchEventListener);
-	  this.aerisCatalogueSearchEventListener = null;
+	//  document.removeEventListener('aerisCatalogueResetEvent', this.catalogueResetListener);
+	//  this.catalogueResetListener = null;
+	//  document.removeEventListener('aerisCatalogueSearchEvent', this.aerisCatalogueSearchEventListener);
+	//  this.aerisCatalogueSearchEventListener = null;
   },
   
   created: function () {
    this.$i18n.locale = this.lang
-   this.catalogueResetListener = this.handleCatalogueReset.bind(this) 
-   document.addEventListener('aerisCatalogueResetEvent', this.catalogueResetListener);
-   this.aerisCatalogueSearchEventListener = this.handleSearch.bind(this) 
-   document.addEventListener('aerisCatalogueSearchEvent', this.aerisCatalogueSearchEventListener);
+   //this.catalogueResetListener = this.handleCatalogueReset.bind(this) 
+  // document.addEventListener('aerisCatalogueResetEvent', this.catalogueResetListener);
+  // this.aerisCatalogueSearchEventListener = this.handleSearch.bind(this) 
+  // document.addEventListener('aerisCatalogueSearchEvent', this.aerisCatalogueSearchEventListener);
   },
 
   mounted: function() {
@@ -68,8 +64,8 @@ export default {
 
    data () {
     return {
-    	aerisCatalogueSearchEventListener: null,
-    	catalogueResetListener: null,
+    //	aerisCatalogueSearchEventListener: null,
+    //	catalogueResetListener: null,
     	from:null,
     	to:null,
     	errorMessage: null
@@ -91,7 +87,7 @@ export default {
 		var temporal = {};
 	    var from = moment(this.from, this.format);
 	    var to = moment(this.to, this.format);
-
+		console.log(from);
 	        temporal.from = from.isValid() ? from.format('YYYY-MM-DD') : '';
 	        temporal.to = to.isValid() ? to.format('YYYY-MM-DD') : '';
 

@@ -13,15 +13,18 @@
 
 <template>
 	
-	<div class="isgi-container">
+	<span class="isgi-container">
 		<input type="hidden" name="user" value="user_formater" />
-		<isgi-search-box header-icon-class="fa fa-bars" :title="$t('index')" >	<isgi-index-select></isgi-index-select></isgi-search-box>
-	
-		<isgi-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" >	<isgi-temporal-search></isgi-temporal-search></isgi-search-box>
+		<isgi-search-box header-icon-class="fa fa-bars" :title="$t('index')" >
+			<isgi-index-select></isgi-index-select>
+		</isgi-search-box>
+		<isgi-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true">	
+		 <isgi-temporal-search></isgi-temporal-search>
+		</isgi-search-box>
 		<isgi-search-box header-icon-class="fa fa-file-o" :title="$t('output_format')" >	<isgi-format-select></isgi-format-select></isgi-search-box>
 	
 		
-	</div>
+	</span>
 </template>
 
 
@@ -90,6 +93,7 @@ export default {
     font-size: inherit; /* inherit size from .custom-dropdown */
     padding: .5em; /* add some space*/
     margin: 0; /* remove default margins */
+    background-color: rgba(172,220,238,0.3); 
 }
 
 
@@ -111,7 +115,8 @@ export default {
         border-radius: 1px;
         -webkit-appearance: none;
         -moz-appearance: none;
-        appearance: none;  
+        appearance: none; 
+        
         width:260px;  
     }
 
@@ -149,8 +154,6 @@ export default {
     /* FF only temp fix */
     @-moz-document url-prefix() {
         .isgi-select select             { padding-right: .9em }
-        .isgi-select--large select { padding-right: 1.3em }
-        .isgi-select--small select { padding-right: .5em }
     }
 }
 /*.isgi-container .isgi-select select{

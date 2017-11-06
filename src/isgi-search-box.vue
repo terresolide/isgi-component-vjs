@@ -1,7 +1,7 @@
 <template>
-<span class="isgi-search-box-container" v-bind:class="{ showBody: deployed }">
+<span class="isgi-search-box" v-bind:class="{ showBody: isdeployed }">
 <div id="main" class="box noselect">
-<header class="box-heading" v-on:click="deployed = !deployed">
+<header class="box-heading" v-on:click="isdeployed = !isdeployed">
   <div class="box-title">
       <i  :class="headerIconClass" id="icon" v-show="headerIconClass"></i>
     <h4 no-label-float>{{title}}</h4>
@@ -56,6 +56,7 @@ export default {
   console.log("aeris-keyword-search-criteria - Creating");
    this.aerisThemeListener = this.handleTheme.bind(this) 
    document.addEventListener('aerisTheme', this.aerisThemeListener);
+   this.isdeployed = this.deployed
   },
 
   mounted: function() {
@@ -64,6 +65,7 @@ export default {
   },
   
   computed: {
+	  
   },
 
    data () {
@@ -71,6 +73,7 @@ export default {
     	theme: null,
     	aerisThemeListener: null,
     	hasToolbar: false,
+    	isdeployed: null
     }
   },
   
@@ -104,24 +107,24 @@ export default {
 
 <style>
 
-.isgi-search-box-container .box-collapsable-part {
+.isgi-search-box .box-collapsable-part {
     display: none;
     transition: 0.3s
 }
 
-.isgi-search-box-container.showBody .box-collapsable-part {
+.isgi-search-box.showBody .box-collapsable-part {
     display: block;
     transition: 0.3s
 }
-.isgi-search-box-container.showBody .chevron {
+.isgi-search-box.showBody .chevron {
     transform: rotate(180deg)
 }
-.isgi-search-box-container .chevron {
+.isgi-search-box .chevron {
     transition: 0.3s
 }
 
 
-.isgi-search-box-container {
+.isgi-search-box {
     box-sizing: border-box;
     position: relative;
     display: block;
@@ -130,54 +133,55 @@ export default {
     transition: transform 4s ease-out;
     box-shadow:  0 2px 5px rgba(0, 0, 0, 0.2)
 }
-.isgi-search-box-container:hover {
+.isgi-search-box:hover {
     cursor: default
 }
-.isgi-search-box-container .box {
+.isgi-search-box .box {
     box-sizing: border-box;
     width: 100%;
     color: var(--catalog-box-color, #333);
     background-color: var(--catalog-box-background-color, #fff)
 }
-.isgi-search-box-container .box-title {
+.isgi-search-box .box-title {
     display: flex;
     font-size: 16px;
     line-height: 1.2
 }
-.isgi-search-box-container .box-title .plateform-icon,
-.isgi-search-box-container .box-title .fa {
+
+.isgi-search-box .box-title .plateform-icon,
+.isgi-search-box .box-title .fa {
     margin-right: 10px
 }
 
-.isgi-search-box-container header {
+.isgi-search-box header {
 	color:#fff;
 }
 
-.isgi-search-box-container .box-title h4 {
+.isgi-search-box .box-title h4 {
     margin: 0;
     font-size: 16px;
 }
-.isgi-search-box-container .box-title h4:first-letter {
-    text-transform:uppercase;
+.isgi-search-box .box-title h4::first-letter{
+	text-transform:uppercase;
 }
-.isgi-search-box-container .box-body {
+.isgi-search-box .box-body {
     font-size: 14px;
     word-wrap: break-word
 }
-.isgi-search-box-container .box-body .content {
+.isgi-search-box .box-body .content {
     padding: 10px;
     text-align: justify
 }
-.isgi-search-box-container .box-toolbar {
+.isgi-search-box .box-toolbar {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
     padding: 5px 10px;
     border-bottom: 1px solid #ccc;
-    border: var(--catalog-box-toolbar-border);
+    border: var(--catalog-box-toolbar-bo	rder);
     background-color: var(--catalog-box-toolbar-background-color, #fafafa)
 }
-.isgi-search-box-container .box-heading {
+.isgi-search-box .box-heading {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -186,24 +190,24 @@ export default {
     border: var(--catalog-box-header-border, none);
     cursor: pointer
 }
-.isgi-search-box-container .box-heading .box-heading-buttons {
+.isgi-search-box .box-heading .box-heading-buttons {
     display: flex;
     flex-flow: row nowrap
 }
-.isgi-search-box-container .box-heading .box-heading-buttons .fa {
+.isgi-search-box .box-heading .box-heading-buttons .fa {
     margin-left: 5px
 }
 
-.isgi-search-box-container .box-collapsable-part {
+.isgi-search-box .box-collapsable-part {
     border: var(--catalog-box-main-border, none)
 }
-.isgi-search-box-container .box-footer {
+.isgi-search-box .box-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 5px
 }
-.isgi-search-box-container .expandButton {
+.isgi-search-box .expandButton {
     font-size: 14px;
     padding: 6px 13px;
     margin: 0 5px;
@@ -213,14 +217,14 @@ export default {
     opacity: var(--expand-button-opacity, 1);
     outline: none
 }
-.isgi-search-box-container .expandButton:hover {
+.isgi-search-box .expandButton:hover {
     cursor: pointer;
     transition: all 0.3s ease-in-out;
     color: var(--expand-button-hover-text-color, #fff);
     background-color: var(--expand-button-secondary-color, #d35400);
     opacity: var(--expand-button-hover-opacity, 1)
 }
-.isgi-search-box-container .metadata-datalevel .cartouche {
+.isgi-search-box .metadata-datalevel .cartouche {
     display: inline-block;
     padding: 3px 5px;
     border-radius: 5px;
@@ -228,7 +232,7 @@ export default {
     font-size: 12px;
     background-color: #f0ad4e
 }
-.isgi-search-box-container .metadata-datalevel .cartouche .fa {
+.isgi-search-box .metadata-datalevel .cartouche .fa {
     margin-right: 5px
 }
  </style>
