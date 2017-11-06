@@ -15,9 +15,11 @@ Vue.use(VueI18n);
 
 
 import Isgindex from './isgi-index-select.vue';
-import IsgiFormat from './isgi-format-select.vue';
+//import IsgiFormat from './isgi-format-select.vue';
 //import IsgiDate from './isgi-input-date.vue';
-import IsgiForm from './isgi-form.vue';
+//import IsgiForm from './isgi-form.vue';
+
+
 
 ljs.addAliases({
 	dep: [//'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', 

@@ -1,9 +1,6 @@
-# isgi-component-vjs
+# aeris-commons-components-vjs
 
-
-Component to connect ISGI service
-
- 
+> Aeris commons components. 
 
 ## Build Setup
 
@@ -14,32 +11,8 @@ npm install
 # serve with hot reload at localhost:8080
 npm run dev
 
-# build for preproduction with minification
-npm run pre
-
 # build for production with minification
 npm run build
-
-
 ```
 
 For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
-
-## Configuration
-Use your own repository and edit package.json in particular `name`, `version`, `main`, `preproduction.url` and `production.url` used to build js files:
-
-``` json
-  "name": "isgi-component-vjs",
-  "version": "0.0.1",
-  "preproduction": {
-	  "url": "https://rawgit.com/terresolide/"
-  },
-  "production": {
-     "url": "https://cdn.rawgit.com/terresolide/"
-  },
-
-```
-
-
-
-

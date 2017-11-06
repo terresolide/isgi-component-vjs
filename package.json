@@ -1,5 +1,5 @@
 {
-  "name": "isgi-component-vjs",
+   "name": "isgi-component-vjs",
   "version": "0.0.2",
   "description": "Connexion isgi Webservice for Web component",
   "preproduction": {
@@ -18,23 +18,18 @@
   "private": false,
   "author": "epointal",
   "license": "GNU",
-  "bugs": {
-    "url": "https://github.com/terresolide/isgi-component-vjs/issues"
-  },
-  "homepage": "https://github.com/terresolide/isgi-component-vjs#README",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --progress --open --hot --inline",
     "pre": "cross-env NODE_ENV=preproduction webpack --progress --hide-modules",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
-    "vue": "^2.5.3",
-    "vue-custom-element": "^1.3.0",
-    "vue-i18n": "^7.2.0",
-    "vue-resource": "^1.3.4"
+    "vue": "^2.3.4",
+    "vue-custom-element": "^1.2.1",
+    "vue-i18n": "7.0.5"
   },
   "devDependencies": {
-    "@kazupon/vue-i18n-loader": "^0.2.0",
+    "@kazupon/vue-i18n-loader": "0.1.1",
     "babel-core": "^6.0.0",
     "babel-loader": "^6.0.0",
     "babel-preset-env": "^1.5.1",
@@ -45,8 +40,8 @@
     "file-loader": "^0.9.0",
     "style-loader": "^0.18.2",
     "vue-loader": "^12.1.0",
-    "vue-template-compiler": "^2.5.3",
+    "vue-template-compiler": "^2.3.3",
     "webpack": "^2.6.1",
-    "webpack-dev-server": "^2.9.4"
+    "webpack-dev-server": "^2.4.5"
   }
 }
