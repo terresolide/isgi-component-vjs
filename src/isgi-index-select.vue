@@ -1,21 +1,9 @@
-<i18n>
-{
-   "en":{
-       "index": 		"index"
-   },
-   "fr":{
-       "index": 		"index"
-   }
-}
-</i18n>
-
 <template>
-<div class="isgi-select">
-	<label id="isgi-label" for="index" >{{$t('index') }}</label>
+<span class="isgi-select">
 	<select name="index">
 		<option v-for="item in indexes" :value="item">{{ item}}</option>
 	</select>
-</div>
+</span>
 </template>
 <script>
 export default {
@@ -33,35 +21,11 @@ export default {
 		}
   },
  
-  methods: {
-		message: function() {
-
-			alert( this.$i18n.t('mynameis')+ " " +  this.$i18n.t(this.name) );
-		}
-	},
-	
-  created: function(){
-      this.$i18n.locale = this.lang;
-  },
-  mounted: function(){
-      
-  }
 }
 </script>
 <style>
-label{
-  padding-left:26px;
-    width:125px;
-    text-transform: uppercase;
-    display:inline-block;
-	min-width:200px;
+.isgi-select select{
+min-width:150px;
 }
-.isgi-label{
-}
-.isgi-select{
- border:1px dotted black;
-}
-select{
-  width:200px;
-}
+
 </style>
