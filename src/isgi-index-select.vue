@@ -8,16 +8,26 @@
    }
 }
 </i18n>
-
+<style scoped>
+label{
+  padding-left:26px;
+    width:125px;
+    text-transform: uppercase;
+    display:inline-block;
+	min-width:200px;
+}
+select{
+  width:200px;
+}
+</style>
 <template>
-<div>
-	<label for="index">{{$t('index') }}</label>
+<div class="isgi-select">
+	<label class="isgi-label" for="index">{{$t('index') }}</label>
 	<select name="index">
 		<option v-for="item in indexes" :value="item">{{ item}}</option>
 	</select>
 </div>
 </template>
-
 
 
 <script>
@@ -50,14 +60,5 @@ export default {
       
   }
 }
-
 </script>
-<style>
-label{
-  padding-left:26px;
-    width:125px;
-    text-transform: uppercase;
-    display:inline-block;
-	min-width:200px;
-}
-</style>
+
