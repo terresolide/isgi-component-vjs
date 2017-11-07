@@ -18,12 +18,13 @@
 	<span class="isgi-container">
 		<input type="hidden" name="user" value="cnrs-formater610" />
 		<isgi-search-box header-icon-class="fa fa-bars" :title="$t('index')" >
-			<isgi-index-select></isgi-index-select>
+			<isgi-select name="Index" options="['aa', 'am', 'Kp', 'Dst', 'PC', 'AE',	'SC', 'SFE', 'Qdays', 'CKdays']"></isgi-select>
 		</isgi-search-box>
 		<isgi-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true">	
 		 <isgi-temporal-search></isgi-temporal-search>
 		</isgi-search-box>
-		<isgi-search-box header-icon-class="fa fa-file" :title="$t('output_format')" >	<isgi-format-select></isgi-format-select></isgi-search-box>
+		<isgi-search-box header-icon-class="fa fa-file" :title="$t('output_format')" >	
+			<isgi-select name="format" options="['IAGA2002']"></isgi-select></isgi-search-box>
 	    <input class="isgi-search-button" type="button" :value="$t('search')" @click="search"/>
 		
 	</span>

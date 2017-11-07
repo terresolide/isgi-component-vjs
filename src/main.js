@@ -13,7 +13,7 @@ Vue.use(VueI18n);
 //Vue.use(VueResource);
 
 
-
+import IsgiSelect from './isgi-select.vue';
 import Isgindex from './isgi-index-select.vue';
 import IsgiFormat from './isgi-format-select.vue';
 import IsgiDate from './isgi-input-date.vue';
@@ -51,6 +51,8 @@ ljs.load('dep', function() {
 	window.registredAerisElements.push('isgi-input-date');
 	Vue.customElement('isgi-format-select', IsgiFormat);
 	window.registredAerisElements.push('isgi-format-select');
+	   Vue.customElement('isgi-select', IsgiSelect);
+	    window.registredAerisElements.push('isgi-select');
 	Vue.customElement('isgi-form', IsgiForm);
     window.registredAerisElements.push('isgi-form');
 	
