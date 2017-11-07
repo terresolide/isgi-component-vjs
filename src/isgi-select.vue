@@ -1,7 +1,7 @@
 <template>
 <div class="isgi-select">
-	<select name="format">
-		<option v-for="item in indexes" :value="item">{{ item}}</option>
+	<select :id="parent+ '_' + name" :name="name" v-model="value">
+		<option v-for="item in indexes" :value="item" :selected="item === value">{{ item}}</option>
 	</select>
 </div>
 </template>
@@ -14,13 +14,30 @@ export default {
         name:{
             type:String,
             default:"select"
+        },
+        parent:{
+            type:String,
+            default:''
         }
     },
-    computed:{
-      indexes:function(){
-          return JSON.parse( this.options.replace(/'/g, '"'));
-      }
-  },
+  
+    data(){
+        return {value:'', indexes: []}
+    },
+    watch:{
+        value:function(ev){
+            console.log( "emit   " + this.value);
+            this.$emit( 'click', this.value);
+            this.$emit( 'input', this.value);
+        }
+    },
+    created: function(){
+        var options = JSON.parse( this.options.replace(/'/g, '"'))
+        this.value = options[0];
+       
+        this.indexes = options;
+        this.$emit( 'input', this.value);
+    }
 
 }
 

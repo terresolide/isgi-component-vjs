@@ -178,7 +178,7 @@ export default {
     align-items: center;
     padding: 5px 10px;
     border-bottom: 1px solid #ccc;
-    border: var(--catalog-box-toolbar-bo	rder);
+    border: var(--catalog-box-toolbar-border);
     background-color: var(--catalog-box-toolbar-background-color, #fafafa)
 }
 .isgi-search-box .box-heading {

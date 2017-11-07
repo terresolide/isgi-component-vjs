@@ -39,7 +39,7 @@ ljs.load('dep', function() {
 		window.registredAerisElements = [];
 	}
 	
-	
+	  
 	Vue.customElement('isgi-index-select', Isgindex);
 	window.registredAerisElements.push('isgi-index-select');
 	

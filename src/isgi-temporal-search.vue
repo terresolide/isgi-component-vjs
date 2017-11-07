@@ -15,14 +15,14 @@
 <span class="isgi-temporal-search">
 <div class="isgi-input-group">
    <span class="right">{{$t('from')}}</span>
-  <input id="StartTime" name="StartTime">
+  <input id="from" :value="from" @input="from = $event.target.value">
 </div>
-<aeris-datepicker for="input#StartTime" format="YYYY-MM-DD"></aeris-datepicker>
-	<div class="isgi-input-group">
-		<span class="right">{{$t('to')}}</span>
-  <input id="EndTime" name="EndTime">
-  </div>
-  <aeris-datepicker for="input#EndTime" format="YYYY-MM-DD"></aeris-datepicker> 
+<aeris-datepicker for="input#from" format="DD/MM/YYYY"></aeris-datepicker>
+<div class="isgi-input-group">
+	<span class="right">{{$t('to')}}</span>
+	<input id="to" v-model="to">
+</div>
+  <aeris-datepicker for="input#to" format="DD/MM/YYYY"></aeris-datepicker> 
 <span class="error-message" v-if="errorMessage">{{errorMessage}}</span>
 
 </span>
@@ -41,18 +41,18 @@ export default {
   
   
   destroyed: function() {
-	//  document.removeEventListener('aerisCatalogueResetEvent', this.catalogueResetListener);
-	//  this.catalogueResetListener = null;
-	//  document.removeEventListener('aerisCatalogueSearchEvent', this.aerisCatalogueSearchEventListener);
-	//  this.aerisCatalogueSearchEventListener = null;
+	document.removeEventListener('isgiResetEvent', this.resetEventListener);
+	this.resetEventListener = null;
+	document.removeEventListener('isgiSearchEvent', this.searchEventListener);
+	this.searchEventListener = null;
   },
   
   created: function () {
    this.$i18n.locale = this.lang
-   //this.catalogueResetListener = this.handleCatalogueReset.bind(this) 
-  // document.addEventListener('aerisCatalogueResetEvent', this.catalogueResetListener);
-  // this.aerisCatalogueSearchEventListener = this.handleSearch.bind(this) 
-  // document.addEventListener('aerisCatalogueSearchEvent', this.aerisCatalogueSearchEventListener);
+   this.resetEventListener = this.handleReset.bind(this) 
+   document.addEventListener('isgiResetEvent', this.resetEventListener);
+   this.searchEventListener = this.handleSearch.bind(this) 
+   document.addEventListener('isgiSearchEvent', this.searchEventListener);
   },
 
   mounted: function() {
@@ -64,8 +64,8 @@ export default {
 
    data () {
     return {
-    //	aerisCatalogueSearchEventListener: null,
-    //	catalogueResetListener: null,
+        searchEventListener: null,
+   		resetEventListener: null,
     	from:null,
     	to:null,
     	errorMessage: null
@@ -77,7 +77,7 @@ export default {
   },
   
   methods: {
-	  handleCatalogueReset: function() {
+	  handleReset: function() {
 		  this.from=""
 		  this.to=""
 		  
@@ -85,8 +85,11 @@ export default {
 	  
 	  handleSearch: function(e) {
 		var temporal = {};
+		console.log(this.from);
 	    var from = moment(this.from, this.format);
 	    var to = moment(this.to, this.format);
+	    
+	    console.log("search temporal");
 		console.log(from);
 	        temporal.from = from.isValid() ? from.format('YYYY-MM-DD') : '';
 	        temporal.to = to.isValid() ? to.format('YYYY-MM-DD') : '';
@@ -119,7 +122,8 @@ export default {
 
 .isgi-temporal-search .isgi-input-group {
     border: none;
-     background-color: rgba(223,208, 166); 
+     /* Default color from aeris */
+    background-color: rgba(172,220,238,0.3); 
 }
 
 .isgi-temporal-search .isgi-input-group input {

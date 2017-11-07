@@ -13,20 +13,21 @@
 }
 </i18n>
 
-<template>
-	
+<template>	
 	<span class="isgi-container">
+	<form id="isgi_form" >
 		<input type="hidden" name="user" value="cnrs-formater610" />
-		<isgi-search-box header-icon-class="fa fa-bars" :title="$t('index')" >
-			<isgi-select name="Index" options="['aa', 'am', 'Kp', 'Dst', 'PC', 'AE',	'SC', 'SFE', 'Qdays', 'CKdays']"></isgi-select>
+		<isgi-search-box header-icon-class="fa fa-bars" :title="$t('index')" :value="index" @input="index = $event.target.value">
+			<isgi-select parent="isgi" name="index" options="['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']"  ></isgi-select>
 		</isgi-search-box>
 		<isgi-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true">	
-		 <isgi-temporal-search></isgi-temporal-search>
+			 <isgi-temporal-search></isgi-temporal-search>
 		</isgi-search-box>
-		<isgi-search-box header-icon-class="fa fa-file" :title="$t('output_format')" >	
-			<isgi-select name="format" options="['IAGA2002']"></isgi-select></isgi-search-box>
+		<isgi-search-box header-icon-class="fa fa-file" :title="$t('output_format')" :value="format" @input="format = $event.target.value">	
+			<isgi-select parent="isgi" name="format" options="['IAGA2002']"></isgi-select>
+	    </isgi-search-box>
 	    <input class="isgi-search-button" type="button" :value="$t('search')" @click="search"/>
-		
+	</form>
 	</span>
 </template>
 
@@ -46,16 +47,32 @@ export default {
       }
       
   },
-  data () {
-		return {
-  			pseudo: 'Truc'
-		}
+  data(){
+      return {
+                  index:'aa',
+	              format:'IAGA2002',
+	              test:'rein' 
+          
+      }
   },
- 
   methods: {
 		search:function(){
+		    console.log(this);
 		    console.log("search");
+		    var e = new CustomEvent("isgiSearchEvent", { detail: {}})
+			  document.dispatchEvent(e);
+		    console.log(e.detail);
 		},
+		isIndex: function(evt){
+		    this.index = evt.target.value;
+		    return evt.target.value;
+		   
+		},
+		/*test:function(e){
+		    console.log('test');
+		    //this.index = e.detail[0];
+		    console.log(e);
+		},*/
 		 handleTheme: function(theme) {
 		  		this.theme = theme.detail
 				this.ensureTheme()
@@ -74,11 +91,12 @@ export default {
 	
   created: function(){
       this.$i18n.locale = this.lang;
+      console.log(this.index);
     //  this.aerisThemeListener = this.handleTheme.bind(this) 
 	 // document.addEventListener('aerisTheme', this.aerisThemeListener);
   },
   mounted: function(){
-      
+      console.log(this.index);
   }
 }
 
