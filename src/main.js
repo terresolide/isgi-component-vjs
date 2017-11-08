@@ -9,14 +9,11 @@ Vue.use(vueCustomElement);
 import VueI18n from 'vue-i18n';
 Vue.use(VueI18n);
 
-//import VueResource from 'vue-resource';
-//Vue.use(VueResource);
+import VueResource from 'vue-resource';
+Vue.use(VueResource);
 
 
 import IsgiSelect from './isgi-select.vue';
-import Isgindex from './isgi-index-select.vue';
-import IsgiFormat from './isgi-format-select.vue';
-import IsgiDate from './isgi-input-date.vue';
 import IsgiForm from './isgi-form.vue';
 import IsgiSearchBox from './isgi-search-box.vue';
 import IsgiTemporalSearch from './isgi-temporal-search.vue';
@@ -26,7 +23,8 @@ ljs.addAliases({
 	    'https://cdnjs.cloudflare.com/ajax/libs/document-register-element/1.4.1/document-register-element.js',
 	    'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js',
 	    'https://cdnjs.cloudflare.com/ajax/libs/moment-range/3.0.3/moment-range.min.js',
-	    'https://cdn.rawgit.com/aeris-data/aeris-commons-components-vjs/0.1.23/dist/aeris-commons-components-vjs_0.1.23.js'
+	    'https://cdn.rawgit.com/aeris-data/aeris-commons-components-vjs/0.1.23/dist/aeris-commons-components-vjs_0.1.23.js',
+	   // 'https://cdn.rawgit.com/aeris-data/aeris-catalogue-components-vjs/0.1.51/dist/aeris-catalogue-components-vjs_0.1.51.js'
 	    ]
 })
 ljs.load('dep', function() {
@@ -38,19 +36,11 @@ ljs.load('dep', function() {
 	if (!window.registredAerisElements) {
 		window.registredAerisElements = [];
 	}
-	
-	  
-	Vue.customElement('isgi-index-select', Isgindex);
-	window.registredAerisElements.push('isgi-index-select');
-	
+
 	Vue.customElement('isgi-search-box',IsgiSearchBox);
 	window.registredAerisElements.push('isgi-search-box');
 	Vue.customElement('isgi-temporal-search',IsgiTemporalSearch);
     window.registredAerisElements.push('isgi-temporal-search');
-	Vue.customElement('isgi-input-date', IsgiDate);
-	window.registredAerisElements.push('isgi-input-date');
-	Vue.customElement('isgi-format-select', IsgiFormat);
-	window.registredAerisElements.push('isgi-format-select');
 	   Vue.customElement('isgi-select', IsgiSelect);
 	    window.registredAerisElements.push('isgi-select');
 	Vue.customElement('isgi-form', IsgiForm);

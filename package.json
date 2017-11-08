@@ -1,5 +1,5 @@
 {
-   "name": "isgi-component-vjs",
+  "name": "isgi-component-vjs",
   "version": "0.0.2",
   "description": "Connexion isgi Webservice for Web component",
   "preproduction": {
@@ -26,7 +26,8 @@
   "dependencies": {
     "vue": "^2.3.4",
     "vue-custom-element": "^1.2.1",
-    "vue-i18n": "7.0.5"
+    "vue-i18n": "7.0.5",
+    "vue-resource": "^1.3.4"
   },
   "devDependencies": {
     "@kazupon/vue-i18n-loader": "0.1.1",

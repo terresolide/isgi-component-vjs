@@ -16,7 +16,6 @@
 <template>	
 	<span class="isgi-container">
 	<form id="isgi_form" >
-		<input type="hidden" name="user" value="cnrs-formater610" />
 		<isgi-search-box header-icon-class="fa fa-bars" :title="$t('index')" :value="index" @input="index = $event.target.value">
 			<isgi-select parent="isgi" name="index" options="['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']"  ></isgi-select>
 		</isgi-search-box>
@@ -37,13 +36,17 @@
 export default {
 
   props:{
-	  user:{
-		  type:String,
-		  default:''
+	  info:{
+	      type:String,
+	      default:null
 	  },
       lang: {
           type: String,
           default: 'fr'
+      },
+      url:{
+          type: String,
+          default: 'http://isgi.unistra.fr/ws'
       }
       
   },
@@ -51,7 +54,8 @@ export default {
       return {
                   index:'aa',
 	              format:'IAGA2002',
-	              test:'rein' 
+	              test:'rein' ,
+	              user:null
           
       }
   },
@@ -59,26 +63,29 @@ export default {
 		search:function(){
 		    console.log(this);
 		    console.log("search");
-		    var e = new CustomEvent("isgiSearchEvent", { detail: {}})
+		    console.log("user");
+		    console.log(this.user);
+		    
+		    var e = new CustomEvent("isgiSearchEvent", { detail: {user: this.reverse() }});
 			  document.dispatchEvent(e);
+		   // e.detail.user = this.reverse();
 		    console.log(e.detail);
+		    this.$http.get(this.url, e.detail).then(
+		            response=>{ this.handelSuccess(response)},
+		            response=>{ this.handleError(response)});
 		},
-		isIndex: function(evt){
-		    this.index = evt.target.value;
-		    return evt.target.value;
-		   
+		handleSuccess: function(rep){
+		    
 		},
-		/*test:function(e){
-		    console.log('test');
-		    //this.index = e.detail[0];
-		    console.log(e);
-		},*/
-		 handleTheme: function(theme) {
+		handleError: function(rep){
+		    
+		},
+		handleTheme: function(theme) {
 		  		this.theme = theme.detail
 				this.ensureTheme()
-		  	},
+		},
 		  	
-		  	ensureTheme: function() {
+		 ensureTheme: function() {
 		  	/*if ((this.$el) && (this.$el.querySelector)) {
 		  		this.$el.querySelector(".dp-header").style.background=this.theme.primary
 		  		this.$el.querySelector(".dp-day.day-selected").style.borderColor=this.theme.primary
@@ -86,14 +93,27 @@ export default {
 		  		this.$el.querySelector(".dp-selectors #monthSelect").style.color=this.theme.primary
 		  		this.$el.querySelector(".dp-selectors #yearSelect").style.color=this.theme.primary
 		  	}*/
-		  	}
+		  	},
+	  	 reverse: function(){
+	  	      var n= '';
+	  	      for( var i=this.user.length-5; i >= 0; i--){
+	  	          n       +=     this.user.charAt(i);
+	  	      }
+	  	  	  return n;
+	  	  },
+	  	  saveUser: function(rep){
+	  	      this.user = rep.body;
+	  	  }
 	},
 	
   created: function(){
       this.$i18n.locale = this.lang;
-      console.log(this.index);
-    //  this.aerisThemeListener = this.handleTheme.bind(this) 
-	 // document.addEventListener('aerisTheme', this.aerisThemeListener);
+      if(this.info != null){
+      	this.user = this.info;
+      }else{
+          this.$http.get('/user.txt', {}).then(response=>{ this.saveUser(response)},response=>{console.log("no user")});
+      }
+ 
   },
   mounted: function(){
       console.log(this.index);

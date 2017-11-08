@@ -22,22 +22,42 @@ export default {
     },
   
     data(){
-        return {value:'', indexes: []}
+        return {value:'', indexes: [], resetEventListener: null, searchEventListener:null}
     },
     watch:{
         value:function(ev){
             console.log( "emit   " + this.value);
-            this.$emit( 'click', this.value);
             this.$emit( 'input', this.value);
         }
     },
+    
     created: function(){
         var options = JSON.parse( this.options.replace(/'/g, '"'))
         this.value = options[0];
        
         this.indexes = options;
         this.$emit( 'input', this.value);
-    }
+        this.resetEventListener = this.handleReset.bind(this) 
+        document.addEventListener('isgiResetEvent', this.resetEventListener);
+        this.searchEventListener = this.handleSearch.bind(this) 
+        document.addEventListener('isgiSearchEvent', this.searchEventListener);
+        
+    },
+    destroyed: function() {
+    	document.removeEventListener('isgiResetEvent', this.resetEventListener);
+    	this.resetEventListener = null;
+    	document.removeEventListener('isgiSearchEvent', this.searchEventListener);
+    	this.searchEventListener = null;
+      },
+      
+      methods:{
+          handleReset: function(evt){
+              this.value = indexes[0];
+      	  },
+          handleSearch: function(evt){
+              evt.detail[this.name] = this.value;
+          }
+      }
 
 }
 
