@@ -22,9 +22,10 @@
 		<isgi-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true">	
 			 <isgi-temporal-search></isgi-temporal-search>
 		</isgi-search-box>
-		<isgi-search-box header-icon-class="fa fa-file" :title="$t('output_format')" :value="format" @input="format = $event.target.value">	
+		<isgi-search-box header-icon-class="fa fa-file" :title="$t('output_format')" :value="format" @input="format = $event.target.value">
 			<isgi-select parent="isgi" name="format" options="['IAGA2002']"></isgi-select>
 	    </isgi-search-box>
+	    <a id="download" href="#" style="display=none;" download="wsigi_data.zip"></a>
 	    <input class="isgi-search-button" type="button" :value="$t('search')" @click="search"/>
 	</form>
 	</span>
@@ -33,6 +34,34 @@
 
 
 <script>
+var build_query = function (obj, num_prefix, temp_key) {
+
+    var output_string = []
+
+    Object.keys(obj).forEach(function (val) {
+
+      var key = val;
+
+      num_prefix && !isNaN(key) ? key = num_prefix + key : ''
+
+      var key = encodeURIComponent(key.replace(/[!'()*]/g, escape));
+      temp_key ? key = temp_key + '[' + key + ']' : ''
+
+      if (typeof obj[val] === 'object') {
+        var query = build_query(obj[val], null, key)
+        output_string.push(query)
+      }
+
+      else {
+        var value = encodeURIComponent(obj[val].replace(/[!'()*]/g, escape));
+        output_string.push(key + '=' + value)
+      }
+
+    })
+
+    return output_string.join('&')
+
+  }
 export default {
 
   props:{
@@ -46,7 +75,7 @@ export default {
       },
       url:{
           type: String,
-          default: 'http://isgi.unistra.fr/ws'
+          default: 'http://service.test/isgi.php'
       }
       
   },
@@ -61,20 +90,31 @@ export default {
   },
   methods: {
 		search:function(){
-		    console.log(this);
-		    console.log("search");
-		    console.log("user");
-		    console.log(this.user);
-		    
+		    if( ! this.user ){
+		        
+		    }
 		    var e = new CustomEvent("isgiSearchEvent", { detail: {user: this.reverse() }});
-			  document.dispatchEvent(e);
-		   // e.detail.user = this.reverse();
-		    console.log(e.detail);
-		    this.$http.get(this.url, e.detail).then(
-		            response=>{ this.handelSuccess(response)},
-		            response=>{ this.handleError(response)});
+			document.dispatchEvent(e);
+
+		   if(e.detail.error){
+		       return;
+		   }
+		   console.log( build_query( e.detail ));
+		   var url = this.url + '?' + build_query( e.detail );
+		  // var url = "http://isgi.unistra.fr/ws?user=cnrs-formater610&index=aa&format=IAGA2002";
+		  
+		   this.$el.querySelector('#download').href = url;
+		 
+		   this.$el.querySelector('#download').click();
+		   e.stopPropagation();
+		   // this.$http.get( url, e.detail).then(
+		   //        response=>{ this.handelSuccess(response)},
+		   //        response=>{ this.handleError(response)}); 
 		},
-		handleSuccess: function(rep){
+		isValid: function (query){
+		    
+		},
+		handelSuccess: function(rep){
 		    
 		},
 		handleError: function(rep){
@@ -111,6 +151,7 @@ export default {
       if(this.info != null){
       	this.user = this.info;
       }else{
+         
           this.$http.get('/user.txt', {}).then(response=>{ this.saveUser(response)},response=>{console.log("no user")});
       }
  

@@ -2,25 +2,33 @@
 {
   "en": {
 	  "from": "from",
-	  "to": "to"
+	  "to": "to",
+	  "inconsistent_dates":	"inconsistent dates",
+	  "last_7_days":	"the last 7 days"
   },
   "fr": {
 	  "from": "de",
-	  "to": "à"
+	  "to": "à",
+	  "inconsistent_dates":	"dates incohérentes",
+	   "last_7_days":	"les 7 derniers jours"
   }
 }
 </i18n>
 
 <template>
 <span class="isgi-temporal-search">
-<div class="isgi-input-group">
+ <div class="isgi-input-group isgi-checkbox" > 
+  <input type="checkbox" v-model="last" >
+  <label>{{$t('last_7_days')}}</label> 
+ </div>
+<div class="isgi-input-group" v-if="!last">
    <span class="right">{{$t('from')}}</span>
-  <input id="from" v-model="from"  />
+  <input id="from" v-model="from" @click="errorMessage = null" />
 </div>
 <aeris-datepicker for="input#from" :format="format" ></aeris-datepicker>
-<div class="isgi-input-group">
+<div class="isgi-input-group" v-if="!last">
 	<span class="right">{{$t('to')}}</span>
-	<input id="to" v-model="to">
+	<input id="to" v-model="to" @click="errorMessage = null">
 </div>
   <aeris-datepicker for="input#to" :format="format"></aeris-datepicker> 
 <span class="error-message" v-if="errorMessage">{{errorMessage}}</span>
@@ -69,7 +77,8 @@ export default {
    		resetEventListener: null,
     	from:null,
     	to:null,
-    	errorMessage: null
+    	errorMessage: null,
+    	last:true
     	
     }
   },
@@ -78,29 +87,40 @@ export default {
   },
   
   methods: {
-    test: function(){
- 
-	     console.log('input data from');
-	},
+
 	handleReset: function() {
 		 this.from=""
 		 this.to=""
 		  
 	},
+	
+
 	  
 	handleSearch: function(e) {
-		var temporal = {};
+		if( this.last ){
+		    return;
+		}
 		//v-model not working??
+		 
 		this.from =  this.$el.querySelector('#from').value
 		this.to =  this.$el.querySelector('#to').value
 		
 		var from = moment(this.from, this.format);
 		var to = moment(this.to, this.format);
-		  
-		temporal.StartTime= from.isValid() ? from.format('YYYY-MM-DD') : '';
-		temporal.EndTime = to.isValid() ? to.format('YYYY-MM-DD') : '';
+		if( from > to ){
+		    this.errorMessage = this.$i18n.t('inconsistent_dates');
+		   	e.detail.error = true;
+	    }
+		   
+		var str_from = from.isValid() ? from.format('YYYY-MM-DD') : '';
+		var str_to = to.isValid() ? to.format('YYYY-MM-DD') : '';
 		
-		e.detail.temporal = temporal;
+		if(str_from && str_to){
+			e.detail.StartTime= str_from;
+			e.detail.EndTime = str_to;
+		}
+		
+		
 	  }
   }
  
@@ -126,7 +146,9 @@ export default {
     font-size: 12px;
     color: red
 }
-
+.isgi-temporal-search .error-message::first-letter{
+	text-transform:uppercase;
+}
 .isgi-temporal-search .isgi-input-group {
     border: none;
      /* Default color from aeris */
@@ -153,8 +175,16 @@ export default {
     line-height: 25px;
     overflow: hidden;
 }
-
-
+.isgi-temporal-search .isgi-checkbox{
+	padding:2px 0;
+}
+.isgi-temporal-search .isgi-checkbox input{
+ 	margin-top:0;
+ 	margin-right:4px;
+ }
+.isgi-temporal-search .isgi-checkbox label::first-letter{
+	text-transform: uppercase;
+}
 
 
 </style>
