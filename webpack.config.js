@@ -25,7 +25,8 @@ module.exports = {
         loader: 'vue-loader',
         options: {
           loaders: {
-        	  i18n: '@kazupon/vue-i18n-loader'
+        	  i18n: '@kazupon/vue-i18n-loader',
+        	  scss: 'style!css!sass'
           }
           // other vue-loader options go here
         }
@@ -35,7 +36,10 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/
       },
-     
+      {
+          test: /\.s[a|c]ss$/,
+          loader: 'style!css!sass'
+      },
       {
         test: /\.(png|jpg|gif|svg)$/,
         loader: 'file-loader',
