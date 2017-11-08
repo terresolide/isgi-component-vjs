@@ -4,13 +4,17 @@
 	  "from": "from",
 	  "to": "to",
 	  "inconsistent_dates":	"inconsistent dates",
-	  "last_7_days":	"the last 7 days"
+	  "last_7_days":	"the last 7 days",
+	  "equal_dates": "The end date should be greater than the start date",
+	  "one_year":	"Download is limited to one year of data per request"
   },
   "fr": {
 	  "from": "de",
 	  "to": "à",
 	  "inconsistent_dates":	"dates incohérentes",
-	   "last_7_days":	"les 7 derniers jours"
+	   "last_7_days":	"les 7 derniers jours",
+	   "equal_dates": "la date finale doit être supérieure à la date initiale",
+	   "one_year":	"Le téléchargement est limité à une année de données"
   }
 }
 </i18n>
@@ -23,7 +27,7 @@
  </div>
 <div class="isgi-input-group" v-if="!last">
    <span class="right">{{$t('from')}}</span>
-  <input id="from" v-model="from" @click="errorMessage = null" />
+  <input id="from" v-model="from" @click="errorMessage = null" @change="test" />
 </div>
 <aeris-datepicker for="input#from" :format="format" ></aeris-datepicker>
 <div class="isgi-input-group" v-if="!last">
@@ -82,12 +86,14 @@ export default {
     	
     }
   },
-  
+ 
   updated: function() {
   },
   
   methods: {
-
+      test: function(){
+          console.log("value changed");
+      },
 	handleReset: function() {
 		 this.from=""
 		 this.to=""
@@ -111,7 +117,20 @@ export default {
 		    this.errorMessage = this.$i18n.t('inconsistent_dates');
 		   	e.detail.error = true;
 	    }
+		
+		if( from == to ){
+		    this.errorMessage = this.$i18n.t('equal_dates');
+		   	e.detail.error = true;
+	    }
 		   
+		var diff = to.diff( from )/ 31536000000;
+		
+		console.log(diff);
+		
+		if( diff >=1){
+		    this.errorMessage = this.$i18n.t('one_year');
+		   	e.detail.error = true;
+		}
 		var str_from = from.isValid() ? from.format('YYYY-MM-DD') : '';
 		var str_to = to.isValid() ? to.format('YYYY-MM-DD') : '';
 		

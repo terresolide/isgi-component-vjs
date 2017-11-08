@@ -3,30 +3,32 @@
    "en":{
        "time_slot": 	"time slot",
        "output_format": "Output Format",
-       "search": "search"
+       "search": "Search"
    },
    "fr":{
         "time_slot": 	"intervalle de temps",
         "output_format": "Format de sortie",
-        "search": "rechercher"
+        "search": "Rechercher"
    }
 }
 </i18n>
 
 <template>	
 	<span class="isgi-container">
-	<form id="isgi_form" >
+	<form id="isgi-form" >
 		<isgi-search-box header-icon-class="fa fa-bars" :title="$t('index')" :value="index" @input="index = $event.target.value">
 			<isgi-select parent="isgi" name="index" options="['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']"  ></isgi-select>
 		</isgi-search-box>
 		<isgi-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true">	
-			 <isgi-temporal-search></isgi-temporal-search>
+			 <isgi-temporal-search :lang="lang"></isgi-temporal-search>
 		</isgi-search-box>
 		<isgi-search-box header-icon-class="fa fa-file" :title="$t('output_format')" :value="format" @input="format = $event.target.value">
 			<isgi-select parent="isgi" name="format" options="['IAGA2002']"></isgi-select>
 	    </isgi-search-box>
 	    <a id="download" href="#" style="display=none;" download="wsigi_data.zip"></a>
+	    <div class= "isgi-buttons" >
 	    <input class="isgi-search-button" type="button" :value="$t('search')" @click="search"/>
+	    </div>
 	</form>
 	</span>
 </template>
@@ -34,6 +36,11 @@
 
 
 <script>
+
+var lightenDarkenColor =  function(col,amt) {
+    col = parseInt(col,16);
+    return (((col & 0x0000FF) + amt) | ((((col>> 8) & 0x00FF) + amt) << 8) | (((col >> 16) + amt) << 16)).toString(16);
+}
 var build_query = function (obj, num_prefix, temp_key) {
 
     var output_string = []
@@ -84,8 +91,9 @@ export default {
                   index:'aa',
 	              format:'IAGA2002',
 	              test:'rein' ,
-	              user:null
-          
+	              user:null,
+	              aerisThemeListener:null,
+	              theme:null
       }
   },
   methods: {
@@ -126,14 +134,11 @@ export default {
 		},
 		  	
 		 ensureTheme: function() {
-		  	/*if ((this.$el) && (this.$el.querySelector)) {
-		  		this.$el.querySelector(".dp-header").style.background=this.theme.primary
-		  		this.$el.querySelector(".dp-day.day-selected").style.borderColor=this.theme.primary
-		  		this.$el.querySelector(".dp-footer .today-button").style.color=this.theme.primary
-		  		this.$el.querySelector(".dp-selectors #monthSelect").style.color=this.theme.primary
-		  		this.$el.querySelector(".dp-selectors #yearSelect").style.color=this.theme.primary
-		  	}*/
-		  	},
+		  	if ((this.$el) && (this.$el.querySelector)) {
+		  		this.$el.querySelector(".isgi-search-button").style.background=this.theme.primary;
+		  		//this.$el.querySelector(".isgi-search-button").style.borderColor= 
+		  	}
+		 },
 	  	 reverse: function(){
 	  	      var n= '';
 	  	      for( var i=this.user.length-5; i >= 0; i--){
@@ -148,50 +153,63 @@ export default {
 	
   created: function(){
       this.$i18n.locale = this.lang;
+      //search user used for request
       if(this.info != null){
       	this.user = this.info;
       }else{
          
           this.$http.get('/user.txt', {}).then(response=>{ this.saveUser(response)},response=>{console.log("no user")});
       }
+      this.aerisThemeListener = this.handleTheme.bind(this) 
+      document.addEventListener('aerisTheme', this.aerisThemeListener);
  
   },
   mounted: function(){
       console.log(this.index);
+      var event = new CustomEvent('aerisThemeRequest', {});
+    	document.dispatchEvent(event);
+  },
+  destroyed: function(){
+      document.removeEventListener('aerisTheme', this.aerisThemeListener);
+     this.aerisThemeListener = null;
   }
 }
 
 </script>
 
 <style>
-
-
-.isgi-container .isgi-search-button{
- background-color: #ff0000;
+.isgi-container #isgi-form{
+	width:280px;
 }
 
-.isgi-container input[type="button"]{
-	margin: 0px 7px 3px 0;
+.isgi-container .isgi-buttons{
+    margin-top:10px;
+	text-align:right;
+}
+.isgi-container .isgi-buttons input[type="button"]{
+	font-family:  "Dejavu serif";
+	margin: 0px 0px 3px 7px;
   padding: 3px 12px;
-  white-space: normal;
+  /*white-space: normal;*/
   text-align: center;
-  background: #DD9946;
+/*  background: #DD9946;*/
   border-width: 1px;
   border-style: solid;
   border-radius: 1px;
   font-size: 16px;
+  font-weight:bold;
   line-height:1.7;
   border-color: #e5b171 #cb8025 #cb8025;
   color: #fff;
   text-decoration: none;
-  text-shadow: 0 -1px 1px #a0651d, 1px 0 1px #cb8025, 0 1px 1px #cb8025, -1px 0 1px #a0651d;
+ /* text-shadow: 0 -1px 1px #a0651d, 1px 0 1px #cb8025, 0 1px 1px #cb8025, -1px 0 1px #a0651d;*/
   vertical-align: top;
   cursor: pointer;
   pointer-events: auto;
   box-sizing: border-box;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
 }
-.isgi-container input[type="button"]:first-letter{
+.isgi-container input[type="button"]::first-letter{
 	text-transform: uppercase;
 }
 
