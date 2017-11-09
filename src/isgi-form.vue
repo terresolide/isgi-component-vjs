@@ -14,7 +14,7 @@
 </i18n>
 
 <template>	
-	<span class="isgi-container">
+	<div class="isgi-container">
 	<form id="isgi-form" >
 		<isgi-search-box header-icon-class="fa fa-bars" :title="$t('index')" :value="index" @input="index = $event.target.value">
 			<isgi-select parent="isgi" name="index" options="['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']"  ></isgi-select>
@@ -30,7 +30,7 @@
 	    <input class="isgi-search-button" type="button" :value="$t('search')" @click="search"/>
 	    </div>
 	</form>
-	</span>
+	</div>
 </template>
 
 
@@ -97,7 +97,7 @@ export default {
       }
   },
   methods: {
-		search:function(){
+		search(){
 		    if( ! this.user ){
 		        
 		    }
@@ -109,16 +109,29 @@ export default {
 		   }
 		   console.log( build_query( e.detail ));
 		   var url = this.url + '?' + build_query( e.detail );
-		  // var url = "http://isgi.unistra.fr/ws?user=cnrs-formater610&index=aa&format=IAGA2002";
 		  
 		   this.$el.querySelector('#download').href = url;
 		 
-		   this.$el.querySelector('#download').click();
+		   zip.createReader(new zip.BlobReader(url), function(zipReader) {
+		       console.log("reader created");
+				zipReader.getEntries(onend);
+			}, onerror);
+		//   this.$el.querySelector('#download').click();
 		   e.stopPropagation();
 		   // this.$http.get( url, e.detail).then(
 		   //        response=>{ this.handelSuccess(response)},
 		   //        response=>{ this.handleError(response)}); 
 		},
+		/** TEST jsonp
+		getData (e) {
+		      this.$jsonp( this.url, e.detail).then(json => {
+		          console.log("succes");
+		        // Success.
+		      }).catch(err => {
+		          console.log("failed");
+		        // Failed.
+		      })
+		    },*/
 		isValid: function (query){
 		    
 		},
@@ -188,6 +201,7 @@ export default {
 }
 .isgi-container #isgi-form{
 	width:280px;
+	height:700px;
 }
 
 .isgi-container .isgi-buttons{
