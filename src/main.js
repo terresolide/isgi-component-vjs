@@ -13,8 +13,8 @@ import VueResource from 'vue-resource';
 Vue.use(VueResource);
 
 //pour les requetes cross origin http, https
-import VueJsonp from 'vue-jsonp'
-Vue.use(VueJsonp)
+//import VueJsonp from 'vue-jsonp'
+//Vue.use(VueJsonp)
 
 import IsgiSelect from './isgi-select.vue';
 import IsgiForm from './isgi-form.vue';
