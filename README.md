@@ -1,6 +1,6 @@
-# aeris-commons-components-vjs
+# isgi-components-vjs
 
-> Aeris commons components. 
+> isgi-component. 
 
 ## Build Setup
 
@@ -37,12 +37,12 @@ For detailed explanation on how things work, consult the [docs for vue-loader](h
 ### Props
 
 #### :lang
- the language
+ > the language
  * fr or en
  * default : fr
  
 #### :info
- informtation about user
+ > information about user
  
 #### :url
- the api service url
+ > the api service url
