@@ -58,6 +58,8 @@ export default {
 		this.resetEventListener = null;
 		document.removeEventListener('isgiSearchEvent', this.searchEventListener);
 		this.searchEventListener = null;
+		 document.removeEventListener('aerisTheme', this.aerisThemeListener);
+         this.aerisThemeListener = null;
   },
   
   created: function () {
@@ -66,6 +68,8 @@ export default {
 		document.addEventListener('isgiResetEvent', this.resetEventListener);
 		this.searchEventListener = this.handleSearch.bind(this) 
 		document.addEventListener('isgiSearchEvent', this.searchEventListener);
+		this.aerisThemeListener = this.handleTheme.bind(this) 
+	    document.addEventListener('aerisTheme', this.aerisThemeListener);
   },
 
   mounted: function() {
@@ -79,6 +83,7 @@ export default {
     return {
         searchEventListener: null,
    		resetEventListener: null,
+   		aerisThemeListener:null,
     	from:null,
     	to:null,
     	errorMessage: null,
@@ -140,7 +145,20 @@ export default {
 		}
 		
 		
-	  }
+	  },
+	 
+      handleTheme: function(theme) {
+	  		this.theme = theme.detail
+			this.ensureTheme()
+	  },
+	  	
+	 ensureTheme: function() {
+	  	if ((this.$el) && (this.$el.querySelector)) {
+	  	    console.log('ensureTheme temporal');
+	  		var color3 =  this.$shadeColor( this.theme.primary, 0.8);
+	  		this.$el.querySelector("isgi-temporal-search .isgi-input-group").style.backgroundColor = color3;
+	  	}
+	 },
   }
  
 }

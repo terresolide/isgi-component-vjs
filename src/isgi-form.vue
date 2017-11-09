@@ -141,8 +141,8 @@ export default {
 		 ensureTheme: function() {
 		  	if ((this.$el) && (this.$el.querySelector)) {
 		  		this.$el.querySelector(".isgi-search-button").style.background= this.theme.primary;
-		  		var color1 = shadeColor2( this.theme.primary, 0.1); //lightcolor
-		  		var color2 = shadeColor2( this.theme.primary, -.1); //dark color
+		  		var color1 = this.$shadeColor( this.theme.primary, 0.1); //lightcolor
+		  		var color2 = this.$shadeColor( this.theme.primary, -.1); //dark color
 		  		this.$el.querySelector(".isgi-search-button").style.borderColor= color1 + ' '+ color2 + ' ' + color2;
 		  	}
 		 },
@@ -173,12 +173,12 @@ export default {
   },
   mounted: function(){
       console.log(this.index);
-      var event = new CustomEvent('aerisThemeRequest', {});
-    	document.dispatchEvent(event);
+    //  var event = new CustomEvent('aerisThemeRequest', {});
+    //	document.dispatchEvent(event);
   },
   destroyed: function(){
       document.removeEventListener('aerisTheme', this.aerisThemeListener);
-     this.aerisThemeListener = null;
+      this.aerisThemeListener = null;
   }
 }
 
@@ -229,9 +229,6 @@ export default {
 	text-transform: uppercase;
 }
 
-.isgi-container .isgi-select select,
-.isgi-container .isgi-temporal-search .isgi-input-group{
-    background-color: rgba(221,153,70,0.2); 
-}
+
 
 </style>

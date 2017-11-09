@@ -12,12 +12,17 @@ Vue.use(VueI18n);
 import VueResource from 'vue-resource';
 Vue.use(VueResource);
 
-
+import IsgiTools from './isgi-tools.js';
+Vue.use(IsgiTools);
 
 import IsgiSelect from './isgi-select.vue';
 import IsgiForm from './isgi-form.vue';
 import IsgiSearchBox from './isgi-search-box.vue';
 import IsgiTemporalSearch from './isgi-temporal-search.vue';
+
+
+
+
 
 ljs.addAliases({
 	dep: [//'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', 

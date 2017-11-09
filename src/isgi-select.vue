@@ -6,6 +6,7 @@
 </div>
 </template>
 <script>
+
 export default {
     props:{
         options:{
@@ -22,7 +23,14 @@ export default {
     },
   
     data(){
-        return {value:'', indexes: [], resetEventListener: null, searchEventListener:null}
+        return {
+            value:'', 
+            indexes: [], 
+            resetEventListener: null, 
+            searchEventListener:null,
+            aerisThemeListener:null
+            
+        }
     },
     watch:{
         value:function(ev){
@@ -41,6 +49,8 @@ export default {
         document.addEventListener('isgiResetEvent', this.resetEventListener);
         this.searchEventListener = this.handleSearch.bind(this) 
         document.addEventListener('isgiSearchEvent', this.searchEventListener);
+        this.aerisThemeListener = this.handleTheme.bind(this) 
+        document.addEventListener('aerisTheme', this.aerisThemeListener);
         
     },
     destroyed: function() {
@@ -48,6 +58,8 @@ export default {
     	this.resetEventListener = null;
     	document.removeEventListener('isgiSearchEvent', this.searchEventListener);
     	this.searchEventListener = null;
+    	 document.removeEventListener('aerisTheme', this.aerisThemeListener);
+         this.aerisThemeListener = null;
       },
       
       methods:{
@@ -56,7 +68,19 @@ export default {
       	  },
           handleSearch: function(evt){
               evt.detail[this.name] = this.value;
-          }
+          },
+          handleTheme: function(theme) {
+		  		this.theme = theme.detail
+				this.ensureTheme()
+		},
+		  	
+		 ensureTheme: function() {
+		  	if ((this.$el) && (this.$el.querySelector)) {
+		  	    console.log('ensureTheme select');
+		  		var color3 =  this.$shadeColor( this.theme.primary, 0.8);
+		  		this.$el.querySelector(".isgi-select select").style.backgroundColor = color3;
+		  	}
+		 },
       }
 
 }
