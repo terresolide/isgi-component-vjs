@@ -20,19 +20,19 @@ For detailed explanation on how things work, consult the [docs for vue-loader](h
 ## Exemple
 
 ```
-	<!-- used with aeris theme to define color -->
-	<aeris-theme id="theme2" active="true" primary="#F1684E" emphasis="#39B062"></aeris-theme>
+<!-- used with aeris theme to define color -->
+<aeris-theme id="theme2" active="true" primary="#F1684E" emphasis="#39B062"></aeris-theme>
 
-    <isgi-form info="poleterre" url="http://service.xyz.fr" lang="en"></isgi-form>
-    <!-- The file is generated when we laucnch in console: npm run pre
-         then push on github branch master
-     Modify the url according to your own configuration -->
-	 <script src="https://rawgit.com/terresolide/isgi-component-vjs/master/dist0/isgi-component-vjs_0.0.2.js"></script> 
+<isgi-form info="poleterre" url="http://service.xyz.fr" lang="en"></isgi-form>
+<script src="https://rawgit.com/terresolide/isgi-component-vjs/master/dist0/isgi-component-vjs_0.0.2.js"></script> 
+
 ```
+
+---
 
 ## API
 
-----
+
 
 ### Props
 
