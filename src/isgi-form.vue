@@ -37,10 +37,14 @@
 
 <script>
 
-var lightenDarkenColor =  function(col,amt) {
-    col = parseInt(col,16);
-    return (((col & 0x0000FF) + amt) | ((((col>> 8) & 0x00FF) + amt) << 8) | (((col >> 16) + amt) << 16)).toString(16);
+// @see https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
+// @todo mettre ailleurs
+function shadeColor2(color, percent) {   
+    var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
+    return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
 }
+
+// trouver une autre fonction
 var build_query = function (obj, num_prefix, temp_key) {
 
     var output_string = []
@@ -69,6 +73,8 @@ var build_query = function (obj, num_prefix, temp_key) {
     return output_string.join('&')
 
   }
+  
+//end see and todo
 export default {
 
   props:{
@@ -115,7 +121,7 @@ export default {
 		  
 		   this.$el.querySelector('#download').click();
 		   e.stopPropagation();
-		       response=>{ this.handleError(response)}); 
+		    
 		},
 		
 		isValid: function (query){
@@ -134,8 +140,10 @@ export default {
 		  	
 		 ensureTheme: function() {
 		  	if ((this.$el) && (this.$el.querySelector)) {
-		  		this.$el.querySelector(".isgi-search-button").style.background=this.theme.primary;
-		  		//this.$el.querySelector(".isgi-search-button").style.borderColor= 
+		  		this.$el.querySelector(".isgi-search-button").style.background= this.theme.primary;
+		  		var color1 = shadeColor2( this.theme.primary, 0.1); //lightcolor
+		  		var color2 = shadeColor2( this.theme.primary, -.1); //dark color
+		  		this.$el.querySelector(".isgi-search-button").style.borderColor= color1 + ' '+ color2 + ' ' + color2;
 		  	}
 		 },
 	  	 reverse: function(){
