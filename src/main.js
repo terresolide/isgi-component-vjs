@@ -21,9 +21,9 @@ import IsgiTemporalSearch from './isgi-temporal-search.vue';
 ljs.addAliases({
 	dep: [//'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', 
 	    'https://cdnjs.cloudflare.com/ajax/libs/document-register-element/1.4.1/document-register-element.js',
-	    'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js',
+	   'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js',
 	    'https://cdnjs.cloudflare.com/ajax/libs/moment-range/3.0.3/moment-range.min.js',
-	    'https://cdn.rawgit.com/aeris-data/aeris-commons-components-vjs/0.1.23/dist/aeris-commons-components-vjs_0.1.23.js',
+	    
 	   // 'https://cdn.rawgit.com/aeris-data/aeris-catalogue-components-vjs/0.1.51/dist/aeris-catalogue-components-vjs_0.1.51.js'
 	    ]
 })

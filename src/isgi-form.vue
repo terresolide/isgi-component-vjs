@@ -178,6 +178,14 @@ export default {
 </script>
 
 <style>
+.isgi-container h1,
+.isgi-container h2,
+.isgi-container h3,
+.isgi-container h4,
+.isgi-container h5,
+.isgi-container h6{
+    color: #fff;
+}
 .isgi-container #isgi-form{
 	width:280px;
 }
@@ -187,7 +195,7 @@ export default {
 	text-align:right;
 }
 .isgi-container .isgi-buttons input[type="button"]{
-	font-family:  "Dejavu serif";
+/*	font-family:  "Dejavu serif";*/
 	margin: 0px 0px 3px 7px;
   padding: 3px 12px;
   /*white-space: normal;*/
@@ -197,7 +205,7 @@ export default {
   border-style: solid;
   border-radius: 1px;
   font-size: 16px;
-  font-weight:bold;
+ /* font-weight:bold;*/
   line-height:1.7;
   border-color: #e5b171 #cb8025 #cb8025;
   color: #fff;
