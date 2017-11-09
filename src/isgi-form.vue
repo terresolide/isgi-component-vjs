@@ -37,44 +37,7 @@
 
 <script>
 
-// @see https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
-// @todo mettre ailleurs
-function shadeColor2(color, percent) {   
-    var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
-    return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
-}
 
-// trouver une autre fonction
-var build_query = function (obj, num_prefix, temp_key) {
-
-    var output_string = []
-
-    Object.keys(obj).forEach(function (val) {
-
-      var key = val;
-
-      num_prefix && !isNaN(key) ? key = num_prefix + key : ''
-
-      var key = encodeURIComponent(key.replace(/[!'()*]/g, escape));
-      temp_key ? key = temp_key + '[' + key + ']' : ''
-
-      if (typeof obj[val] === 'object') {
-        var query = build_query(obj[val], null, key)
-        output_string.push(query)
-      }
-
-      else {
-        var value = encodeURIComponent(obj[val].replace(/[!'()*]/g, escape));
-        output_string.push(key + '=' + value)
-      }
-
-    })
-
-    return output_string.join('&')
-
-  }
-  
-//end see and todo
 export default {
 
   props:{
@@ -113,8 +76,8 @@ export default {
 		   if(e.detail.error){
 		       return;
 		   }
-		   console.log( build_query( e.detail ));
-		   var url = this.url + '?' + build_query( e.detail );
+
+		   var url = this.url + '?' + this.$buildQuery( e.detail );
 		  
 		   this.$el.querySelector('#download').href = url;
 		 

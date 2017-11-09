@@ -154,7 +154,6 @@ export default {
 	  	
 	 ensureTheme: function() {
 	  	if ((this.$el) && (this.$el.querySelector)) {
-	  	    console.log('ensureTheme temporal');
 	  		var color3 =  this.$shadeColor( this.theme.primary, 0.8);
 	  		this.$el.querySelector("isgi-temporal-search .isgi-input-group").style.backgroundColor = color3;
 	  	}
