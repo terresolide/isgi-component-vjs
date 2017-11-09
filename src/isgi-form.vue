@@ -112,26 +112,12 @@ export default {
 		  
 		   this.$el.querySelector('#download').href = url;
 		 
-		   zip.createReader(new zip.BlobReader(url), function(zipReader) {
-		       console.log("reader created");
-				zipReader.getEntries(onend);
-			}, onerror);
-		//   this.$el.querySelector('#download').click();
+		  
+		   this.$el.querySelector('#download').click();
 		   e.stopPropagation();
-		   // this.$http.get( url, e.detail).then(
-		   //        response=>{ this.handelSuccess(response)},
-		   //        response=>{ this.handleError(response)}); 
+		       response=>{ this.handleError(response)}); 
 		},
-		/** TEST jsonp
-		getData (e) {
-		      this.$jsonp( this.url, e.detail).then(json => {
-		          console.log("succes");
-		        // Success.
-		      }).catch(err => {
-		          console.log("failed");
-		        // Failed.
-		      })
-		    },*/
+		
 		isValid: function (query){
 		    
 		},
