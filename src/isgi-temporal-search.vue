@@ -25,12 +25,12 @@
   <input type="checkbox" v-model="last" >
   <label>{{$t('last_7_days')}}</label> 
  </div>
-<div class="isgi-input-group" v-if="!last">
+<div class="isgi-input-group" v-show="!last">
    <span class="right">{{$t('from')}}</span>
-  <input id="from" v-model="from" @click="errorMessage = null" @change="test" />
+  <input id="from" v-model="from" @click="errorMessage = null" />
 </div>
 <aeris-datepicker for="input#from" :format="format" ></aeris-datepicker>
-<div class="isgi-input-group" v-if="!last">
+<div class="isgi-input-group" v-show="!last">
 	<span class="right">{{$t('to')}}</span>
 	<input id="to" v-model="to" @click="errorMessage = null">
 </div>
@@ -54,9 +54,9 @@ export default {
     }
   }, 
   destroyed: function() {
-		document.removeEventListener('isgiResetEvent', this.resetEventListener);
+		document.removeEventListener('aerisResetEvent', this.resetEventListener);
 		this.resetEventListener = null;
-		document.removeEventListener('isgiSearchEvent', this.searchEventListener);
+		document.removeEventListener('aerisSearchEvent', this.searchEventListener);
 		this.searchEventListener = null;
 		 document.removeEventListener('aerisTheme', this.aerisThemeListener);
          this.aerisThemeListener = null;
@@ -65,15 +65,14 @@ export default {
   created: function () {
 		this.$i18n.locale = this.lang
 		this.resetEventListener = this.handleReset.bind(this) 
-		document.addEventListener('isgiResetEvent', this.resetEventListener);
+		document.addEventListener('aerisResetEvent', this.resetEventListener);
 		this.searchEventListener = this.handleSearch.bind(this) 
-		document.addEventListener('isgiSearchEvent', this.searchEventListener);
+		document.addEventListener('aerisSearchEvent', this.searchEventListener);
 		this.aerisThemeListener = this.handleTheme.bind(this) 
 	    document.addEventListener('aerisTheme', this.aerisThemeListener);
   },
 
-  mounted: function() {
-  },
+
   
   computed: {
   	

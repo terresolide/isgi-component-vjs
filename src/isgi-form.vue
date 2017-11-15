@@ -17,13 +17,13 @@
 	<div class="isgi-container">
 	<form id="isgi-form" >
 		<isgi-search-box header-icon-class="fa fa-bars" :title="$t('index')" :value="index" @input="index = $event.target.value">
-			<isgi-select parent="isgi" name="index" options="['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']"  ></isgi-select>
+			<formater-select width="260px" name="index" options="['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']"  ></formater-select>
 		</isgi-search-box>
 		<isgi-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true">	
 			 <isgi-temporal-search :lang="lang"></isgi-temporal-search>
 		</isgi-search-box>
 		<isgi-search-box header-icon-class="fa fa-file" :title="$t('output_format')" :value="format" @input="format = $event.target.value">
-			<isgi-select parent="isgi" name="format" options="['IAGA2002']"></isgi-select>
+			<formater-select width="260px"  name="format" options="['IAGA2002']"></formater-select>
 	    </isgi-search-box>
 	    <a id="download" href="#" style="display=none;" download="wsigi_data.zip"></a>
 	    <div class= "isgi-buttons" >
@@ -68,9 +68,10 @@ export default {
   methods: {
 		search(){
 		    if( ! this.user ){
-		        
+		        console.log("no user");
+		        return;
 		    }
-		    var e = new CustomEvent("isgiSearchEvent", { detail: {user: this.reverse() }});
+		    var e = new CustomEvent("aerisSearchEvent", { detail: {user: this.reverse() }});
 			document.dispatchEvent(e);
 
 		   if(e.detail.error){
@@ -81,7 +82,7 @@ export default {
 		  
 		   this.$el.querySelector('#download').href = url;
 		 
-		  
+		  return;
 		   this.$el.querySelector('#download').click();
 		   e.stopPropagation();
 		    
@@ -110,6 +111,7 @@ export default {
 		  	}
 		 },
 	  	 reverse: function(){
+	  	     console.log("reverse");
 	  	      var n= '';
 	  	      for( var i=this.user.length-5; i >= 0; i--){
 	  	          n       +=     this.user.charAt(i);
@@ -117,6 +119,7 @@ export default {
 	  	  	  return n;
 	  	  },
 	  	  saveUser: function(rep){
+	  	      console.log("save user "+rep.body);
 	  	      this.user = rep.body;
 	  	  }
 	},
@@ -136,7 +139,7 @@ export default {
   },
   mounted: function(){
       console.log(this.index);
-    //  var event = new CustomEvent('aerisThemeRequest', {});
+     // var event = new CustomEvent('aerisThemeRequest', {});
     //	document.dispatchEvent(event);
   },
   destroyed: function(){
@@ -156,6 +159,7 @@ export default {
 .isgi-container h6{
     color: #fff;
 }
+
 .isgi-container #isgi-form{
 	width:280px;
 	height:700px;
