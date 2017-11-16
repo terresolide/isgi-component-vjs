@@ -82,7 +82,6 @@ export default {
 		  
 		   this.$el.querySelector('#download').href = url;
 		 
-		  return;
 		   this.$el.querySelector('#download').click();
 		   e.stopPropagation();
 		    
@@ -102,7 +101,7 @@ export default {
 				this.ensureTheme()
 		},
 		  	
-		 ensureTheme: function() {
+		ensureTheme: function() {
 		  	if ((this.$el) && (this.$el.querySelector)) {
 		  		this.$el.querySelector(".isgi-search-button").style.background= this.theme.primary;
 		  		var color1 = this.$shadeColor( this.theme.primary, 0.1); //lightcolor
@@ -111,7 +110,6 @@ export default {
 		  	}
 		 },
 	  	 reverse: function(){
-	  	     console.log("reverse");
 	  	      var n= '';
 	  	      for( var i=this.user.length-5; i >= 0; i--){
 	  	          n       +=     this.user.charAt(i);
@@ -138,7 +136,6 @@ export default {
  
   },
   mounted: function(){
-      console.log(this.index);
      // var event = new CustomEvent('aerisThemeRequest', {});
     //	document.dispatchEvent(event);
   },

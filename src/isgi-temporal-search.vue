@@ -141,20 +141,22 @@ export default {
 		if(str_from && str_to){
 			e.detail.StartTime= str_from;
 			e.detail.EndTime = str_to;
-		}
-		
-		
+		}	
 	  },
 	 
       handleTheme: function(theme) {
-	  		this.theme = theme.detail
-			this.ensureTheme()
+	  		this.theme = theme.detail;
+			this.ensureTheme();
 	  },
 	  	
 	 ensureTheme: function() {
 	  	if ((this.$el) && (this.$el.querySelector)) {
 	  		var color3 =  this.$shadeColor( this.theme.primary, 0.8);
-	  		this.$el.querySelector("isgi-temporal-search .isgi-input-group").style.backgroundColor = color3;
+	  		var nodes= this.$el.querySelectorAll(".isgi-input-group");
+	  		[].forEach.call(nodes, function(node){
+	  		    node.style.backgroundColor = color3;
+	  		})
+	  		
 	  	}
 	 },
   }

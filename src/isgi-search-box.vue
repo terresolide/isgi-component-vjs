@@ -53,15 +53,13 @@ export default {
   },
   
   created: function () {
-  console.log("aeris-keyword-search-criteria - Creating");
    this.aerisThemeListener = this.handleTheme.bind(this) 
    document.addEventListener('aerisTheme', this.aerisThemeListener);
    this.isdeployed = this.deployed
   },
 
   mounted: function() {
-  	var event = new CustomEvent('aerisThemeRequest', {});
-  	document.dispatchEvent(event);
+ 
   },
   
   computed: {
@@ -88,8 +86,8 @@ export default {
     },
   	
   	handleTheme: function(theme) {
-  		this.theme = theme.detail
-		this.ensureTheme()
+  		this.theme = theme.detail;
+		this.ensureTheme();
   	},
   	
   	ensureTheme: function() {
