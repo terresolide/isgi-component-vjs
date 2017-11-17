@@ -1,11 +1,13 @@
 <i18n>
 {
    "en":{
+       "index":			 "index",
        "time_slot": 	"time slot",
        "output_format": "Output Format",
        "search": "Search"
    },
    "fr":{
+        "index":		"index",
         "time_slot": 	"intervalle de temps",
         "output_format": "Format de sortie",
         "search": "Rechercher"
@@ -15,6 +17,7 @@
 
 <template>	
 	<div class="isgi-container">
+	
 	<form id="isgi-form" >
 		<isgi-search-box header-icon-class="fa fa-bars" :title="$t('index')" :value="index" @input="index = $event.target.value">
 			<formater-select width="260px" name="index" options="['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']"  ></formater-select>
@@ -136,8 +139,8 @@ export default {
  
   },
   mounted: function(){
-     // var event = new CustomEvent('aerisThemeRequest', {});
-    //	document.dispatchEvent(event);
+      var event = new CustomEvent('aerisThemeRequest', {});
+      document.dispatchEvent(event);
   },
   destroyed: function(){
       document.removeEventListener('aerisTheme', this.aerisThemeListener);

@@ -55,17 +55,14 @@ export default {
   created: function () {
    this.aerisThemeListener = this.handleTheme.bind(this) 
    document.addEventListener('aerisTheme', this.aerisThemeListener);
-   this.isdeployed = this.deployed
+   this.isdeployed = this.deployed;
+   this.ensureTheme();
   },
 
   mounted: function() {
- 
-  },
-  
-  computed: {
-	  
-  },
-
+    	var event = new CustomEvent('aerisThemeRequest', {});
+    	document.dispatchEvent(event);
+    },
    data () {
     return {
     	theme: null,
@@ -76,26 +73,20 @@ export default {
   },
   
   updated: function() {
-  	this.ensureTheme()
+  	//this.ensureTheme()
   },
   
   methods: {
-  
-	  handleChevronClick: function() {
-       
-    },
-  	
   	handleTheme: function(theme) {
   		this.theme = theme.detail;
 		this.ensureTheme();
   	},
   	
   	ensureTheme: function() {
-  	if (this.theme) {
-  		if (this.$el) { 
-  			this.$el.querySelector("header").style.background=this.theme.primary
-  		}
-  	}
+	  	if (this.theme && this.$el) { 
+	  			this.$el.querySelector("header").style.background=this.theme.primary
+	  		
+	  	}
   	}
   	
   	
