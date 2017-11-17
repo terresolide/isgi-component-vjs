@@ -19,15 +19,15 @@
 	<div class="isgi-container">
 	
 	<form id="isgi-form" >
-		<isgi-search-box header-icon-class="fa fa-bars" :title="$t('index')" :value="index" @input="index = $event.target.value">
+		<formater-search-box header-icon-class="fa fa-bars" :title="$t('index')" :value="index" @input="index = $event.target.value">
 			<formater-select width="260px" name="index" options="['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']"  ></formater-select>
-		</isgi-search-box>
-		<isgi-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true">	
+		</formater-search-box>
+		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true">	
 			 <isgi-temporal-search :lang="lang"></isgi-temporal-search>
-		</isgi-search-box>
-		<isgi-search-box header-icon-class="fa fa-file" :title="$t('output_format')" :value="format" @input="format = $event.target.value">
+		</formater-search-box>
+		<formater-search-box header-icon-class="fa fa-file" :title="$t('output_format')" :value="format" @input="format = $event.target.value">
 			<formater-select width="260px"  name="format" options="['IAGA2002']"></formater-select>
-	    </isgi-search-box>
+	    </formater-search-box>
 	    <a id="download" href="#" style="display=none;" download="wsigi_data.zip"></a>
 	    <div class= "isgi-buttons" >
 	    <input class="isgi-search-button" type="button" :value="$t('search')" @click="search"/>

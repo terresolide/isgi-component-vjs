@@ -19,7 +19,6 @@ Vue.use(IsgiTools);
 import IsgiForm from './isgi-form.vue';
 import IsgiTemporalSearch from './isgi-temporal-search.vue';
 
-import IsgiSearchBox from './isgi-search-box.vue';
 
 //import AerisDatePicker from '../../aeris-commons-components/src/aeris-datepicker/aeris-datepicker.vue';
 
@@ -53,7 +52,7 @@ ljs.load('dep', function() {
             window.registredAerisElements.push(name)
         }
 	}
-	var componentUsed = new Array('formater-select' , 'aeris-datepicker', 'aeris-theme');
+	var componentUsed = new Array('formater-select' , 'formater-search-box', 'aeris-datepicker');
 	var loaded = setInterval(function() {
 	    var result = componentUsed.filter( function( cpt){
 	        return window.registredAerisElements.indexOf(cpt)>-1;
@@ -66,7 +65,7 @@ ljs.load('dep', function() {
 	 }, 100);
      function load(){
          
-        registerElement('isgi-search-box',IsgiSearchBox);
+        //registerElement('isgi-search-box',IsgiSearchBox);
         //window.registredAerisElements.push('isgi-search-box');
         registerElement('isgi-temporal-search',IsgiTemporalSearch);
        // window.registredAerisElements.push('isgi-temporal-search');
