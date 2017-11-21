@@ -31,7 +31,7 @@ ljs.addAliases({
 	  // 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js',
 	  // 'https://cdnjs.cloudflare.com/ajax/libs/moment-range/3.0.3/moment-range.min.js',
 	  // 'https://cdnjs.cloudflare.com/ajax/libs/document-register-element/1.4.1/document-register-element.js',
-	   'https://cdn.rawgit.com/aeris-data/aeris-commons-components-vjs/0.1.28/dist/aeris-commons-components-vjs_0.1.28.js', 
+	  // 'https://cdn.rawgit.com/aeris-data/aeris-commons-components-vjs/0.1.28/dist/aeris-commons-components-vjs_0.1.28.js', 
 	    //dev version for formater-commons-components-vjs
 	    'https://rawgit.com/terresolide/formater-commons-components-vjs/master/dist0/formater-commons-components-vjs.js' 
 	
