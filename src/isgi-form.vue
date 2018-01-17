@@ -20,7 +20,7 @@
 	
 	<form id="isgi-form" >
 		<formater-search-box header-icon-class="fa fa-bars" :title="$t('index')" :value="index" @input="index = $event.target.value">
-			<formater-select width="260px" name="index" options="['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']"  ></formater-select>
+			<formater-select width="260px" name="index" multiple="true" options="['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']"  ></formater-select>
 		</formater-search-box>
 		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true">	
 			 <isgi-temporal-search :lang="lang"></isgi-temporal-search>
@@ -54,50 +54,74 @@ export default {
       },
       url:{
           type: String,
-          default: 'http://service.test/isgi.php'
+          default: 'http://api.formater/cds/isgi/data'
       }
       
   },
   data(){
       return {
-                  index:'aa',
-	              format:'IAGA2002',
-	              test:'rein' ,
-	              user:null,
+                 
 	              aerisThemeListener:null,
-	              theme:null
+	              theme:null,
+	              index:null,
+	              format:null
       }
   },
   methods: {
-		search(){
-		    if( ! this.user ){
-		        console.log("no user");
-		        return;
-		    }
-		    var e = new CustomEvent("aerisSearchEvent", { detail: {user: this.reverse() }});
-			document.dispatchEvent(e);
-
-		   if(e.detail.error){
-		       return;
-		   }
-
-		   var url = this.url + '?' + this.$buildQuery( e.detail );
-		  
-		   this.$el.querySelector('#download').href = url;
-		 
-		   this.$el.querySelector('#download').click();
-		   e.stopPropagation();
-		    
-		},
-		
+	  search(){
+		  var e = new CustomEvent("aerisSearchEvent", { detail: {}});
+	      document.dispatchEvent(e);
+	      console.log(e.detail);
+	      if( e.detail.error){
+	          var event = new CustomEvent('aerisErrorNotificationMessageEvent', { 'detail': {message: this.$i18n.t('error')}});
+	          document.dispatchEvent(event);
+	          
+	          return;
+	      }else{
+	
+	          //var event = new CustomEvent('aerisErrorNotificationMessageEvent', { 'detail': {message: this.$i18n.t('service_closed')}});
+	        //  document.dispatchEvent(event);
+	          var result = this.callApi(e);
+	          return;
+	      }
+	  },
+	  callApi(e){
+	        var _this = this;
+	        //this.call(0, e.detail);
+	
+	
+	        for(var i=0; i<e.detail.index.length; i++){
+	        	var url = this.url +"/"+ e.detail.index[i];
+	        	var data = {}
+	        	if(e.detail.start){
+	        		data.start = e.detail.start;
+	        	}
+	        	if(e.detail.end){
+                    data.end = e.detail.end;
+                }
+	        	var query = data;
+	        	query.index = e.detail.index[i];
+	        	//console.log()
+		        this.$http.get( url,{params: data}).then( 
+		                response => {_this.handleSuccess( response, query)},
+		                response => {_this.handleError( response , query)});
+	        }
+	        
+	
+	  },
 		isValid: function (query){
 		    
 		},
-		handelSuccess: function(rep){
-		    
+		handleSuccess: function(rep, query){
+			//if rep.body.error!!! this.handleError();
+			 var event = new CustomEvent("findIndiceEvent", {detail: {result:rep.body , query: query}});
+	            document.dispatchEvent(event);
+	            console.log(event);
 		},
-		handleError: function(rep){
-		    
+		handleError: function(rep, query){
+			 var event = new CustomEvent("errorSearchIndiceEvent", {detail: {result:rep.body , query: query}});
+	            document.dispatchEvent(event);
+	            
 		},
 		handleTheme: function(theme) {
 		  		this.theme = theme.detail
@@ -112,28 +136,13 @@ export default {
 		  		this.$el.querySelector(".isgi-search-button").style.borderColor= color1 + ' '+ color2 + ' ' + color2;
 		  	}
 		 },
-	  	 reverse: function(){
-	  	      var n= '';
-	  	      for( var i=this.user.length-5; i >= 0; i--){
-	  	          n       +=     this.user.charAt(i);
-	  	      }
-	  	  	  return n;
-	  	  },
-	  	  saveUser: function(rep){
-	  	      console.log("save user "+rep.body);
-	  	      this.user = rep.body;
-	  	  }
+	  	 
 	},
 	
   created: function(){
       this.$i18n.locale = this.lang;
       //search user used for request
-      if(this.info != null){
-      	this.user = this.info;
-      }else{
-         
-          this.$http.get('/user.txt', {}).then(response=>{ this.saveUser(response)},response=>{console.log("no user")});
-      }
+     
       this.aerisThemeListener = this.handleTheme.bind(this) 
       document.addEventListener('aerisTheme', this.aerisThemeListener);
  

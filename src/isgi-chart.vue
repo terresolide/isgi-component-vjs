@@ -20,23 +20,8 @@
 </i18n>
 
 <template>
-<span class="isgi-temporal-search">
- <div class="isgi-input-group isgi-checkbox" > 
-  <input type="checkbox" v-model="last" >
-  <label>{{$t('last_7_days')}}</label> 
- </div>
-<div class="isgi-input-group" v-show="!last">
-   <span class="right">{{$t('from')}}</span>
-  <input id="from" v-model="from" @click="errorMessage = null" />
-</div>
-<aeris-datepicker for="input#from" :format="format" ></aeris-datepicker>
-<div class="isgi-input-group" v-show="!last">
-	<span class="right">{{$t('to')}}</span>
-	<input id="to" v-model="to" @click="errorMessage = null">
-</div>
-  <aeris-datepicker for="input#to" :format="format"></aeris-datepicker> 
-<span class="error-message" v-if="errorMessage">{{errorMessage}}</span>
-
+<span class="isgi-chart" :class="index==null? 'hidden':''">
+  <header><h2>Indice {{index}}</h2></header>
 </span>
 </template>
 
@@ -48,26 +33,28 @@ export default {
       type: String,
       default: 'fr'
     },
-    format:{
-        type: String,
-        default:'DD/MM/YYYY'
+    index:{
+    	type: String,
+    	default:null
     }
+    
   }, 
   destroyed: function() {
+	  document.removeEventListener('findIndiceEvent', this.findIndiceEventListener);
+      this.findIndiceEventListener = null;
 		document.removeEventListener('aerisResetEvent', this.resetEventListener);
 		this.resetEventListener = null;
-		document.removeEventListener('aerisSearchEvent', this.searchEventListener);
-		this.searchEventListener = null;
+
 		 document.removeEventListener('aerisTheme', this.aerisThemeListener);
          this.aerisThemeListener = null;
   },
   
   created: function () {
-		this.$i18n.locale = this.lang
+		this.$i18n.locale = this.lang;
+		this.findIndiceEventListener = this.buildChart.bind(this) 
+        document.addEventListener('findIndiceEvent', this.findIndiceEventListener);
 		this.resetEventListener = this.handleReset.bind(this) 
 		document.addEventListener('aerisResetEvent', this.resetEventListener);
-		this.searchEventListener = this.handleSearch.bind(this) 
-		document.addEventListener('aerisSearchEvent', this.searchEventListener);
 		this.aerisThemeListener = this.handleTheme.bind(this) 
 	    document.addEventListener('aerisTheme', this.aerisThemeListener);
   },
@@ -80,13 +67,10 @@ export default {
 
    data () {
     return {
-        searchEventListener: null,
    		resetEventListener: null,
    		aerisThemeListener:null,
-    	from:null,
-    	to:null,
-    	errorMessage: null,
-    	last:true
+   		findIndiceEventListener:null,
+   		
     	
     }
   },
@@ -95,54 +79,16 @@ export default {
   },
   
   methods: {
-      test: function(){
-          console.log("value changed");
-      },
+	  buildChart: function(){
+		  
+	  },
+    
 	handleReset: function() {
-		 this.from=""
-		 this.to=""
+		
 		  
 	},
 	
 
-	  
-	handleSearch: function(e) {
-		if( this.last ){
-		    return;
-		}
-		//v-model not working??
-		 
-		this.from =  this.$el.querySelector('#from').value
-		this.to =  this.$el.querySelector('#to').value
-		
-		var from = moment(this.from, this.format);
-		var to = moment(this.to, this.format);
-		if( from > to ){
-		    this.errorMessage = this.$i18n.t('inconsistent_dates');
-		   	e.detail.error = true;
-	    }
-		
-		if( from == to ){
-		    this.errorMessage = this.$i18n.t('equal_dates');
-		   	e.detail.error = true;
-	    }
-		   
-		var diff = to.diff( from )/ 31536000000;
-		
-		console.log(diff);
-		
-		if( diff >=1){
-		    this.errorMessage = this.$i18n.t('one_year');
-		   	e.detail.error = true;
-		}
-		var str_from = from.isValid() ? from.format('YYYY-MM-DD') : '';
-		var str_to = to.isValid() ? to.format('YYYY-MM-DD') : '';
-		
-		if(str_from && str_to){
-			e.detail.start = str_from;
-			e.detail.end = str_to;
-		}	
-	  },
 	 
       handleTheme: function(theme) {
 	  		this.theme = theme.detail;

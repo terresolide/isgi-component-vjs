@@ -18,22 +18,20 @@ Vue.use(IsgiTools);
 
 import IsgiForm from './isgi-form.vue';
 import IsgiTemporalSearch from './isgi-temporal-search.vue';
-
-
-//import AerisDatePicker from '../../aeris-commons-components/src/aeris-datepicker/aeris-datepicker.vue';
+import IsgiChart from './isgi-chart.vue';
+import IsgiLayout from './isgi-layout.vue';
 
 
 
 ljs.addAliases({
 	dep: [
-	  //  'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', 
-	   
-	  // 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js',
-	  // 'https://cdnjs.cloudflare.com/ajax/libs/moment-range/3.0.3/moment-range.min.js',
-	  // 'https://cdnjs.cloudflare.com/ajax/libs/document-register-element/1.4.1/document-register-element.js',
-	  // 'https://cdn.rawgit.com/aeris-data/aeris-commons-components-vjs/0.1.28/dist/aeris-commons-components-vjs_0.1.28.js', 
+		// lib for highchart
+		//------------------
+		'https://code.highcharts.com/highcharts.src.js',
 	    //dev version for formater-commons-components-vjs
-	    'https://rawgit.com/terresolide/formater-commons-components-vjs/master/dist0/formater-commons-components-vjs.js' 
+		//'http://localhost:8082/dist/build.js',
+	    //'https://rawgit.com/terresolide/formater-commons-components-vjs/master/dist0/formater-commons-components-vjs.js' ,
+		'https://cdn.rawgit.com/terresolide/formater-commons-components-vjs/0.1.1/dist/formater-commons-components-vjs.js' ,
 	
 	    ]
 })
@@ -65,15 +63,10 @@ ljs.load('dep', function() {
 	 }, 100);
      function load(){
          
-        //registerElement('isgi-search-box',IsgiSearchBox);
-        //window.registredAerisElements.push('isgi-search-box');
         registerElement('isgi-temporal-search',IsgiTemporalSearch);
-       // window.registredAerisElements.push('isgi-temporal-search');
-    /*  registerElement('isgi-select', IsgiSelect);
-        window.registredAerisElements.push('isgi-select');*/
         registerElement('isgi-form', IsgiForm);
-     //   window.registredAerisElements.push('isgi-form');
-  //  })
+        registerElement('isgi-chart', IsgiChart);
+        registerElement('isgi-layout',IsgiLayout);
 	
 	}
 
