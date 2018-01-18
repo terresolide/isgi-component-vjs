@@ -29,6 +29,30 @@
 </template>
 
 <script>
+function kp_to_value( kp ){
+	var num = parseInt( kp.substring(0,1));
+	if(kp.length>1){
+		switch( kp.substring(1,1)){
+			case "+": 
+				num += 0.333;
+				break;
+			case "-":
+				num -= 0.333;
+				break;
+		}
+	}
+	return num;
+}
+function get_Kp_name( obj ){
+    for(var key in obj){
+    	console.log(key);
+    	if( /^Kp[a-z]{1}$/.test( key)){
+    		return key;
+    	}
+    }
+    return null;
+}
+
 export default {
 	 
   props: {
@@ -39,6 +63,10 @@ export default {
     indice:{
     	type: String,
     	default:null
+    },
+    id:{
+    	type: Number,
+    	default:0
     }
     
   }, 
@@ -56,6 +84,7 @@ export default {
    		resetEventListener: null,
    		aerisThemeListener:null,
    		findDataIndiceEventListener:null,
+   	
    		
     	
     }
@@ -69,7 +98,7 @@ export default {
          if( evt.detail.query.index != this.indice ){
         	 return;
          }
-         console.log( evt.detail.result);
+         var id = this.id;
          var data0 = evt.detail.result;
          var container = this.$el.querySelector(".chart-container");
        
@@ -80,35 +109,97 @@ export default {
          
                 
                  var data = new Array();
+                 data["indice"] = new Array();
+                
                  var coord = new Array();
                
      
                  //traitement des collections
                   var indice = this.indice;
+                  var kp = get_Kp_name( data0.collection[0]);
+                  console.log( "kp = " + kp)
+                  var color = Highcharts.getOptions().colors[id];
+                  console.log(color);
+                  var color1 = this.$shadeColor( color, -.2);
+                  var color2 = this.$shadeColor( color, 0.1);
+                  console.log( color1);
+                  console.log(color2);
+                 // Primary yAxis
+                  var yAxis = [{ 
+			            title: {
+			                useHTML: true,
+			                text: '<span style="color:'+ color1+'">'+
+			                '<b>'+indice+'</b></span> (nT)'
+			            }
+			        }] ;
+                 if( kp ){
+                	
+                	 data["kp"] = new Array();
+                	 // add opposite secondary yAxis
+                	 yAxis.push({ 
+				            title: {
+				                text: kp,
+				                style: {
+				                    color: color2,
+				                    fontWeight: 'bold'
+				                }
+				            },
+				            minorTickInterval: 2,
+				            tickLength: 10,
+				            max: 9,
+				            opposite: true })
+      
+                 }
+                 console.log(Highcharts.getOptions().colors[id]);
                  data0.collection.forEach( function( item){
-                	    var date = Date.parse(item.DATE+" "+item.TIME);
-                	    console.log(date);
-                         data.push([date, item[indice]]);
-                   
+                	    var date = Date.parse(item.DATE+" "+item.TIME); 
+                         data["indice"].push([date, item[indice]]);
+                         if( kp){
+                        	 data["kp"].push([date, kp_to_value( item[kp])]);
+                         }
 
                  });
-    
-               
+                 var series = [{
+                	 type: 'line',
+                     name: indice,
+                     color: color1,
+                     zIndex: 2,
+                     data: data["indice"]
+                 }]
+                 if(kp){
+                	 series.push({
+                		    type: 'column',
+             		        name: kp,
+             		        color: color2,
+             		        yAxis: 1,
+             		        zIndex: 1,
+             		        data: data["kp"]
+             		       });
+                 }
                     // console.log(value);
-                
+                var id = this.id;
                  var mychart = Highcharts.chart(container, {
                   
                      chart:{
-                     height:130,
+                    	   height:230,
+                    	   plotBorderColor: '#666666',
+                           plotBorderWidth: 1
                     // marginBottom: (value==="F")? 45 : 15
                      },
                      title: {
-                         text: '<div style="background:#fff;padding:5px;font-size:10px"><div style="background:'+Highcharts.getOptions().colors[0]+';width:10px;height:10px;display:inline-block;margin:0 3px;"></div>'+indice+'</div>',
-                         align: 'right',
-                         margin: 10,
-                         useHTML: true,
-                       //  x: 70,
-                         floating:true
+                         text: "indice " + indice,
+                         align: "left"
+                     },
+                     legend: {
+                         enabled: false
+                     },
+                     plotOptions: {
+                         series: {
+                             pointPadding: 0,
+                             groupPadding: 0,
+                             borderWidth: 1,
+                             shadow: true
+                         }
                      },
                      xAxis: {
                          type: 'datetime',
@@ -124,6 +215,7 @@ export default {
                              month: '%b %y',
                              year: '%Y'
                          },
+                         
                          events: {
                              //setExtremes: syncExtremes
                          },
@@ -132,7 +224,7 @@ export default {
                             // enabled:value==="F"
                          }
                      },
-                     yAxis: [{
+                     yAxis: yAxis,/*[{
                          title: {
                              text: "",
                              margin:10,
@@ -145,18 +237,33 @@ export default {
                              }
                          }}
                       
-                     ],
+                     ],*/
                      tooltip: {
-                         headerFormat: '<b>{series.name}</b><br>',
-                         pointFormat: '{point.x:%e. %b %Y}: {point.y:,.0f}'
-                         //pointFormat: '{point.x:'+interval+'} | {point.y:,.0f}'
+                         formatter: function() {
+                             var s =  Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) ;
+
+                             this.points.forEach(function(point, i) {
+                                 s += '<br/><span style="color:'+ point.series.color +'">\u25AC</span>'+ point.series.name +': ' ;
+                                 if (point.series.type=='column') {
+                                     if ((point.y - Math.floor(point.y))==0) { s+= Math.floor(point.y) +'o'; }
+                                     if (((point.y - Math.floor(point.y))>0) && ((point.y - Math.floor(point.y))<0.4)) { s+= Math.floor(point.y) +'+'; }
+                                     if ((point.y - Math.floor(point.y))>0.6) { s+= Math.round(point.y) +'-'; }
+                                 } else {
+                                     s += point.y ;
+                                 }
+                             });
+
+                             return s;
+                         },
+                         shared: true,
+                         crosshairs: [true, false, false]
                      },
-                     series: [{
+                     series: series/* [{
                          name: indice,
                          showInLegend:false,
-                         color: Highcharts.getOptions().colors[0],
-                         data: data //[1, 0, 4]
-                     }]
+                         color: Highcharts.getOptions().colors[id],
+                         data: data["indice"] //[1, 0, 4]
+                     }]*/
                  });
             
           

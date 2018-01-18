@@ -24,7 +24,7 @@
             
         </aside>
         <main>
-            <isgi-chart :lang="lang" v-for="(indice, id) in indices" :indice="indice" :key="id"></isgi-chart>
+            <isgi-chart :lang="lang" v-for="(indice, id) in indices" :indice="indice" :key="id" :id="id"></isgi-chart>
         </main>
          </div>
         

@@ -94,29 +94,36 @@ export default {
 	          return;
 	      }
 	  },
-	  callApi(e){
-	        var _this = this;
-	        //this.call(0, e.detail);
-	
-	
-	        for(var i=0; i<e.detail.index.length; i++){
-	        	var url = this.url +"/"+ e.detail.index[i];
-	        	var data = {}
-	        	if(e.detail.start){
-	        		data.start = e.detail.start;
-	        	}
-	        	if(e.detail.end){
-                    data.end = e.detail.end;
-                }
-	        	var query = data;
-	        	query.index = e.detail.index[i];
-	        	//console.log()
-		        this.$http.get( url,{params: data}).then( 
-		                response => {_this.handleSuccess( response, query)},
-		                response => {_this.handleError( response , query)});
-	        }
-	        
-	
+	  callApi(e){	     
+	       this.call( e.detail,0);
+	  },
+	  /**
+	   * recursive request to api.formater
+	   */
+	  call( detail, i){
+		  if( i < detail.index.length){
+			  var url = this.url +"/"+ detail.index[i];
+	          var data = {}
+	          if(detail.start){
+	              data.start = detail.start;
+	          }
+	          if(detail.end){
+	              data.end = detail.end;
+	          }
+	          var query = data;
+	          query.index = detail.index[i];
+	          //console.log()
+	          var _this = this;
+	          this.$http.get( url,{params: data}).then( 
+	                  response => {
+	                	  _this.handleSuccess( response, query);
+	                	  _this.call( detail, i+1);
+	                  },
+	                  response => {
+	                	  _this.handleError( response , query);
+	                	  _this.call( detail, i+1);
+	                  });
+		  }
 	  },
 		isValid: function (query){
 		    
