@@ -20,8 +20,11 @@
 </i18n>
 
 <template>
-<span class="isgi-chart" :class="index==null? 'hidden':''">
-  <header><h2>Indice {{index}}</h2></header>
+<span class="isgi-chart" >
+  <header><h2 style="color:#000;margin-top:0;">Indice {{indice}}</h2></header>
+  <main>
+  <div class="chart-container"></div>
+  </main>
 </span>
 </template>
 
@@ -33,55 +36,131 @@ export default {
       type: String,
       default: 'fr'
     },
-    index:{
+    indice:{
     	type: String,
     	default:null
     }
     
   }, 
-  destroyed: function() {
-	  document.removeEventListener('findIndiceEvent', this.findIndiceEventListener);
-      this.findIndiceEventListener = null;
-		document.removeEventListener('aerisResetEvent', this.resetEventListener);
-		this.resetEventListener = null;
 
-		 document.removeEventListener('aerisTheme', this.aerisThemeListener);
-         this.aerisThemeListener = null;
-  },
-  
-  created: function () {
-		this.$i18n.locale = this.lang;
-		this.findIndiceEventListener = this.buildChart.bind(this) 
-        document.addEventListener('findIndiceEvent', this.findIndiceEventListener);
-		this.resetEventListener = this.handleReset.bind(this) 
-		document.addEventListener('aerisResetEvent', this.resetEventListener);
-		this.aerisThemeListener = this.handleTheme.bind(this) 
-	    document.addEventListener('aerisTheme', this.aerisThemeListener);
+
+  methods:{
+	 
   },
 
 
-  
-  computed: {
-  	
-  },
+
 
    data () {
     return {
    		resetEventListener: null,
    		aerisThemeListener:null,
-   		findIndiceEventListener:null,
+   		findDataIndiceEventListener:null,
    		
     	
     }
   },
  
-  updated: function() {
-  },
+  
   
   methods: {
-	  buildChart: function(){
-		  
-	  },
+	
+      createChart(evt){
+         if( evt.detail.query.index != this.indice ){
+        	 return;
+         }
+         console.log( evt.detail.result);
+         var data0 = evt.detail.result;
+         var container = this.$el.querySelector(".chart-container");
+       
+      //   var dataType = data0.meta.get("Data Type");
+       //  var interval = this.intervalType(data0.meta.get("Data Interval Type"), dataType);
+        
+         //this.createChartTitle( dataType, data0.collection[0].DATE, data0.collection[ data0.collection.length-1].DATE);
+         
+                
+                 var data = new Array();
+                 var coord = new Array();
+               
+     
+                 //traitement des collections
+                  var indice = this.indice;
+                 data0.collection.forEach( function( item){
+                	    var date = Date.parse(item.DATE+" "+item.TIME);
+                	    console.log(date);
+                         data.push([date, item[indice]]);
+                   
+
+                 });
+    
+               
+                    // console.log(value);
+                
+                 var mychart = Highcharts.chart(container, {
+                  
+                     chart:{
+                     height:130,
+                    // marginBottom: (value==="F")? 45 : 15
+                     },
+                     title: {
+                         text: '<div style="background:#fff;padding:5px;font-size:10px"><div style="background:'+Highcharts.getOptions().colors[0]+';width:10px;height:10px;display:inline-block;margin:0 3px;"></div>'+indice+'</div>',
+                         align: 'right',
+                         margin: 10,
+                         useHTML: true,
+                       //  x: 70,
+                         floating:true
+                     },
+                     xAxis: {
+                         type: 'datetime',
+                         lineColor:'#666',
+                         tickLength: 5,
+                         dateTimeLabelFormats: { // don't display the dummy year
+                            millisecond: '%H:%M:%S.%L',
+                             second: '%H:%M:%S',
+                             minute: '%H:%M',
+                             hour: '%H:%M',
+                             day: '%e %b %Y',
+                             week: '%e. %b',
+                             month: '%b %y',
+                             year: '%Y'
+                         },
+                         events: {
+                             //setExtremes: syncExtremes
+                         },
+                         crosshair: true,
+                         labels:{
+                            // enabled:value==="F"
+                         }
+                     },
+                     yAxis: [{
+                         title: {
+                             text: "",
+                             margin:10,
+                             lineColor:'#666'
+                         },
+                         labels:{
+                             style:{
+                                 color:'#333',
+                                 fontSize:'10px'
+                             }
+                         }}
+                      
+                     ],
+                     tooltip: {
+                         headerFormat: '<b>{series.name}</b><br>',
+                         pointFormat: '{point.x:%e. %b %Y}: {point.y:,.0f}'
+                         //pointFormat: '{point.x:'+interval+'} | {point.y:,.0f}'
+                     },
+                     series: [{
+                         name: indice,
+                         showInLegend:false,
+                         color: Highcharts.getOptions().colors[0],
+                         data: data //[1, 0, 4]
+                     }]
+                 });
+            
+          
+      },
     
 	handleReset: function() {
 		
@@ -105,7 +184,26 @@ export default {
 	  		
 	  	}
 	 },
-  }
+  },
+  destroyed: function() {
+      document.removeEventListener('findDataIndiceEvent', this.findDataIndiceEventListener);
+      this.findDataIndiceEventListener = null;
+        document.removeEventListener('aerisResetEvent', this.resetEventListener);
+        this.resetEventListener = null;
+
+         document.removeEventListener('aerisTheme', this.aerisThemeListener);
+         this.aerisThemeListener = null;
+  },
+  
+  created: function () {
+        this.$i18n.locale = this.lang;
+        this.findDataIndiceEventListener = this.createChart.bind(this) ;
+        document.addEventListener('findDataIndiceEvent', this.findDataIndiceEventListener);
+        this.resetEventListener = this.handleReset.bind(this) 
+        document.addEventListener('aerisResetEvent', this.resetEventListener);
+        this.aerisThemeListener = this.handleTheme.bind(this) 
+        document.addEventListener('aerisTheme', this.aerisThemeListener);
+  },
  
 }
 </script>

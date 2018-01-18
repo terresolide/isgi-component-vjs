@@ -20,7 +20,7 @@
 	
 	<form id="isgi-form" >
 		<formater-search-box header-icon-class="fa fa-bars" :title="$t('index')" :value="index" @input="index = $event.target.value">
-			<formater-select width="260px" name="index" multiple="true" options="['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']"  ></formater-select>
+			<formater-select width="260px" name="index" multiple="true" :options="indices"  ></formater-select>
 		</formater-search-box>
 		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true">	
 			 <isgi-temporal-search :lang="lang"></isgi-temporal-search>
@@ -56,6 +56,9 @@ export default {
           type: String,
           default: 'http://api.formater/cds/isgi/data'
       }
+      //indices:{
+    //	  default:['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']
+      //}
       
   },
   data(){
@@ -64,10 +67,16 @@ export default {
 	              aerisThemeListener:null,
 	              theme:null,
 	              index:null,
-	              format:null
+	              format:null,
+	               indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']
       }
   },
   methods: {
+	 
+     // indices(){
+    //	  return ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays'];
+     // },
+	  
 	  search(){
 		  var e = new CustomEvent("aerisSearchEvent", { detail: {}});
 	      document.dispatchEvent(e);
@@ -114,9 +123,10 @@ export default {
 		},
 		handleSuccess: function(rep, query){
 			//if rep.body.error!!! this.handleError();
-			 var event = new CustomEvent("findIndiceEvent", {detail: {result:rep.body , query: query}});
+			 var event = new CustomEvent("findDataIndiceEvent", {detail: {result:rep.body , query: query}});
+			 console.log(event);
 	            document.dispatchEvent(event);
-	            console.log(event);
+	            
 		},
 		handleError: function(rep, query){
 			 var event = new CustomEvent("errorSearchIndiceEvent", {detail: {result:rep.body , query: query}});

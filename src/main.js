@@ -29,9 +29,11 @@ ljs.addAliases({
 		//------------------
 		'https://code.highcharts.com/highcharts.src.js',
 	    //dev version for formater-commons-components-vjs
-		//'http://localhost:8082/dist/build.js',
+		//----------------------------------------------
+		'http://localhost:8082/dist/build.js',
 	    //'https://rawgit.com/terresolide/formater-commons-components-vjs/master/dist0/formater-commons-components-vjs.js' ,
-		'https://cdn.rawgit.com/terresolide/formater-commons-components-vjs/0.1.1/dist/formater-commons-components-vjs.js' ,
+		
+		//'https://cdn.rawgit.com/terresolide/formater-commons-components-vjs/0.1.2/dist/formater-commons-components-vjs.js' ,
 	
 	    ]
 })
