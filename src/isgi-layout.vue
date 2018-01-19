@@ -24,7 +24,7 @@
             
         </aside>
         <main>
-            <isgi-chart :lang="lang" v-for="(indice, id) in indices" :indice="indice" :key="id" :id="id"></isgi-chart>
+            <isgi-chart :lang="lang" v-for="(indice, id) in indices" :indice="indice" :key="id"  :id="id" ></isgi-chart>
         </main>
          </div>
         
@@ -51,13 +51,25 @@ export default {
 	    },
 	data(){
 		return{
-			indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']
+			indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays'],
+			mainWidth: "width:100%",
+			//windowResizeListener: null
 		}
 	},
-   
+//     computed:{
+//     	mainWidth(){
+//     		var left = this.$el.querySelector("aside").offsetWidth;
+//     		return "width: 300px;";
+//     	}
+//     },
     created(){
         this.$i18n.locale = this.lang;
-        console.log( this.indices);
+        //this.windowResizeListener = this.mainWidth.bind( this);
+        //window.addEventListener('resize', this.windowResizeListener);
+    },
+    destroyed(){
+    	// window.removeEventListener( 'resize', this.windowResizeListener);
+         //this.windowResizeListener = null;
     }
 }
 </script>

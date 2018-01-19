@@ -20,33 +20,36 @@
 </i18n>
 
 <template>
-<span class="isgi-chart" >
-  <header><h2 style="color:#000;margin-top:0;">Indice {{indice}}</h2></header>
+<div class="isgi-chart" >
+ 
   <main>
   <div class="chart-container"></div>
   </main>
-</span>
+</div>
 </template>
 
 <script>
 function kp_to_value( kp ){
-	var num = parseInt( kp.substring(0,1));
-	if(kp.length>1){
-		switch( kp.substring(1,1)){
-			case "+": 
-				num += 0.333;
-				break;
-			case "-":
-				num -= 0.333;
-				break;
-		}
+	if(typeof kp != "string"){
+		return 0;
 	}
+	var num = parseInt( kp.charAt(0));
+     
+	switch( kp.charAt(1)){
+		case "+": 
+			num += 0.333;
+			break;
+		case "-":
+			num -= 0.333;
+			break;
+	}
+	
 	return num;
 }
 function get_Kp_name( obj ){
     for(var key in obj){
     	console.log(key);
-    	if( /^Kp[a-z]{1}$/.test( key)){
+    	if( /^Kp[a-z]?$/.test( key)){
     		return key;
     	}
     }
@@ -84,6 +87,8 @@ export default {
    		resetEventListener: null,
    		aerisThemeListener:null,
    		findDataIndiceEventListener:null,
+   		windowResizeListener:null,
+   		chart:null
    	
    		
     	
@@ -117,22 +122,102 @@ export default {
                  //traitement des collections
                   var indice = this.indice;
                   var kp = get_Kp_name( data0.collection[0]);
-                  console.log( "kp = " + kp)
+                  if(kp){
+                	  data.kp = new Array();
+                  }
+                  data0.collection.forEach( function( item){
+                      var date = Date.parse(item.DATE+" "+item.TIME); 
+                       data["indice"].push([date, item[indice]]);
+                       if( kp){
+                           data["kp"].push([date, kp_to_value( item[kp])]);
+                       }
+
+                  });
                   var color = Highcharts.getOptions().colors[id];
-                  console.log(color);
+  
                   var color1 = this.$shadeColor( color, -.2);
                   var color2 = this.$shadeColor( color, 0.1);
-                  console.log( color1);
-                  console.log(color2);
+                  
+                  var yAxis = new Array();
+                  var series = new Array();
+                  switch( indice){
+                  case "Kp":
+                	  // only 1 yAxis in column
+                	  yAxis.push({ 
+                          title: {
+                              text: indice,
+                              style: {
+                                  color: color2,
+                                  fontWeight: 'bold'
+                              }
+                          },
+                          minorTickInterval: 2,
+                          tickLength: 10,
+                          max: 9});
+                	  series.push({
+                          type: 'column',
+                          name: kp,
+                          color: color2,
+                          data: data["kp"]
+                         });
+                
+            
+                	  break;
+                  case "aa":
+                  case "am":
+                      // 2 yAxis (left: linear indice (default), right: Kp in column)
+                     
+                      yAxis.push({ 
+                          title: {
+                              text: kp,
+                              style: {
+                                  color: color2,
+                                  fontWeight: 'bold'
+                              }
+                          },
+                          minorTickInterval: 2,
+                          tickLength: 10,
+                          max: 9,
+                          opposite: true });
+                      series.push({
+                          type: 'column',
+                          name: kp,
+                          color: color2,
+                          yAxis: 1,
+                          zIndex: 1,
+                          data: data["kp"]
+                         });
+                     
+                  default:
+                      // only 1 yAxis linear
+                       yAxis.unshift({ 
+                            title: {
+                                useHTML: true,
+                                text: '<span style="color:'+ color1+'">'+
+                                '<b>'+indice+'</b></span> (nT)'
+                            }
+                        });
+	                    series.unshift({
+	                      type: 'line',
+	                      name: indice,
+	                      color: color1,
+	                      zIndex: 2,
+	                      data: data["indice"]
+	                   });
+                      
+                 
+                  
+                  }
                  // Primary yAxis
-                  var yAxis = [{ 
+                 
+                  /*var yAxis = [{ 
 			            title: {
 			                useHTML: true,
 			                text: '<span style="color:'+ color1+'">'+
 			                '<b>'+indice+'</b></span> (nT)'
 			            }
-			        }] ;
-                 if( kp ){
+			        }] ;*/
+               /*  if( kp ){
                 	
                 	 data["kp"] = new Array();
                 	 // add opposite secondary yAxis
@@ -150,7 +235,7 @@ export default {
 				            opposite: true })
       
                  }
-                 console.log(Highcharts.getOptions().colors[id]);
+                 
                  data0.collection.forEach( function( item){
                 	    var date = Date.parse(item.DATE+" "+item.TIME); 
                          data["indice"].push([date, item[indice]]);
@@ -158,8 +243,8 @@ export default {
                         	 data["kp"].push([date, kp_to_value( item[kp])]);
                          }
 
-                 });
-                 var series = [{
+                 });*/
+                 /*var series = [{
                 	 type: 'line',
                      name: indice,
                      color: color1,
@@ -175,13 +260,14 @@ export default {
              		        zIndex: 1,
              		        data: data["kp"]
              		       });
-                 }
+                 }*/
                     // console.log(value);
                 var id = this.id;
-                 var mychart = Highcharts.chart(container, {
+                 this.chart = Highcharts.chart(container, {
                   
                      chart:{
                     	   height:230,
+                    	   defaultSeriesType: 'areaspline',
                     	   plotBorderColor: '#666666',
                            plotBorderWidth: 1
                     // marginBottom: (value==="F")? 45 : 15
@@ -268,20 +354,28 @@ export default {
             
           
       },
-    
-	handleReset: function() {
+    resize(){
+    	  console.log( "resize");
+    	  if(!this.chart){
+    		  return;
+    	  }
+    	  var height = this.chart.height
+    	   
+    	    this.chart.setSize( 250, height, true);
+      },
+	handleReset() {
 		
 		  
 	},
 	
 
 	 
-      handleTheme: function(theme) {
+      handleTheme(theme) {
 	  		this.theme = theme.detail;
 			this.ensureTheme();
 	  },
 	  	
-	 ensureTheme: function() {
+	 ensureTheme() {
 	  	if ((this.$el) && (this.$el.querySelector)) {
 	  		var color3 =  this.$shadeColor( this.theme.primary, 0.8);
 	  		var nodes= this.$el.querySelectorAll(".isgi-input-group");
@@ -292,7 +386,7 @@ export default {
 	  	}
 	 },
   },
-  destroyed: function() {
+  destroyed() {
       document.removeEventListener('findDataIndiceEvent', this.findDataIndiceEventListener);
       this.findDataIndiceEventListener = null;
         document.removeEventListener('aerisResetEvent', this.resetEventListener);
@@ -300,6 +394,8 @@ export default {
 
          document.removeEventListener('aerisTheme', this.aerisThemeListener);
          this.aerisThemeListener = null;
+         window.removeEventListener( 'resize', this.windowResizeListener);
+         this.windowResizeListener = null;
   },
   
   created: function () {
@@ -310,6 +406,8 @@ export default {
         document.addEventListener('aerisResetEvent', this.resetEventListener);
         this.aerisThemeListener = this.handleTheme.bind(this) 
         document.addEventListener('aerisTheme', this.aerisThemeListener);
+        this.windowResizeListener = this.resize.bind( this);
+        window.addEventListener('resize', this.windowResizeListener);
   },
  
 }
@@ -317,61 +415,9 @@ export default {
 
 <style>
 
-.isgi-temporal-search {
-    display: block
-}
-
-.isgi-temporal-search .right {
-	min-width: 40px;
-	border-right: 1px solid #fff;
-	box-sizing: border-box;
-    display: block;
-    height: 100%;
-    text-align: center;
-}
-
-.isgi-temporal-search .error-message {
-    font-size: 12px;
-    color: red
-}
-.isgi-temporal-search .error-message::first-letter{
-	text-transform:uppercase;
-}
-.isgi-temporal-search .isgi-input-group {
-    border: none;
-     /* Default color from aeris */
-    background-color: rgba(172,220,238,0.3); 
-}
-
-.isgi-temporal-search .isgi-input-group input {
-	border: none;
-	background-color: transparent;
-	padding: 0 5px;
-	outline: none;
-}
-	
-.isgi-temporal-search .isgi-input-group span:first-letter {
-   text-transform: uppercase;
-}
-.isgi-temporal-search .isgi-input-group{
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    margin: 5px 0;
-    width: 100%;
-    height: 25px;
-    line-height: 25px;
-    overflow: hidden;
-}
-.isgi-temporal-search .isgi-checkbox{
-	padding:2px 0;
-}
-.isgi-temporal-search .isgi-checkbox input{
- 	margin-top:0;
- 	margin-right:4px;
- }
-.isgi-temporal-search .isgi-checkbox label::first-letter{
-	text-transform: uppercase;
+.isgi-chart .chart-container{
+    width:100%;
+    max-width:100%;
 }
 
 
