@@ -20,9 +20,12 @@
 </i18n>
 
 <template>
-<div class="isgi-chart" >
- 
+<div class="isgi-chart" :class="{hidden: !data}">
+   <header class="box-heading">
+    <h4>{{$t("indice")}} {{indice}}</h4>
+   </header>
   <main>
+  <div v-if="error">{{error}}</div>
   <div class="chart-container"></div>
   </main>
 </div>
@@ -88,51 +91,85 @@ export default {
    		aerisThemeListener:null,
    		findDataIndiceEventListener:null,
    		windowResizeListener:null,
-   		chart:null
-   	
-   		
-    	
+   		chart:null,
+   		data:null,
+   		width:null,
+   		error:null
     }
   },
  
   
   
   methods: {
-	
+	  treatmentData( evt){
+		  
+	         var id = this.id;
+	         if(evt.detail.error){
+	        	 this.error = event.detail.error;
+	        	 this.data = event.detail.error;
+	        	 return null;
+	         }
+	         var data0 = evt.detail.result;
+	         var data = new Array();
+             data["indice"] = new Array();
+            
+             var coord = new Array();
+           
+ 
+             //traitement des collections
+              var indice = this.indice;
+              var kp = get_Kp_name( data0.collection[0]);
+              if(kp){
+                  data.kp = new Array();
+              }
+              data0.collection.forEach( function( item){
+                  var date = Date.parse(item.DATE+" "+item.TIME); 
+                   data["indice"].push([date, item[indice]]);
+                   if( kp){
+                       data["kp"].push([date, kp_to_value( item[kp])]);
+                   }
+
+              });
+              this.data = data;
+              return kp;
+	  },
       createChart(evt){
          if( evt.detail.query.index != this.indice ){
         	 return;
          }
-         var id = this.id;
-         var data0 = evt.detail.result;
-         var container = this.$el.querySelector(".chart-container");
+         var kp = this.treatmentData(evt);
+        // var id = this.id;
+         //var data0 = evt.detail.result;
+         
        
-      //   var dataType = data0.meta.get("Data Type");
-       //  var interval = this.intervalType(data0.meta.get("Data Interval Type"), dataType);
         
-         //this.createChartTitle( dataType, data0.collection[0].DATE, data0.collection[ data0.collection.length-1].DATE);
          
                 
-                 var data = new Array();
-                 data["indice"] = new Array();
+//                  var data = new Array();
+//                  data["indice"] = new Array();
                 
-                 var coord = new Array();
+//                  var coord = new Array();
                
      
-                 //traitement des collections
-                  var indice = this.indice;
-                  var kp = get_Kp_name( data0.collection[0]);
-                  if(kp){
-                	  data.kp = new Array();
-                  }
-                  data0.collection.forEach( function( item){
-                      var date = Date.parse(item.DATE+" "+item.TIME); 
-                       data["indice"].push([date, item[indice]]);
-                       if( kp){
-                           data["kp"].push([date, kp_to_value( item[kp])]);
-                       }
+//                  //traitement des collections
+//                   var indice = this.indice;
+//                   var kp = get_Kp_name( data0.collection[0]);
+//                   if(kp){
+//                 	  data.kp = new Array();
+//                   }
+//                   data0.collection.forEach( function( item){
+//                       var date = Date.parse(item.DATE+" "+item.TIME); 
+//                        data["indice"].push([date, item[indice]]);
+//                        if( kp){
+//                            data["kp"].push([date, kp_to_value( item[kp])]);
+//                        }
 
-                  });
+//                   });
+//                 
+                  var data = this.data;
+                  var indice = this.indice;
+                  var id = this.id;
+                  
                   var color = Highcharts.getOptions().colors[id];
   
                   var color1 = this.$shadeColor( color, -.2);
@@ -151,8 +188,7 @@ export default {
                                   fontWeight: 'bold'
                               }
                           },
-                          minorTickInterval: 2,
-                          tickLength: 10,
+                          tickInterval:3,
                           max: 9});
                 	  series.push({
                           type: 'column',
@@ -263,18 +299,23 @@ export default {
                  }*/
                     // console.log(value);
                 var id = this.id;
+                var container = this.$el.querySelector(".chart-container");
+                console.log("draw chart w=" + this.width);
                  this.chart = Highcharts.chart(container, {
                   
                      chart:{
                     	   height:230,
+                    	   width: this.width,
                     	   defaultSeriesType: 'areaspline',
                     	   plotBorderColor: '#666666',
                            plotBorderWidth: 1
                     // marginBottom: (value==="F")? 45 : 15
                      },
                      title: {
-                         text: "indice " + indice,
-                         align: "left"
+                       //  text: "indice " + indice,
+                         text:"",
+                       //  align: "left"
+                       align: "float"
                      },
                      legend: {
                          enabled: false
@@ -329,7 +370,7 @@ export default {
                              var s =  Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) ;
 
                              this.points.forEach(function(point, i) {
-                                 s += '<br/><span style="color:'+ point.series.color +'">\u25AC</span>'+ point.series.name +': ' ;
+                                 s += '<br/><span style="color:'+ point.series.color +'">\u25AC</span> '+ point.series.name +': ' ;
                                  if (point.series.type=='column') {
                                      if ((point.y - Math.floor(point.y))==0) { s+= Math.floor(point.y) +'o'; }
                                      if (((point.y - Math.floor(point.y))>0) && ((point.y - Math.floor(point.y))<0.4)) { s+= Math.floor(point.y) +'+'; }
@@ -351,50 +392,45 @@ export default {
                          data: data["indice"] //[1, 0, 4]
                      }]*/
                  });
-            
+              
           
       },
-    resize(){
+    resize( evt){
+    	  
     	  console.log( "resize");
+    	   switch( this.indice){
+           case "aa":
+           case "am":
+               var margin = 15;
+               break;
+           default:
+               var margin = 65;
+           }
+           this.width = evt.detail.mainWidth -margin;
     	  if(!this.chart){
     		  return;
     	  }
     	  var height = this.chart.height
-    	   
-    	    this.chart.setSize( 250, height, true);
+    
+    	    this.chart.setSize( this.width, height, true);
       },
 	handleReset() {
-		
+		this.error = null;
+		this.data = null;
 		  
 	},
 	
 
-	 
-      handleTheme(theme) {
-	  		this.theme = theme.detail;
-			this.ensureTheme();
-	  },
-	  	
-	 ensureTheme() {
-	  	if ((this.$el) && (this.$el.querySelector)) {
-	  		var color3 =  this.$shadeColor( this.theme.primary, 0.8);
-	  		var nodes= this.$el.querySelectorAll(".isgi-input-group");
-	  		[].forEach.call(nodes, function(node){
-	  		    node.style.backgroundColor = color3;
-	  		})
-	  		
-	  	}
-	 },
   },
   destroyed() {
       document.removeEventListener('findDataIndiceEvent', this.findDataIndiceEventListener);
       this.findDataIndiceEventListener = null;
         document.removeEventListener('aerisResetEvent', this.resetEventListener);
-        this.resetEventListener = null;
+       this.resetEventListener = null;
 
-         document.removeEventListener('aerisTheme', this.aerisThemeListener);
-         this.aerisThemeListener = null;
-         window.removeEventListener( 'resize', this.windowResizeListener);
+        // document.removeEventListener('aerisTheme', this.aerisThemeListener);
+       //  this.aerisThemeListener = null;
+         window.removeEventListener( 'isgiResize', this.windowResizeListener);
          this.windowResizeListener = null;
   },
   
@@ -405,20 +441,53 @@ export default {
         this.resetEventListener = this.handleReset.bind(this) 
         document.addEventListener('aerisResetEvent', this.resetEventListener);
         this.aerisThemeListener = this.handleTheme.bind(this) 
-        document.addEventListener('aerisTheme', this.aerisThemeListener);
-        this.windowResizeListener = this.resize.bind( this);
-        window.addEventListener('resize', this.windowResizeListener);
+       // document.addEventListener('aerisTheme', this.aerisThemeListener);
+       // this.windowResizeListener = this.resize.bind( this);
+        document.addEventListener('isgiResize', this.windowResizeListener);
   },
  
 }
 </script>
 
 <style>
+.isgi-chart.hidden{
+    display:none;
+}
+.isgi-chart{
+    margin-left:15px;
+    margin-bottom:10px;
+    box-sizing: border-box;
+position: relative;
+display: block;
 
+
+transition: transform 4s ease-out;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
 .isgi-chart .chart-container{
     width:100%;
     max-width:100%;
 }
-
+.isgi-chart header{
+    margin:0;
+}
+.isgi-chart header h4{
+ color: #666;
+ padding:0;
+    text-shadow: 1px 1px 1px rgba(26, 20, 20, 1);
+}
+.isgi-chart header h4::first-letter{
+    text-transform:uppercase;
+ 
+}
+.isgi-chart .box-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: var(--catalog-box-header-background-color, #f5f5f5);
+    border: var(--catalog-box-header-border, none);
+    cursor: pointer;
+    }
 
 </style>
