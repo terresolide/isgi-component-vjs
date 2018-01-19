@@ -1,6 +1,6 @@
 # isgi-components-vjs
 
-> isgi-component. 
+> isgi-component. Request to ISGI and display charts of geomagnetic index
 
 ## Build Setup
 
@@ -23,8 +23,8 @@ For detailed explanation on how things work, consult the [docs for vue-loader](h
 <!-- used with aeris theme to define color -->
 <aeris-theme id="theme2" active="true" primary="#F1684E" emphasis="#39B062"></aeris-theme>
 
-<isgi-form info="poleterre" url="http://service.xyz.fr" lang="en"></isgi-form>
-<script src="https://rawgit.com/terresolide/isgi-component-vjs/master/dist0/isgi-component-vjs_0.0.2.js"></script> 
+<isgi-form lang="en"></isgi-form>
+<script src="https://rawgit.com/terresolide/isgi-component-vjs/master/dist0/isgi-component-vjs.js"></script> 
 
 ```
 
@@ -41,8 +41,8 @@ For detailed explanation on how things work, consult the [docs for vue-loader](h
  * fr or en
  * default : fr
  
-#### :info
- > information about user
+
  
 #### :url
  > the api service url
+ * @todo actually direct in script
