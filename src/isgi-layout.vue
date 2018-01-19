@@ -11,7 +11,7 @@
 </i18n>
 <template>
 <span class="isgi-layout">
-    <aeris-notifier autoHide="true"></aeris-notifier>
+  
     <formater-layout>
 
     

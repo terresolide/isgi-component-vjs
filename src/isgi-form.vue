@@ -54,7 +54,7 @@ export default {
       },
       url:{
           type: String,
-          default: 'http://api.formater/cds/isgi/data'
+          default: 'http://formater.art-sciences.fr/cds/isgi/data'
       }
       //indices:{
     //	  default:['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']

@@ -26,7 +26,7 @@
    </header>
   <main>
   <div v-if="error">{{error}}</div>
-  <div class="chart-container"></div>
+  <div class="chart-container" v-else></div>
   </main>
 </div>
 </template>
@@ -414,6 +414,18 @@ export default {
     
     	    this.chart.setSize( this.width, height, true);
       },
+      handleTheme: function(theme) {
+	  		this.theme = theme.detail
+			this.ensureTheme()
+	},
+	  	
+	ensureTheme: function() {
+	  	if ((this.$el) && (this.$el.querySelector)) {
+	  		//this.$el.querySelector(".box-heading h4").style.color = this.theme.primary;
+	  		this.$el.querySelector(".box-heading").style.backgroundColor = this.theme.primary;
+	  		
+	  			}
+	 },
 	handleReset() {
 		this.error = null;
 		this.data = null;
@@ -428,8 +440,8 @@ export default {
         document.removeEventListener('aerisResetEvent', this.resetEventListener);
        this.resetEventListener = null;
 
-        // document.removeEventListener('aerisTheme', this.aerisThemeListener);
-       //  this.aerisThemeListener = null;
+        document.removeEventListener('aerisTheme', this.aerisThemeListener);
+        this.aerisThemeListener = null;
          window.removeEventListener( 'isgiResize', this.windowResizeListener);
          this.windowResizeListener = null;
   },
@@ -441,10 +453,14 @@ export default {
         this.resetEventListener = this.handleReset.bind(this) 
         document.addEventListener('aerisResetEvent', this.resetEventListener);
         this.aerisThemeListener = this.handleTheme.bind(this) 
-       // document.addEventListener('aerisTheme', this.aerisThemeListener);
-       // this.windowResizeListener = this.resize.bind( this);
+        document.addEventListener('aerisTheme', this.aerisThemeListener);
+        this.windowResizeListener = this.resize.bind( this);
         document.addEventListener('isgiResize', this.windowResizeListener);
   },
+  mounted(){
+	  var event = new CustomEvent('aerisThemeRequest', {});
+      document.dispatchEvent(event);
+  }
  
 }
 </script>
@@ -455,7 +471,7 @@ export default {
 }
 .isgi-chart{
     margin-left:15px;
-    margin-bottom:10px;
+    margin:5px 5px 5px 10px;
     box-sizing: border-box;
 position: relative;
 display: block;
@@ -469,12 +485,13 @@ box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     max-width:100%;
 }
 .isgi-chart header{
-    margin:0;
+    margin:0 0 10px 0;
 }
 .isgi-chart header h4{
- color: #666;
+ color: #fff;
  padding:0;
-    text-shadow: 1px 1px 1px rgba(26, 20, 20, 1);
+ margin:0;
+    text-shadow: 0px 0px 1px rgba(26, 20, 20, 1);
 }
 .isgi-chart header h4::first-letter{
     text-transform:uppercase;
