@@ -1,13 +1,13 @@
 <i18n>
 {
    "en":{
-       "index":			 "index",
+       "indices":	    "indices",
        "time_slot": 	"time slot",
        "output_format": "Output Format",
        "search": "Search"
    },
    "fr":{
-        "index":		"index",
+        "indices":	    "indices",
         "time_slot": 	"intervalle de temps",
         "output_format": "Format de sortie",
         "search": "Rechercher"
@@ -19,14 +19,14 @@
 	<div class="isgi-container">
 	
 	<form id="isgi-form" >
-		<formater-search-box header-icon-class="fa fa-bars" :title="$t('index')" :value="index" @input="index = $event.target.value">
+		<formater-search-box header-icon-class="fa fa-bars" :title="$t('indices')" :value="index" @input="index = $event.target.value">
 			<formater-select width="260px" name="index" multiple="true" :options="indices"  ></formater-select>
 		</formater-search-box>
 		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true">	
 			 <isgi-temporal-search :lang="lang"></isgi-temporal-search>
 		</formater-search-box>
 		<formater-search-box header-icon-class="fa fa-file" :title="$t('output_format')" :value="format" @input="format = $event.target.value">
-			<formater-select width="260px"  name="format" options="['IAGA2002']"></formater-select>
+			<formater-select width="260px"  name="format" options="IAGA2002"></formater-select>
 	    </formater-search-box>
 	    <a id="download" href="#" style="display=none;" download="wsigi_data.zip"></a>
 	    <div class= "isgi-buttons" >
@@ -54,7 +54,9 @@ export default {
       },
       url:{
           type: String,
+      	  //default: 'http://api.formater/cds/isgi/data'
           default: 'http://formater.art-sciences.fr/cds/isgi/data'
+          
       }
       //indices:{
     //	  default:['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']

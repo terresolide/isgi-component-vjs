@@ -21,7 +21,7 @@
             <isgi-form :lang="lang"></isgi-form>   
         </aside>
         <main>
-            <isgi-chart :lang="lang" v-for="(indice, id) in indices" :indice="indice" :key="id"  :id="id" ></isgi-chart>
+            <isgi-chart :lang="lang" v-for="(indice, id) in indices" :indice="indice" :key="id" :width="mainWidth"  :id="id" ></isgi-chart>
         </main>
          </div>
         
@@ -49,16 +49,27 @@ export default {
 	data(){
 		return{
 			indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays'],
-			windowResizeListener: null
+			windowResizeListener: null,
+			aerisThemeListener:null,
+			mainWidth:300
 		}
 	},
 	methods:{
-		mainWidth(){
-			var width = this.$el.querySelector(".formater-wrapper").offsetWidth;
-	    	width -= this.$el.querySelector("aside").offsetWidth;
-	        console.log( "emit resize w=" + width);
+		emitMainWidth(){
+			this.computeMainWidth();
 			var event = new CustomEvent('isgiResize', { detail:{mainWidth: width}});
 			document.dispatchEvent(event);
+		},
+		computeMainWidth(){
+			var width = this.$el.querySelector(".formater-wrapper").offsetWidth;
+	    	width -= this.$el.querySelector("aside").offsetWidth;
+
+	        this.mainWidth = width;
+			
+			 return width;
+		},
+		addWidth( evt){
+			evt.detail.mainWidth = this.computeMainWidth();
 			
 		}
 	},
@@ -70,16 +81,20 @@ export default {
 //     },
     created(){
         this.$i18n.locale = this.lang;
-        this.windowResizeListener = this.mainWidth.bind( this);
+        this.windowResizeListener = this.emitMainWidth.bind( this);
         window.addEventListener('resize', this.windowResizeListener);
+        this.aerisThemeListener = this.addWidth.bind( this);
+        document.addEventListener('aerisTheme', this.aerisThemeListener);
         
     },
     mounted(){
-    	this.mainWidth();
+    	this.computeMainWidth();
     },
     destroyed(){
     	 window.removeEventListener( 'resize', this.windowResizeListener);
          this.windowResizeListener = null;
+         document.removeAerisThemeListener('aerisTheme', this.aerisThemeListener);
+         this.aerisThemeListener =null
     }
 }
 </script>
