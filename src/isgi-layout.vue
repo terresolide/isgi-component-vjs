@@ -18,7 +18,7 @@
   
     <div class="formater-wrapper">
         <aside>
-            <isgi-form :lang="lang"></isgi-form>   
+            <isgi-form :lang="lang" :indices="indices"></isgi-form>   
         </aside>
         <main>
             <isgi-chart :lang="lang" v-for="(indice, id) in indices" :indice="indice" :key="id" :width="mainWidth"  :id="id" ></isgi-chart>
@@ -48,7 +48,7 @@ export default {
 	    },
 	data(){
 		return{
-			indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays'],
+			indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', /*'SC', 'SFE', 'Qdays', 'CKdays'*/],
 			windowResizeListener: null,
 			aerisThemeListener:null,
 			mainWidth:300
@@ -57,7 +57,7 @@ export default {
 	methods:{
 		emitMainWidth(){
 			this.computeMainWidth();
-			var event = new CustomEvent('isgiResize', { detail:{mainWidth: width}});
+			var event = new CustomEvent('isgiResize', { detail:{mainWidth:this.mainWidth}});
 			document.dispatchEvent(event);
 		},
 		computeMainWidth(){

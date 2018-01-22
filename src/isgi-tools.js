@@ -35,6 +35,19 @@ const isgiToolsPlugin = {
 		       return output_string.join('&')
 
 		     }
+
+		    Vue.prototype.$dispatch = function(component, event, target, once) {
+		      const parent = component.$parent;
+
+		      if (parent) {
+		        if (isTarget(target, parent.$options.name)) {
+		          parent.$emit.apply(parent, ...event);
+
+		          if (once) return;
+		        }
+		        dispatch(parent, event, target, once);
+		      }
+		    }
 		}
 };
 

@@ -20,6 +20,7 @@ import IsgiForm from './isgi-form.vue';
 import IsgiTemporalSearch from './isgi-temporal-search.vue';
 import IsgiChart from './isgi-chart.vue';
 import IsgiLayout from './isgi-layout.vue';
+//import IsgiDatepicker from './isgi-datepicker.vue';
 
 
 
@@ -65,7 +66,7 @@ ljs.load('dep', function() {
 	    }
 	 }, 100);
      function load(){
-         
+      //   registerElement('isgi-datepicker',IsgiDatepicker);
         registerElement('isgi-temporal-search',IsgiTemporalSearch);
         registerElement('isgi-form', IsgiForm);
         registerElement('isgi-chart', IsgiChart);

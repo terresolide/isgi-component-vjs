@@ -1,29 +1,50 @@
 <i18n>
 {
   "en": {
-	  "indice":"indice"
+	  "indice":"indice",
+	  "about_indice": "About this indice",
+	  "download": "Download",
+	  "delete": "Remove",
+	  "reduce": "Reduce",
+	  "extend": "Extend"
   },
   "fr": {
-	  "indice": "indice"
+	  "indice": "indice",
+	   "about_indice": "A propos de cet indice",
+      "download": "Télécharger",
+      "delete": "Supprimer",
+      "reduce": "Réduire",
+      "extend": "Déployer"
   }
 }
 </i18n>
 
 <template>
-<div class="isgi-chart" :class="{hidden: !data && !error, showBody: isdeployed}">
-   <header class="box-heading"  @click="isdeployed = !isdeployed">
+<span class="isgi-chart" :class="{hidden: !data && !error, showBody: isdeployed}">
+   <header class="box-heading" >
    <div class="box-title">
     <h4>{{$t("indice")}} {{indice}}</h4>
     </div>
      <div class="box-heading-buttons">
-    <i class="chevron" :class="openIconClass"></i>
+	    <a :href="isgi_url" v-if="isgi_url" :title="$t('download')"> 
+	           <i class="fa fa-download isgi-white"></i>
+	    </a>
+	     <a :href="infos[indice].url"  :title="$t('about_indice')" target="_blank"> 
+               <i class="fa fa-question isgi-white"></i>
+        </a>
+	    <span :title="isdeployed? $t('reduce'):$t('extend')"  @click="isdeployed = !isdeployed">
+	           <i class="chevron" :class="openIconClass"  ></i>
+	    </span>
+	    <span :title="$t('delete')" @click="handleReset">
+	           <i class="fa fa-close" ></i>
+	    </span>
   </div>
    </header>
-  <main>
-  <div v-if="error">{{error}}</div>
+  <main class="box-collapsable-part">
+  <div class="error" v-if="error">{{error}}</div>
   <div class="chart-container" v-else></div>
   </main>
-</div>
+</span>
 </template>
 
 <script>
@@ -52,6 +73,17 @@ function get_Kp_name( obj ){
     }
     return null;
 }
+Array.prototype.get= function( name ){
+    var i=0;
+    find = false;
+    while( !find && i< this.length){
+        if( this[i].name == name){
+            find = this[i].content;
+        }
+        i++;
+    }
+    return find;
+}
 
 export default {
 	 
@@ -71,14 +103,18 @@ export default {
     openIconClass:  {
         type: String,
         default: 'fa fa-chevron-down'
-      }
-    
+      },
+     deployed:{
+    	 type: Boolean,
+    	 default: true
+     }
   }, 
  
 
    data () {
     return {
    		resetEventListener: null,
+   		chartResetEventListener: null,
    		aerisThemeListener:null,
    		findDataIndiceEventListener:null,
    		windowResizeListener:null,
@@ -86,9 +122,20 @@ export default {
    		data:null,
    		width:null,
    		error:null,
+   		isgi_url:null,
+   		kp:null,
    		colors: [],
+   		isdeployed:true,
    		infos:{
-   			aa: { unit: "nT", description:{'fr':"", 'en':""}, url:"http://isgi.unistra.fr/aa.php"}
+   			aa: { unit: "nT", url:"http://isgi.unistra.fr/indices_aa.php"},
+   			am: { unit: "nT", url:"http://isgi.unistra.fr/indices_am.php"},
+   			Kp: { unit: "", url:"http://isgi.unistra.fr/indices_kp.php"},
+   			Dst: { unit: "nT", url:"http://isgi.unistra.fr/indices_dst.php"},
+   			Dst: { unit: "nT", url:"http://isgi.unistra.fr/indices_dst.php"},
+   			PC: { unit: "mV/m", url:"http://isgi.unistra.fr/indices_pc.php"},
+   			AE: { unit: "nT", url:"http://isgi.unistra.fr/indices_ae.php"},
+   			
+   			
    		}
     }
   },
@@ -103,9 +150,10 @@ export default {
 	         if( evt.detail.result.error ){
 	        	 this.error = evt.detail.result.error;
 	        	 this.data = null;
-	        	 return null;
+	        	 return false;
 	         }
 	         var data0 = evt.detail.result;
+	         this.isgi_url = data0.meta.get("isgi_url");
 	         var data = new Array();
 	         if( this.indice == "PC"){
 	        	 data["PCN"] = new Array();
@@ -139,13 +187,15 @@ export default {
 
               });
               this.data = data;
-              return kp;
+              this.kp = kp;
+              return true;
+
 	  },
       createChart(evt){
          if( evt.detail.query.index != this.indice ){
         	 return;
          }
-         var kp = this.treatmentData(evt);
+         this.treatmentData(evt);
       	if( this.data == null){
       		return;
       	}
@@ -165,7 +215,7 @@ export default {
          case "PC":
         	 var html = '<span style="color:'+ color1+'">'+
              '<b>PCN</b></span> / <span style="color:'+
-             color3+';"><b>PCS</b></span>';
+             color3+';"><b>PCS</b></span> (' + this.infos.PC.unit+ ')';
         	 yAxis.push({ 
                      title: {
                         useHTML: true,
@@ -213,7 +263,7 @@ export default {
                  max: 9});
        	  series.push({
                  type: 'column',
-                 name: kp,
+                 name: this.kp,
                  color: color2,
                  data: data["kp"]
                 });
@@ -226,7 +276,7 @@ export default {
             
              yAxis.push({ 
                  title: {
-                     text: kp,
+                     text: this.kp,
                      style: {
                          color: color2,
                          fontWeight: 'bold'
@@ -238,7 +288,7 @@ export default {
                  opposite: true });
              series.push({
                  type: 'column',
-                 name: kp,
+                 name: this.kp,
                  color: color2,
                  yAxis: 1,
                  zIndex: 1,
@@ -251,7 +301,7 @@ export default {
                    title: {
                        useHTML: true,
                        text: '<span style="color:'+ color1+'">'+
-                       '<b>'+indice+'</b></span> (nT)'
+                       '<b>'+indice+'</b></span> (' + this.infos[indice].unit +')'
                    }
                });
             series.unshift({
@@ -344,7 +394,6 @@ export default {
           
       },
     resize( evt){
-    	  
     	   switch( this.indice){
            case "aa":
            case "am":
@@ -378,8 +427,15 @@ export default {
 	  	
 	 },
 	handleReset() {
-		this.error = null;
-		this.data = null;
+	    this.data = null;
+	    this.error = null,
+	    this.isgi_url = null;
+	    this.isdeployed = true;
+	    if( this.chart ){
+			this.chart.destroy();
+		    this.chart = null;
+	    }
+		
 		  
 	},
 	
@@ -390,6 +446,8 @@ export default {
       this.findDataIndiceEventListener = null;
         document.removeEventListener('aerisResetEvent', this.resetEventListener);
        this.resetEventListener = null;
+       document.removeEventListener('chartResetEvent', this.chartResetEventListener);
+       this.chartResetEventListener = null;
 
         document.removeEventListener('aerisTheme', this.aerisThemeListener);
         this.aerisThemeListener = null;
@@ -403,6 +461,8 @@ export default {
         document.addEventListener('findDataIndiceEvent', this.findDataIndiceEventListener);
         this.resetEventListener = this.handleReset.bind(this) 
         document.addEventListener('aerisResetEvent', this.resetEventListener);
+        this.chartResetEventListener = this.handleReset.bind(this) 
+        document.addEventListener('chartResetEvent', this.chartResetEventListener);
         this.aerisThemeListener = this.handleTheme.bind(this) 
         document.addEventListener('aerisTheme', this.aerisThemeListener);
         this.windowResizeListener = this.resize.bind( this);
@@ -435,11 +495,15 @@ box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     width:100%;
     max-width:100%;
 }
+.isgi-chart .error{
+    padding:10px;
+    color:red;
+}
 .isgi-chart header{
     margin:0 0 10px 0;
 }
 .isgi-chart header h4{
- color: #fff;
+ color: #fff !important;
  padding:0;
  margin:0;
     text-shadow: 0px 0px 1px rgba(26, 20, 20, 1);
@@ -453,21 +517,55 @@ box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    background-color: var(--catalog-box-header-background-color, #f5f5f5);
-    border: var(--catalog-box-header-border, none);
-    cursor: pointer;
+     color: #fff !important;
+    background-color:  #f5f5f5;
+    border:  none;
+   
     }
-    
+    .isgi-chart .box-collapsable-part {
+    max-height:0;
+    height:0;
+    display:none;
+    transition: 0.3s
+    }
+   /* .isgi-chart .box-collapsable-part .chart-container{
+        display:none;
+    }
+    .isgi-chart.showBody .box-collapsable-part .chart-container{
+        display:block;
+    }*/
     .isgi-chart.showBody .box-collapsable-part {
+    max-height:300px;
+    height:auto;
     display: block;
     transition: 0.3s
 }
 .isgi-chart.showBody .chevron {
-    transform: rotate(180deg)
+    transform: rotate(180deg);
 }
 .isgi-chart .chevron {
     transition: 0.3s
 }
-    
+.isgi-chart .box-heading-buttons a i.isgi-white{
+    color:#fff;
+}
+.isgi-chart .box-heading-buttons span{
+    width: 20px;
+    text-align:center;
+    padding-left:3px;
+}
+.isgi-chart .box-title{
+    cursor:pointer;
+}
+.isgi-chart .box-heading-buttons i{
+  
+    text-align:left;
+     cursor: pointer;
+}
+.isgi-chart .box-heading-buttons i:hover {
+margin-top:1px;
+font-size:1.1rem;
+}
+
 
 </style>

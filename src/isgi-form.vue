@@ -4,13 +4,15 @@
        "indices":	    "indices",
        "time_slot": 	"time slot",
        "output_format": "Output Format",
-       "search": "Search"
+       "search": "Search",
+       "reset": "Reset"
    },
    "fr":{
         "indices":	    "indices",
         "time_slot": 	"intervalle de temps",
         "output_format": "Format de sortie",
-        "search": "Rechercher"
+        "search": "Rechercher",
+        "reset": "Initialiser"
    }
 }
 </i18n>
@@ -22,14 +24,15 @@
 		<formater-search-box header-icon-class="fa fa-bars" :title="$t('indices')" :value="index" @input="index = $event.target.value">
 			<formater-select width="260px" name="index" multiple="true" :options="indices"  ></formater-select>
 		</formater-search-box>
-		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true">	
-			 <isgi-temporal-search :lang="lang"></isgi-temporal-search>
+		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true" >	
+			 <isgi-temporal-search :lang="lang" ></isgi-temporal-search>
 		</formater-search-box>
 		<formater-search-box header-icon-class="fa fa-file" :title="$t('output_format')" :value="format" @input="format = $event.target.value">
 			<formater-select width="260px"  name="format" options="IAGA2002"></formater-select>
 	    </formater-search-box>
 	    <a id="download" href="#" style="display=none;" download="wsigi_data.zip"></a>
 	    <div class= "isgi-buttons" >
+	    <input class="isgi-reset-button" type="button" :value="$t('reset')" @click="reset"/>
 	    <input class="isgi-search-button" type="button" :value="$t('search')" @click="search"/>
 	    </div>
 	</form>
@@ -57,10 +60,10 @@ export default {
       	  //default: 'http://api.formater/cds/isgi/data'
           default: 'http://formater.art-sciences.fr/cds/isgi/data'
           
-      }
-      //indices:{
-    //	  default:['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']
-      //}
+      },
+     indices:{
+    	  default:"aa,am,Kp,Dst,PC,AE,SC,SFE,Qdays,CKdays"
+     }
       
   },
   data(){
@@ -69,20 +72,22 @@ export default {
 	              aerisThemeListener:null,
 	              theme:null,
 	              index:null,
-	              format:null,
-	               indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']
+	              format:null
+	             //  indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']
       }
   },
   methods: {
-	 
-     // indices(){
-    //	  return ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays'];
-     // },
-	  
-	  search(){
+	
+    reset(){
+    	  var e = new CustomEvent("aerisResetEvent", { detail: {}});
+          document.dispatchEvent(e);
+    },
+    search(){
+
+		 
 		  var e = new CustomEvent("aerisSearchEvent", { detail: {}});
 	      document.dispatchEvent(e);
-	      console.log(e.detail);
+	      
 	      if( e.detail.error){
 	          var event = new CustomEvent('aerisErrorNotificationMessageEvent', { 'detail': {message: this.$i18n.t('error')}});
 	          document.dispatchEvent(event);
@@ -114,7 +119,7 @@ export default {
 	          }
 	          var query = data;
 	          query.index = detail.index[i];
-	          //console.log()
+	        
 	          var _this = this;
 	          this.$http.get( url,{params: data}).then( 
 	                  response => {
@@ -133,8 +138,7 @@ export default {
 		handleSuccess: function(rep, query){
 			//if rep.body.error!!! this.handleError();
 			 var event = new CustomEvent("findDataIndiceEvent", {detail: {result:rep.body , query: query}});
-			 console.log(event);
-	            document.dispatchEvent(event);
+			 document.dispatchEvent(event);
 	            
 		},
 		handleError: function(rep, query){
@@ -149,10 +153,16 @@ export default {
 		  	
 		ensureTheme: function() {
 		  	if ((this.$el) && (this.$el.querySelector)) {
-		  		this.$el.querySelector(".isgi-search-button").style.background= this.theme.primary;
-		  		var color1 = this.$shadeColor( this.theme.primary, 0.1); //lightcolor
-		  		var color2 = this.$shadeColor( this.theme.primary, -.1); //dark color
-		  		this.$el.querySelector(".isgi-search-button").style.borderColor= color1 + ' '+ color2 + ' ' + color2;
+		  		var nodes = this.$el.querySelectorAll(".isgi-buttons input[type='button']");
+		  	  var color1 = this.$shadeColor( this.theme.primary, 0.1); //lightcolor
+              var color2 = this.$shadeColor( this.theme.primary, -.1); //dark color
+              var theme = this.theme;
+              [].forEach.call( nodes, function(node){
+		  			node.style.background= theme.primary;
+		  			node.style.borderColor= color1 + ' '+ color2 + ' ' + color2;
+		  		})
+		  	
+		  		//this.$el.querySelector(".isgi-search-button").style.borderColor= color1 + ' '+ color2 + ' ' + color2;
 		  	}
 		 },
 	  	 

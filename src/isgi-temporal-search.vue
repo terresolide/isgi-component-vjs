@@ -27,14 +27,14 @@
  </div>
 <div class="isgi-input-group" v-show="!last">
    <span class="right">{{$t('from')}}</span>
-  <input id="from" v-model="from" @click="errorMessage = null" />
+  <input id="from" v-model="from" @click="errorMessage = null" @change="dateChange"/>
 </div>
-<aeris-datepicker for="input#from" :format="format" ></aeris-datepicker>
+<aeris-datepicker for="input#from" :format="format" @change="dateChange"></aeris-datepicker>
 <div class="isgi-input-group" v-show="!last">
 	<span class="right">{{$t('to')}}</span>
-	<input id="to" v-model="to" @click="errorMessage = null">
+	<input id="to" v-model="to" @click="errorMessage = null" @change="dateChange">
 </div>
-  <aeris-datepicker for="input#to" :format="format"></aeris-datepicker> 
+  <aeris-datepicker for="input#to" :format="format" @change="dateChange"></aeris-datepicker> 
 <span class="error-message" v-if="errorMessage">{{errorMessage}}</span>
 
 </span>
@@ -103,17 +103,23 @@ export default {
 		 this.to=""
 		  
 	},
-	
-
+	dateChange: function(evt){
+		console.log("date change in child");
+		this.$emit("input");
+	},
 	  
 	handleSearch: function(e) {
 		if( this.last ){
 		    return;
 		}
 		//v-model not working??
-		 
-		this.from =  this.$el.querySelector('#from').value
-		this.to =  this.$el.querySelector('#to').value
+		var from_old = this.from;
+		var to_old = this.to;
+		
+		this.from =  this.$el.querySelector('#from').value;
+		this.to =  this.$el.querySelector('#to').value;
+		
+		
 		
 		var from = moment(this.from, this.format);
 		var to = moment(this.to, this.format);
@@ -129,7 +135,6 @@ export default {
 		   
 		var diff = to.diff( from )/ 31536000000;
 		
-		console.log(diff);
 		
 		if( diff >=1){
 		    this.errorMessage = this.$i18n.t('one_year');
@@ -139,6 +144,10 @@ export default {
 		var str_to = to.isValid() ? to.format('YYYY-MM-DD') : '';
 		
 		if(str_from && str_to){
+			if( this.from != from_old || this.to != to_old){
+	            var event = new CustomEvent( "chartResetEvent",{ detail: {}});
+	            document.dispatchEvent(event);
+	        }
 			e.detail.start = str_from;
 			e.detail.end = str_to;
 		}	
