@@ -4,8 +4,10 @@
  <i18n>
 {
    "en":{
+      
    },
    "fr":{
+    
    }
 }
 </i18n>
@@ -14,7 +16,7 @@
   
     <formater-layout>
 
-    
+    <isgi-qdays></isgi-qdays>
   
     <div class="formater-wrapper">
         <aside>
@@ -40,15 +42,11 @@ export default {
 	        lang: {
 	            type:String,
 	            default:'fr'
-	        },
-	       // indices:{
-	       // 	type: Array,
-	       // 	default:['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']
-	       // }
-	    },
+	        }
+	},
 	data(){
 		return{
-			indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', /*'SC', 'SFE', 'Qdays', 'CKdays'*/],
+			indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'Qdays'/*'SC', 'SFE', 'Qdays', 'CKdays'*/],
 			windowResizeListener: null,
 			aerisThemeListener:null,
 			mainWidth:300

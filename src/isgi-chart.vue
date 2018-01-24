@@ -134,6 +134,7 @@ export default {
    			Dst: { unit: "nT", url:"http://isgi.unistra.fr/indices_dst.php"},
    			PC: { unit: "mV/m", url:"http://isgi.unistra.fr/indices_pc.php"},
    			AE: { unit: "nT", url:"http://isgi.unistra.fr/indices_ae.php"},
+   			Qdays: {unit: "", url:"http://isgi.unistra.fr/events_qdays.php"}
    			
    			
    		}
