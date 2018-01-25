@@ -48,7 +48,7 @@
 </template>
 
 <script>
-function kp_to_value( kp ){
+/*function kp_to_value( kp ){
 	if(typeof kp != "string"){
 		return 0;
 	}
@@ -83,7 +83,7 @@ Array.prototype.get= function( name ){
         i++;
     }
     return find;
-}
+}*/
 
 export default {
 	 
@@ -127,17 +127,17 @@ export default {
    		colors: [],
    		isdeployed:true,
    		infos:{
-   			aa: { unit: "nT", url:"http://isgi.unistra.fr/indices_aa.php"},
-   			am: { unit: "nT", url:"http://isgi.unistra.fr/indices_am.php"},
-   			Kp: { unit: "", url:"http://isgi.unistra.fr/indices_kp.php"},
-   			Dst: { unit: "nT", url:"http://isgi.unistra.fr/indices_dst.php"},
-   			Dst: { unit: "nT", url:"http://isgi.unistra.fr/indices_dst.php"},
-   			PC: { unit: "mV/m", url:"http://isgi.unistra.fr/indices_pc.php"},
-   			AE: { unit: "nT", url:"http://isgi.unistra.fr/indices_ae.php"},
-   			Qdays: {unit: "", url:"http://isgi.unistra.fr/events_qdays.php"}
-   			
-   			
+   		        aa: { unit: "nT", url:"http://isgi.unistra.fr/indices_aa.php"},
+   		        am: { unit: "nT", url:"http://isgi.unistra.fr/indices_am.php"},
+   		        Kp: { unit: "", url:"http://isgi.unistra.fr/indices_kp.php"},
+   		        Dst: { unit: "nT", url:"http://isgi.unistra.fr/indices_dst.php"},
+   		        Dst: { unit: "nT", url:"http://isgi.unistra.fr/indices_dst.php"},
+   		        PC: { unit: "mV/m", url:"http://isgi.unistra.fr/indices_pc.php"},
+   		        AE: { unit: "nT", url:"http://isgi.unistra.fr/indices_ae.php"},
+   		        Qdays: {unit: "", url:"http://isgi.unistra.fr/events_qdays.php"}
+   		        
    		}
+   		
     }
   },
 
@@ -147,16 +147,28 @@ export default {
 	  treatmentData( evt){
 		  
 	         var id = this.id;
-	       
+	         
 	         if( evt.detail.result.error ){
 	        	 this.error = evt.detail.result.error;
 	        	 this.data = null;
 	        	 return false;
 	         }
-	         var query = evt.detail.query;
-	         var data0 = evt.detail.result;
-	         this.isgi_url = data0.meta.get("isgi_url");
-	         var data = new Array();
+	         
+	        // var query = evt.detail.query;
+	        // var data0 = evt.detail.result;
+	        // this.isgi_url = data0.meta.get("isgi_url");
+	         this.isgi_url = isgi.getUrl(evt.detail);
+	         //this.data = isgi.treatmentData( this.indice, evt.detail);
+	        
+             this.kp = isgi.getKpName( evt.detail.result.collection[0]);
+             var collection = new isgi.Collection( evt.detail, this.indice, this.id);
+             // console.log(collection);
+              this.data = collection.data;
+              console.log( this.data);
+             
+              var container = this.$el.querySelector(".chart-container");
+              collection.createChart( container, this.width);
+	       /* var data = new Array();
 	         if( this.indice == "PC"){
 	        	 data["PCN"] = new Array();
 	        	 data["PCS"] = new Array();
@@ -170,8 +182,9 @@ export default {
  
              //traitement des collections
               var indice = this.indice;
-              var kp = get_Kp_name( data0.collection[0]);
-              if(kp){
+              var kp = isgi.get_Kp_name( data0.collection[0]);
+              var collection = new isgi.Collection()
+             /* if(kp){
                   data.kp = new Array();
               }
              
@@ -195,10 +208,10 @@ export default {
                 	  var date = Date.parse(item.DATE); 
                 	  if( item.DAYS.indexOf("D") >=0){
                 		  data["Ddays"].push([date, 1]);
-                		  data["Qdays"].push([date, 0]);
+                		//  data["Qdays"].push([date, 0]);
                 	  }else{
                 		  data["Qdays"].push([date, 1]);
-                		  data["Ddays"].push([date, 0]);
+                		 // data["Ddays"].push([date, 0]);
                 	  }
                 	  break;
                   default:
@@ -216,7 +229,7 @@ export default {
               }
               this.data = data;
               this.kp = kp;
-              return true;
+              return true;*/
 
 	  },
       createChart(evt){
@@ -224,9 +237,11 @@ export default {
         	 return;
          }
          this.treatmentData(evt);
+         return;
       	if( this.data == null){
       		return;
       	}
+     
          var data = this.data;
          
          var indice = this.indice;
@@ -307,7 +322,7 @@ export default {
         	 break;
          case "Qdays":
         	 chart.type ="column";
-        	 var html = '<span style="color:#ff0000">'+
+        	 var html = '<span style="color:#FE1B00">'+
              '<b>Ddays</b></span> / <span style="color:'+
              '#32CD32;"><b>Qdays</b></span>';
         	 yAxis.push({
@@ -320,7 +335,7 @@ export default {
         	 })
         	 series.push({
         		 name: "Ddays",
-        		 color: "#ff0000",
+        		 color: "#DB1702",
         		 data:data["Ddays"],
         		 stack: "Days"
         	 });

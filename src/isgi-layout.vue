@@ -81,10 +81,12 @@ export default {
         window.addEventListener('resize', this.windowResizeListener);
         this.aerisThemeListener = this.addWidth.bind( this);
         document.addEventListener('aerisTheme', this.aerisThemeListener);
+        if( isgi ) this.indices = isgi.indices();
         
     },
     mounted(){
     	this.computeMainWidth();
+    	
     },
     destroyed(){
     	 window.removeEventListener( 'resize', this.windowResizeListener);

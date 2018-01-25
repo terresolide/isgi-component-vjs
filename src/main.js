@@ -29,6 +29,9 @@ ljs.addAliases({
 		// lib for highchart
 		//------------------
 		'https://code.highcharts.com/highcharts.src.js',
+		// isgi function
+		//---------------
+		'/src/isgi-indice.js',
 	    //dev version for formater-commons-components-vjs
 		//----------------------------------------------
 		//'http://localhost:8080/dist/build.js',
