@@ -16,8 +16,6 @@
   
     <formater-layout>
 
-    <isgi-qdays></isgi-qdays>
-  
     <div class="formater-wrapper">
         <aside>
             <isgi-form :lang="lang" :indices="indices"></isgi-form>   

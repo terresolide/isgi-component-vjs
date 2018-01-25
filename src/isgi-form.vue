@@ -21,7 +21,7 @@
 	<div class="isgi-container">
 	
 	<form id="isgi-form" >
-		<formater-search-box header-icon-class="fa fa-bars" :title="$t('indices')" :value="index" @input="index = $event.target.value">
+		<formater-search-box header-icon-class="fa fa-bars" :title="$t('indices')" :value="index" @input="index = $event.target.value" deployed="true">
 			<formater-select width="260px" name="index" multiple="true" :options="indices"  ></formater-select>
 		</formater-search-box>
 		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true" >	

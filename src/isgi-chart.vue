@@ -159,6 +159,9 @@ export default {
 	         if( this.indice == "PC"){
 	        	 data["PCN"] = new Array();
 	        	 data["PCS"] = new Array();
+	         }else if(this.indice == "Qdays"){
+	        	 data["Qdays"] = new Array();
+	        	 data["Ddays"] = new Array();
 	         }else{
              	data["indice"] = new Array();
 	         }
@@ -172,20 +175,32 @@ export default {
              
               data0.collection.forEach( function( item){
                   var date = Date.parse(item.DATE+" "+item.TIME); 
-                  if( indice == "PC"){
+                  switch( indice ){
+                  case "PC":
                 	  if(item.PCS){
-                		  data["PCS"].push([date, item.PCS]);
+                          data["PCS"].push([date, item.PCS]);
+                      }
+                      if(item.PCN){
+                          data["PCN"].push([date, item.PCN]);
+                      }
+                      break;
+                  case "Qdays":
+                	  var date = Date.parse(item.DATE); 
+                	  if( item.DAYS.indexOf("D") >=0){
+                		  data["Ddays"].push([date, 1]);
+                		  data["Qdays"].push([date, 0]);
+                	  }else{
+                		  data["Qdays"].push([date, 1]);
+                		  data["Ddays"].push([date, 0]);
                 	  }
-                	  if(item.PCN){
-                		  data["PCN"].push([date, item.PCN]);
-                	  }
-                  }else{
-	                   data["indice"].push([date, item[indice]]);
-	                   if( kp){
-	                       data["kp"].push([date, kp_to_value( item[kp])]);
-	                   }
+                	  break;
+                  default:
+                	  data["indice"].push([date, item[indice]]);
+	                  if( kp){
+	                      data["kp"].push([date, kp_to_value( item[kp])]);
+	                  }
                   }
-
+	                  
               });
               this.data = data;
               this.kp = kp;
@@ -212,6 +227,34 @@ export default {
          var color3 = "#ff0000";
          var yAxis = new Array();
          var series = new Array();
+         var chart = {
+             height:230,
+             width: this.width,
+             defaultSeriesType: 'areaspline',
+             plotBorderColor: '#666666',
+              plotBorderWidth: 1
+       // marginBottom: (value==="F")? 45 : 15
+        }
+         var tooltip =  {
+             formatter: function() {
+                 var s =  Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) ;
+
+                 this.points.forEach(function(point, i) {
+                     s += '<br/><span style="color:'+ point.series.color +'">\u25AC</span> '+ point.series.name +': ' ;
+                     if (point.series.type=='column') {
+                         if ((point.y - Math.floor(point.y))==0) { s+= Math.floor(point.y) +'o'; }
+                         if (((point.y - Math.floor(point.y))>0) && ((point.y - Math.floor(point.y))<0.4)) { s+= Math.floor(point.y) +'+'; }
+                         if ((point.y - Math.floor(point.y))>0.6) { s+= Math.round(point.y) +'-'; }
+                     } else {
+                         s += point.y ;
+                     }
+                 });
+
+                 return s;
+             },
+             shared: true,
+             crosshairs: [true, false, false]
+         }
          switch( indice){
          case "PC":
         	 var html = '<span style="color:'+ color1+'">'+
@@ -248,6 +291,45 @@ export default {
                 color: color3,
                 data: data["PCS"]
                });
+        	 
+        	 break;
+         case "Qdays":
+        	 chart.type ="column";
+        	 var html = '<span style="color:#ff0000">'+
+             '<b>Ddays</b></span> / <span style="color:'+
+             '#32CD32;"><b>Qdays</b></span>';
+        	 yAxis.push({
+        		 title:{
+        			 useHTML: true,
+        			 text:html},
+        		 min:0,
+                 max:1,
+                 tickInterval:1
+        	 })
+        	 series.push({
+        		 name: "Ddays",
+        		 color: "#ff0000",
+        		 data:data["Ddays"],
+        		 stack: "Days"
+        	 });
+        	 series.push({
+        		 name: "Qdays",
+        		 color: "#32CD32",
+                 data:data["Qdays"],
+                 stack: "Days"
+             })
+             tooltip.borderColor = "#ccc";
+             tooltip.formatter = function() {
+                 var s =  Highcharts.dateFormat('%Y-%m-%d', this.x) ;
+
+                 this.points.forEach(function(point, i) {
+                	 if(point.y>0)
+                     s += '<br/><span style="color:'+ point.series.color +'">\u25AC</span> '+ point.series.name  ;
+                     
+                 });
+
+                 return s;
+             }
         	 
         	 break;
          case "Kp":
@@ -320,14 +402,7 @@ export default {
          
           this.chart = Highcharts.chart(container, {
            
-              chart:{
-             	   height:230,
-             	   width: this.width,
-             	   defaultSeriesType: 'areaspline',
-             	   plotBorderColor: '#666666',
-                    plotBorderWidth: 1
-             // marginBottom: (value==="F")? 45 : 15
-              },
+              chart:chart,
               title: {
                   text:"",
                   align: "float"
@@ -337,6 +412,7 @@ export default {
               },
               plotOptions: {
                   series: {
+                	  stacking:"normal",
                       pointPadding: 0,
                       groupPadding: 0,
                       borderWidth: 1,
@@ -367,26 +443,7 @@ export default {
                   }
               },
               yAxis: yAxis,
-              tooltip: {
-                  formatter: function() {
-                      var s =  Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) ;
-
-                      this.points.forEach(function(point, i) {
-                          s += '<br/><span style="color:'+ point.series.color +'">\u25AC</span> '+ point.series.name +': ' ;
-                          if (point.series.type=='column') {
-                              if ((point.y - Math.floor(point.y))==0) { s+= Math.floor(point.y) +'o'; }
-                              if (((point.y - Math.floor(point.y))>0) && ((point.y - Math.floor(point.y))<0.4)) { s+= Math.floor(point.y) +'+'; }
-                              if ((point.y - Math.floor(point.y))>0.6) { s+= Math.round(point.y) +'-'; }
-                          } else {
-                              s += point.y ;
-                          }
-                      });
-
-                      return s;
-                  },
-                  shared: true,
-                  crosshairs: [true, false, false]
-              },
+              tooltip: tooltip,
               series: series
           });
              
