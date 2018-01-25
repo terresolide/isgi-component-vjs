@@ -153,6 +153,7 @@ export default {
 	        	 this.data = null;
 	        	 return false;
 	         }
+	         var query = evt.detail.query;
 	         var data0 = evt.detail.result;
 	         this.isgi_url = data0.meta.get("isgi_url");
 	         var data = new Array();
@@ -161,6 +162,7 @@ export default {
 	        	 data["PCS"] = new Array();
 	         }else if(this.indice == "Qdays"){
 	        	 data["Qdays"] = new Array();
+	        	 
 	        	 data["Ddays"] = new Array();
 	         }else{
              	data["indice"] = new Array();
@@ -173,6 +175,11 @@ export default {
                   data.kp = new Array();
               }
              
+              //specific Qdays: first and last day to 0
+              if( indice == "Qdays" && data0.collection[0].DATE > query.start){
+            	  var date = Date.parse( query.start);
+            	  data["Qdays"].push( [date, 0]);
+              }
               data0.collection.forEach( function( item){
                   var date = Date.parse(item.DATE+" "+item.TIME); 
                   switch( indice ){
@@ -202,6 +209,11 @@ export default {
                   }
 	                  
               });
+              //specific Qdays: last day
+              if( indice == "Qdays" && data0.collection[ data0.collection.length -1].DATE < query.end){
+            	  var date = Date.parse( query.end);
+                  data["Qdays"].push( [date, 0]);
+              }
               this.data = data;
               this.kp = kp;
               return true;
