@@ -132,7 +132,8 @@ isgi.Collection = function( resp, indice, id){
 		data.Qdays = new Array();
 		data.Ddays = new Array();
 		var data0 = resp.result;
-
+		var nodata = resp.result.meta.get("no_data");
+		nodata ="2018-01-01";
 		//add begin date if not Qdays or Ddays
 		if( data0.collection[0].DATE > resp.query.start){
 			var date = Date.parse( resp.query.start);
@@ -148,9 +149,21 @@ isgi.Collection = function( resp, indice, id){
 		});
 		// add last date if not Qdays or Ddays
 		if( data0.collection[ data0.collection.length -1].DATE < resp.query.end){
-			var date = Date.parse( resp.query.end);
-       	  	data["Qdays"].push( [date, 0]);
+			if( nodata){
+			
+				var date = Date.parse( nodata);
+				data["noData"] =  new Array();
+				data["noData"].push([ date  , 1]);
+				var date = Date.parse( resp.query.end);
+				
+	       	  	data["noData"].push( [date, 1]);
+			}else{
+				var date = Date.parse( resp.query.end + 12*3600);
+				data["Qdays"].push([date,0]);
+			}
+       	  	
         }
+		
 		return data;
 	}
 	function _treatmentDataDefault( resp ){
@@ -171,6 +184,7 @@ isgi.Collection = function( resp, indice, id){
 		 return data;
 		
 	}
+
 	function _chart( width){
 		  var chart = {
 		             height:230,
@@ -182,6 +196,20 @@ isgi.Collection = function( resp, indice, id){
 		  if( _this.indice == "Qdays"){
 			  chart.type = "column";
 		  }
+		 /* chart.events = {
+	          	load: function(e){
+	        		this.renderer.rect(this.xAxis[0].series[0].data[0].clientX, 20, 50, 200)
+	        		.attr({
+                        fill: 'rgba(255, 0, 0, .2)'
+                    })
+                    .add();;
+	        		
+	        		
+	        	},
+	        	render:function(e){
+	        		console.log(e);
+	        	}
+		  }*/
 		  return chart;
 		
 	}
@@ -284,6 +312,14 @@ isgi.Collection = function( resp, indice, id){
                  data:_this.data["Qdays"],
                  stack: "Days"
              })
+             if( _this.data["noData"]){
+	             series.push({
+	            	 name: "no data",
+	            	 type: "area",
+	            	 color: "#cccccc",
+	            	 data: _this.data["noData"]
+	             })
+             }
              break;
 		case "Kp":
 			  series.push({
@@ -356,13 +392,16 @@ isgi.Collection = function( resp, indice, id){
 		 }
 		 return tooltip;
 	}
+
 	this.createChart = function( container, width){
-		console.log(container);
-		var chart = _chart(width);
-		console.log(chart);
+		var events = {}
+		events.load = function(){
+			console.log( "load");
+			console.log( this);
+		}
 		this.chart = Highcharts.chart(container, {
 	           
-            chart:chart,
+            chart:_chart(width),
             title: {
                 text:"",
                 align: "float"
@@ -395,6 +434,7 @@ isgi.Collection = function( resp, indice, id){
                 },
                 crosshair: true,
             },
+            
             yAxis: _yAxis(),
             tooltip: _tooltip(),
             series: _series()
