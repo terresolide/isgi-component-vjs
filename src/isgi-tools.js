@@ -48,6 +48,7 @@ const isgiToolsPlugin = {
 		        dispatch(parent, event, target, once);
 		      }
 		    }
+		    // Vue.isgi = 
 		}
 };
 

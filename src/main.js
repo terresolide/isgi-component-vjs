@@ -20,7 +20,7 @@ import IsgiForm from './isgi-form.vue';
 import IsgiTemporalSearch from './isgi-temporal-search.vue';
 import IsgiChart from './isgi-chart.vue';
 import IsgiLayout from './isgi-layout.vue';
-// import IsgiQdays from './isgi-qdays.vue';
+
 
 
 

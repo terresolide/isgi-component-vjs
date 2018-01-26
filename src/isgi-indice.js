@@ -190,9 +190,9 @@ isgi.Collection = function( resp, indice, id){
 		switch( _this.indice ){
 		case "PC":
 			 //only one axis 
-			 var html = '<span style="color:'+ color1+'">'+
+			 var html = '<span style="color:'+ _this.colors[1]+'">'+
              '<b>PCN</b></span> / <span style="color:'+
-             color3+';"><b>PCS</b></span> (' + this.infos.PC.unit+ ')';
+             isgi.red +';"><b>PCS</b></span> (' + isgi.infos.PC.unit+ ')';
         	 yAxis.push({ 
                      title: {
                         useHTML: true,
@@ -354,11 +354,15 @@ isgi.Collection = function( resp, indice, id){
 	             return s;
 	         }
 		 }
+		 return tooltip;
 	}
 	this.createChart = function( container, width){
+		console.log(container);
+		var chart = _chart(width);
+		console.log(chart);
 		this.chart = Highcharts.chart(container, {
 	           
-            chart:_chart( width),
+            chart:chart,
             title: {
                 text:"",
                 align: "float"
@@ -401,6 +405,17 @@ isgi.Collection = function( resp, indice, id){
 			var height = this.chart.height;
 			this.chart.setSize( width, height, true);
 		}
+	}
+	this.destroy = function(){
+		this.data = null;
+		this.indice = null;
+		this.kp = null;
+		this.colors = null;
+		if( this.chart ){
+			this.chart.destroy();
+		    this.chart = null;
+	    }
+		return null;
 	}
 	
 }
