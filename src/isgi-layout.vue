@@ -4,18 +4,31 @@
  <i18n>
 {
    "en":{
+        "isgi": "International Service of Geomagnetic Indices",
+        "description":"ISGI is the Reference service of the International Association of Geomagnetism and Aeronomy (IAGA) for validation, dissemination and stewardship of geomagnetic indices (with the help of 6 ISGI-Collaborating-Institutes internationally spread) through its official Web portal. <br /><br />ISGI is an official French National Service of CNRS-INSU which is getting a double label, both in &laquo;Solid Earth&raquo; TS‑ANO4 (National Observation in Magnetism) and in &laquo;Astronomy-Astrophysics&raquo; AA‑ANO6 (Surveillance of the Sun and the Earth's Space Environment)."
       
    },
    "fr":{
-    
+         "isgi": "Service International des Indices Géomagnétiques",
+          "description":"ISGI est le service de référence de l'Association Internationale de Géomagnétisme et Aéronomie (IAGA) pour la validation, la diffusion for validation, dissemination et la gestion des indices géomagnétiques (avec la collaboration de 6 Instituts Internationaux) à travers leur portail web. <br /><br />ISGI est le service officiel français du CNRS-INSU qui détient une double casquette, à la fois présent dans le &laquo;Pôle Terre Solide&raquo; TS‑ANO4 (Observation National en Magnétisme) et dans  &laquo;Astronomie-Astrophysiques&raquo; AA‑ANO6 (Surveillance du Soleil et de l'Espace Environant la Terre)."
+      
    }
 }
 </i18n>
 <template>
 <span class="isgi-layout">
-  
+  <header>
+    <div>
+    <a href="http://isgi.unistra.fr" :title="$t('isgi')">
+    <img class="isgi-logo" src="http://isgi.unistra.fr/Images/logo_ISGI.gif" alt="ISGI"/>
+    </a>
+    </div>
+    <div class="isgi-description" v-html="$t('description')">
+    
+    </div>
+    </header>
     <formater-layout>
-
+    
     <div class="formater-wrapper">
         <aside>
             <isgi-form :lang="lang" :indices="indices"></isgi-form>   
@@ -44,7 +57,7 @@ export default {
 	},
 	data(){
 		return{
-			indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'Qdays'/*'SC', 'SFE', 'Qdays', 'CKdays'*/],
+			indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'Qdays', 'SC'/*, 'SFE', 'Qdays', 'CKdays'*/],
 			windowResizeListener: null,
 			aerisThemeListener:null,
 			mainWidth:300
@@ -96,3 +109,34 @@ export default {
     }
 }
 </script>
+<style>
+.isgi-layout > header{
+    background-color:#fff;
+    display: block;
+	-webkit-box-flex: 1;
+	-ms-flex: 1 1 auto;
+	flex: 1 1 auto;
+	    flex-grow: 1;
+	    flex-shrink: 1;
+	    flex-basis: auto;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
+	-ms-flex-direction: row;
+	flex-direction: row;
+	vertical-align:bottom;
+}
+.isgi-layout > header img.isgi-logo{
+    width:200px;
+}
+.isgi-layout > header div{
+    display: block;
+    vertical-align: bottom;
+}
+.isgi-layout > header div.isgi-description{
+    margin-top:80px;
+    margin-left:20px;
+    }
+</style>

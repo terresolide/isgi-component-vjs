@@ -26,10 +26,10 @@ isgi.infos={
 		am: { unit: "nT", url:"http://isgi.unistra.fr/indices_am.php"},
 		Kp: { unit: "", url:"http://isgi.unistra.fr/indices_kp.php"},
 		Dst: { unit: "nT", url:"http://isgi.unistra.fr/indices_dst.php"},
-		Dst: { unit: "nT", url:"http://isgi.unistra.fr/indices_dst.php"},
 		PC: { unit: "mV/m", url:"http://isgi.unistra.fr/indices_pc.php"},
-		//AE: { unit: "nT", url:"http://isgi.unistra.fr/indices_ae.php"},
-		Qdays: {unit: "", url:"http://isgi.unistra.fr/events_qdays.php"}
+		AE: { unit: "nT", url:"http://isgi.unistra.fr/indices_ae.php"},
+		Qdays: {unit: "", url:"http://isgi.unistra.fr/events_qdays.php"},
+		SC: {unit: "", url:"http://isgi.unistra.fr/events_sc.php"}
 		
 }
 
@@ -99,6 +99,10 @@ isgi.Collection = function( resp, indice, id){
 		case "PC":
 	    	 var data = _treatmentDataPC( resp);
 			break;
+		case "SC":
+		case "SFE":
+			var data = _treatmentDataSC(resp);
+			break;
 		case "Qdays":
 			var data = _treatmentDataQdays( resp );
 			break;
@@ -115,7 +119,7 @@ isgi.Collection = function( resp, indice, id){
 		data.PCS = new Array();
 		var data0 = resp.result;
 	    data0.collection.forEach( function( item){
-             var date = Date.parse(item.DATE+" "+item.TIME); 
+             var date = Date.parseDate(item.DATE+"T"+item.TIME+"Z"); 
              
            	 if(item.PCS){
                  data.PCS.push([date, item.PCS]);
@@ -127,20 +131,47 @@ isgi.Collection = function( resp, indice, id){
 	    return data;
 		
 	}
+	function _treatmentDataSC(resp ){
+		var data = new Array();
+	
+		var data0 = resp.result;
+		var nodata = resp.result.meta.get("no_data");
+		data[ _this.indice ] = new Array();
+		data["hidden"] = new Array();
+		//nodata ="2018-01-01";
+		//add begin date if not Qdays or Ddays
+		if( data0.collection[0].DATE > resp.query.start){
+			var date = Date.parse( resp.query.start + "T00:00:00.000Z");
+			data["hidden"].push( [date, 0]);
+		}
+		
+		data0.collection.forEach( function( item){
+			 var date = Date.parse(item.DATE+"T"+item.TIME + "Z"); 
+			 
+			data[ _this.indice ].push( [date, 1]);
+		});
+		// add last date if not in response
+		if( data0.collection[ data0.collection.length -1].DATE < resp.query.end){
+				var date = Date.parse( resp.query.end + "T23:59:00.000Z")
+       	  		data["hidden"].push( [date, 0]);
+        }
+		
+		return data;
+	}
 	function _treatmentDataQdays(resp ){
 		var data = new Array();
 		data.Qdays = new Array();
 		data.Ddays = new Array();
 		var data0 = resp.result;
 		var nodata = resp.result.meta.get("no_data");
-		nodata ="2018-01-01";
+		//nodata ="2018-01-01";
 		//add begin date if not Qdays or Ddays
 		if( data0.collection[0].DATE > resp.query.start){
-			var date = Date.parse( resp.query.start);
+			var date = Date.parse( resp.query.start + "T12:00:00.000Z");
 			data["Qdays"].push( [date, 0]);
 		}
 		data0.collection.forEach( function( item){
-			var date = Date.parse(item.DATE); 
+			var date = Date.parse(item.DATE + "T12:00:00.000Z"); 
 			if( item.DAYS.indexOf("D") >=0){
 				data["Ddays"].push([date, 1]);
 			}else{
@@ -154,11 +185,11 @@ isgi.Collection = function( resp, indice, id){
 				var date = Date.parse( nodata);
 				data["noData"] =  new Array();
 				data["noData"].push([ date  , 1]);
-				var date = Date.parse( resp.query.end);
+				var date = Date.parse( resp.query.end + "T23:59:00.000Z") ;
 				
 	       	  	data["noData"].push( [date, 1]);
 			}else{
-				var date = Date.parse( resp.query.end + 12*3600);
+				var date = Date.parse( resp.query.end + "T23:59:00.000Z");
 				data["Qdays"].push([date,0]);
 			}
        	  	
@@ -175,7 +206,7 @@ isgi.Collection = function( resp, indice, id){
         }
 		var data0 = resp.result;
 		data0.collection.forEach( function( item){
-			var date = Date.parse(item.DATE+" "+item.TIME); 
+			var date = Date.parse(item.DATE+"T"+item.TIME +"Z"); 
 		    data["indice"].push([date, item[indice]]);
             if( _this.kp ){
                 data["kp"].push([date, isgi.kp2value( item[ _this.kp])]);
@@ -193,7 +224,7 @@ isgi.Collection = function( resp, indice, id){
 		             plotBorderColor: '#666666',
 		             plotBorderWidth: 1
 		  }
-		  if( _this.indice == "Qdays"){
+		  if( ["SC", "SFE", "Qdays"].indexOf( _this.indice)>=0 ){
 			  chart.type = "column";
 		  }
 		 /* chart.events = {
@@ -228,6 +259,18 @@ isgi.Collection = function( resp, indice, id){
                      }
         	 });
         	 break;
+		case "SC":
+			var html = '<span style="color:'+_this.colors[1]+';">'+
+            '<b>'+ _this.indice + '</b></span> ';
+	       	 yAxis.push({
+	       		 title:{
+	       			 useHTML: true,
+	       			 text:html},
+	       		 min:0,
+	             max:1,
+	             tickInterval:1
+	       	 });
+	       	 break;
 		case "Qdays":
 			var html = '<span style="color:'+isgi.red +';">'+
             '<b>Ddays</b></span> / <span style="color:'+
@@ -299,6 +342,18 @@ isgi.Collection = function( resp, indice, id){
 	                color: isgi.red,
 	                data: _this.data["PCS"]});
 			 break;
+		case "SC":
+			 series.push({
+        		 name: _this.indice,
+        		 color: _this.colors[2],
+        		 data:_this.data[ _this.indice],
+        	 });
+			 series.push({
+        		 name: "",
+        		 color: "#fff",
+        		 data:_this.data["hidden"],
+        	 });
+			 break;
 		case "Qdays":
 			 series.push({
         		 name: "Ddays",
@@ -358,8 +413,8 @@ isgi.Collection = function( resp, indice, id){
 	             shared: true,
 	             crosshairs: [true, false, false]
 	         }
-		 if( _this.indice == "Qdays"){
-			 
+		 switch( _this.indice ){
+		 case "Qdays":
 			 tooltip.borderColor = "#ccc";
              tooltip.formatter = function() {
                  var s =  Highcharts.dateFormat('%Y-%m-%d', this.x) ;
@@ -372,7 +427,19 @@ isgi.Collection = function( resp, indice, id){
 
                  return s;
              }
-		 }else{
+             break;
+		 case "SC":
+		 case "SFE":
+				 tooltip.formatter = function() {
+		             var s =  Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) ;
+		
+		             this.points.forEach(function(point, i) {
+		                 s += '<br/><span style="color:'+ point.series.color +'">\u25AC</span> '+ point.series.name ;
+		             });
+		             return s;
+	             }
+			 break;
+		  default:
 			 tooltip.formatter = function() {
 	             var s =  Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) ;
 	
@@ -389,8 +456,26 @@ isgi.Collection = function( resp, indice, id){
 	
 	             return s;
 	         }
+			  
 		 }
+		
 		 return tooltip;
+	}
+	function _plotOptions(){
+		var plotOptions =  {
+        	
+            series: {
+          	  	stacking:"normal",
+                pointPadding: 0,
+                groupPadding: 0,
+                borderWidth: 1,
+                shadow: true
+            }
+        }
+		if( ["SC", "SFE"].indexOf(_this.indice)>= 0){
+			plotOptions.column = { pointWidth:1 }
+		}
+		return plotOptions;
 	}
 
 	this.createChart = function( container, width){
@@ -409,15 +494,7 @@ isgi.Collection = function( resp, indice, id){
             legend: {
                 enabled: false
             },
-            plotOptions: {
-                series: {
-              	  	stacking:"normal",
-	                pointPadding: 0,
-	                groupPadding: 0,
-	                borderWidth: 1,
-	                shadow: true
-                }
-            },
+            plotOptions: _plotOptions(),
             xAxis: {
                 type: 'datetime',
                 lineColor:'#666',

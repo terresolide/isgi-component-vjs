@@ -5,14 +5,16 @@
        "time_slot": 	"time slot",
        "output_format": "Output Format",
        "search": "Search",
-       "reset": "Reset"
+       "reset": "Reset",
+       "license": "License"
    },
    "fr":{
         "indices":	    "indices",
         "time_slot": 	"intervalle de temps",
         "output_format": "Format de sortie",
         "search": "Rechercher",
-        "reset": "Initialiser"
+        "reset": "Initialiser",
+         "license": "Licence"
    }
 }
 </i18n>
@@ -27,6 +29,9 @@
 		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true" >	
 			 <isgi-temporal-search :lang="lang" ></isgi-temporal-search>
 		</formater-search-box>
+		  <formater-search-box header-icon-class="fa fa-legal" :title="$t('license')" deployed="true" >  
+            
+        </formater-search-box>
 		<formater-search-box header-icon-class="fa fa-file" :title="$t('output_format')" :value="format" @input="format = $event.target.value">
 			<formater-select width="260px"  name="format" options="IAGA2002"></formater-select>
 	    </formater-search-box>
@@ -73,7 +78,6 @@ export default {
 	              theme:null,
 	              index:null,
 	              format:null
-	             //  indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'SC', 'SFE', 'Qdays', 'CKdays']
       }
   },
   methods: {
@@ -115,7 +119,13 @@ export default {
 	              data.start = detail.start;
 	          }
 	          if(detail.end){
-	              data.end = detail.end;
+	        	  var now = new Date().toISOString().slice(0,10);
+
+	        	  if( detail.end > now){
+	        		  data.end = now;
+	        	  }else{
+	        		  data.end = detail.end;
+	        	  }
 	          }
 	          var query = data;
 	          query.index = detail.index[i];
