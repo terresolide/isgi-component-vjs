@@ -94,10 +94,13 @@ export default {
 
 	        	 return false;
 	         }
-	         
-	         this.isgi_url = isgi.getUrl(evt.detail);
-             this.collection = new isgi.Collection( evt.detail, this.indice, this.id);
-             this.data = this.collection.data;
+	         if(isgi){
+		         this.isgi_url = isgi.getUrl(evt.detail);
+	             this.collection = new isgi.Collection( evt.detail, this.indice, this.id);
+	             if( this.collection){
+	            	   this.data = this.collection.data;
+		         }
+	         }
 	  },
       createChart(evt){
          if( evt.detail.query.index != this.indice ){
@@ -105,6 +108,7 @@ export default {
          }
          this.treatmentData(evt);
          var container = this.$el.querySelector(".chart-container");
+         if( this.collection )
          this.collection.createChart( container, this.width);
          return;
       },
@@ -160,6 +164,13 @@ export default {
 			this.aerisThemeListener = null;
 			window.removeEventListener( 'isgiResize', this.windowResizeListener);
 			this.windowResizeListener = null;
+			// load isgi script if not exists
+// 			 var recaptchaScript = document.createElement('script')
+//     recaptchaScript.setAttribute('src', 'https://code.highcharts.com/highcharts.src.js');
+//     document.head.appendChild(recaptchaScript);
+//     var recaptchaScript = document.createElement('script')
+//     recaptchaScript.setAttribute('src', '/src/isgi-indice.js');
+//     document.head.appendChild(recaptchaScript);
   },
   
   created() {

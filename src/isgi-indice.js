@@ -119,7 +119,7 @@ isgi.Collection = function( resp, indice, id){
 		data.PCS = new Array();
 		var data0 = resp.result;
 	    data0.collection.forEach( function( item){
-             var date = Date.parseDate(item.DATE+"T"+item.TIME+"Z"); 
+             var date = Date.parse(item.DATE+"T"+item.TIME+"Z"); 
              
            	 if(item.PCS){
                  data.PCS.push([date, item.PCS]);
@@ -141,7 +141,11 @@ isgi.Collection = function( resp, indice, id){
 		//nodata ="2018-01-01";
 		//add begin date if not Qdays or Ddays
 		if( data0.collection[0].DATE > resp.query.start){
+			// Add 2 days with value 0 at the beginning to begin graph with the start date
+			// and have same scale that others graph
 			var date = Date.parse( resp.query.start + "T00:00:00.000Z");
+			data["hidden"].push( [date, 0]);
+			var next = Date.parse( resp.query.start + "T23:59:59.999Z");
 			data["hidden"].push( [date, 0]);
 		}
 		
@@ -149,10 +153,12 @@ isgi.Collection = function( resp, indice, id){
 			 var date = Date.parse(item.DATE+"T"+item.TIME + "Z"); 
 			 
 			data[ _this.indice ].push( [date, 1]);
+			
+			data["hidden"].push([date, 0]);
 		});
 		// add last date if not in response
 		if( data0.collection[ data0.collection.length -1].DATE < resp.query.end){
-				var date = Date.parse( resp.query.end + "T23:59:00.000Z")
+				var date = Date.parse( resp.query.end + "T00:00:00.000Z")
        	  		data["hidden"].push( [date, 0]);
         }
 		
@@ -473,7 +479,7 @@ isgi.Collection = function( resp, indice, id){
             }
         }
 		if( ["SC", "SFE"].indexOf(_this.indice)>= 0){
-			plotOptions.column = { pointWidth:1 }
+			plotOptions.column = { pointWidth:3 }
 		}
 		return plotOptions;
 	}

@@ -5,12 +5,12 @@
 {
    "en":{
         "isgi": "International Service of Geomagnetic Indices",
-        "description":"ISGI is the Reference service of the International Association of Geomagnetism and Aeronomy (IAGA) for validation, dissemination and stewardship of geomagnetic indices (with the help of 6 ISGI-Collaborating-Institutes internationally spread) through its official Web portal. <br /><br />ISGI is an official French National Service of CNRS-INSU which is getting a double label, both in &laquo;Solid Earth&raquo; TS‑ANO4 (National Observation in Magnetism) and in &laquo;Astronomy-Astrophysics&raquo; AA‑ANO6 (Surveillance of the Sun and the Earth's Space Environment)."
+        "description":"<b>ISGI</b> is the Reference service of the International Association of Geomagnetism and Aeronomy (IAGA) for validation, dissemination and stewardship of geomagnetic indices (with the help of 6 ISGI-Collaborating-Institutes internationally spread) through its official Web portal. <br /><br /><b>ISGI</b> is an official French National Service of <b>CNRS-INSU</b> which is getting a double label, both in &laquo;Solid Earth&raquo; <b>TS‑ANO4</b> (National Observation in Magnetism) and in &laquo;Astronomy-Astrophysics&raquo; <b>AA‑ANO6</b> (Surveillance of the Sun and the Earth's Space Environment)."
       
    },
    "fr":{
          "isgi": "Service International des Indices Géomagnétiques",
-          "description":"ISGI est le service de référence de l'Association Internationale de Géomagnétisme et Aéronomie (IAGA) pour la validation, la diffusion for validation, dissemination et la gestion des indices géomagnétiques (avec la collaboration de 6 Instituts Internationaux) à travers leur portail web. <br /><br />ISGI est le service officiel français du CNRS-INSU qui détient une double casquette, à la fois présent dans le &laquo;Pôle Terre Solide&raquo; TS‑ANO4 (Observation National en Magnétisme) et dans  &laquo;Astronomie-Astrophysiques&raquo; AA‑ANO6 (Surveillance du Soleil et de l'Espace Environant la Terre)."
+          "description":"<b>ISGI</b> est le service de référence de l'Association Internationale de Géomagnétisme et Aéronomie (IAGA) pour la validation, la diffusion et la gestion des indices géomagnétiques (avec la collaboration de 6 Instituts Internationaux) à travers leur portail web. <br /><br /><b>ISGI</b> est le service officiel français du <b>CNRS-INSU</b> disposant d'une double étiquette, à la fois présent dans le &laquo;Pôle Terre Solide&raquo; <b>TS‑ANO4</b> (Observation National en Magnétisme) et dans  &laquo;Astronomie-Astrophysiques&raquo; <b>AA‑ANO6</b> (Surveillance du Soleil et de l'Espace Environnant la Terre)."
       
    }
 }

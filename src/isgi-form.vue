@@ -29,8 +29,12 @@
 		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true" >	
 			 <isgi-temporal-search :lang="lang" ></isgi-temporal-search>
 		</formater-search-box>
-		  <formater-search-box header-icon-class="fa fa-legal" :title="$t('license')" deployed="true" >  
-            
+		  <formater-search-box header-icon-class="fa fa-legal" :title="$t('license')" deployed="false" > 
+		  <span> 
+            <a href="https://creativecommons.org/licenses/by-nc/4.0/" title="Creative Commons NonCommercial 4.0" target="_blank">
+            <img src="/images/license_ccbync.png" height="60"/>
+            </a>
+        </span>
         </formater-search-box>
 		<formater-search-box header-icon-class="fa fa-file" :title="$t('output_format')" :value="format" @input="format = $event.target.value">
 			<formater-select width="260px"  name="format" options="IAGA2002"></formater-select>
@@ -134,11 +138,19 @@ export default {
 	          this.$http.get( url,{params: data}).then( 
 	                  response => {
 	                	  _this.handleSuccess( response, query);
-	                	  _this.call( detail, i+1);
+	                	  //add Timeout, to not have the same timestamp
+	                	  //create trouble to isgi server
+	                	  var next = function(){
+	                		    _this.call( detail, i+1);
+	                	  }
+	                	  setTimeout( next, 1000);
 	                  },
 	                  response => {
 	                	  _this.handleError( response , query);
+	                	  var next = function(){
 	                	  _this.call( detail, i+1);
+	                	  setTimeout(next, 10);
+	                	  }
 	                  });
 		  }
 	  },
