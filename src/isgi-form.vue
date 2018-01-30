@@ -32,7 +32,7 @@
 		  <formater-search-box header-icon-class="fa fa-legal" :title="$t('license')" deployed="false" > 
 		  <span> 
             <a href="https://creativecommons.org/licenses/by-nc/4.0/" title="Creative Commons NonCommercial 4.0" target="_blank">
-            <img src="/images/license_ccbync.png" height="60"/>
+            <img src="https://cdn.rawgit.com/terresolide/isgi-component-vjs/0.0.4/images/license_ccbync.png" height="60"/>
             </a>
         </span>
         </formater-search-box>
