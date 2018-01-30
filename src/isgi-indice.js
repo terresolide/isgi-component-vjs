@@ -22,19 +22,20 @@ function shadeColor(color, percent) {
 var isgi = isgi || {}
 
 isgi.infos={
-		aa: { unit: "nT", url:"http://isgi.unistra.fr/indices_aa.php"},
-		am: { unit: "nT", url:"http://isgi.unistra.fr/indices_am.php"},
-		Kp: { unit: "", url:"http://isgi.unistra.fr/indices_kp.php"},
-		Dst: { unit: "nT", url:"http://isgi.unistra.fr/indices_dst.php"},
-		PC: { unit: "mV/m", url:"http://isgi.unistra.fr/indices_pc.php"},
-		AE: { unit: "nT", url:"http://isgi.unistra.fr/indices_ae.php"},
-		Qdays: {unit: "", url:"http://isgi.unistra.fr/events_qdays.php"},
-		SC: {unit: "", url:"http://isgi.unistra.fr/events_sc.php"}
+		aa: { unit: "nT", color: "#336699", url:"http://isgi.unistra.fr/indices_aa.php"},
+		am: { unit: "nT", color:"#cc33cc", url:"http://isgi.unistra.fr/indices_am.php"},
+		Kp: { unit: "2nT", color:"#339933",  url:"http://isgi.unistra.fr/indices_kp.php"},
+		Dst: { unit: "nT", color: "#ff6633", url:"http://isgi.unistra.fr/indices_dst.php"},
+		PC: { unit: "mV/m", color: "#3366ff", url:"http://isgi.unistra.fr/indices_pc.php"},
+		AE: { unit: "nT", color: "#ff0000", url:"http://isgi.unistra.fr/indices_ae.php"},
+		Qdays: {unit: "", color:"#ff0000", url:"http://isgi.unistra.fr/events_qdays.php"},
+		SC: {unit: "", color: "#669933" , url:"http://isgi.unistra.fr/events_sc.php"}
 		
 }
 
 isgi.red = "#DB1702";
 isgi.green = "#32CD32";
+isgi.kpgreen ="#339933";
 
 isgi.indices = function(){
 	return Object.keys( this.infos);
@@ -76,9 +77,11 @@ isgi.getUrl= function( resp ){
 
 isgi.Collection = function( resp, indice, id){
 	this.indice = indice;
+	this.nameindice = indice == "Kp"? "ap":indice;
 	this.id = id;
 	this.kp = isgi.getKpName( resp.result.collection[0]);
 	this.chart = null;
+	this.error = null;
 	this.colors = new Array();
     var _this = this;
 
@@ -88,10 +91,16 @@ isgi.Collection = function( resp, indice, id){
     function _initColors( id ){
     	
     	//@todo can choose my own colors
-    	_this.colors[0] = Highcharts.getOptions().colors[id];
+    	if( _this.indice == "Kp"){
+    		_this.colors[0] = isgi.kpgreen;
+    	}else{
+    		_this.colors[0] = Highcharts.getOptions().colors[id];
+    	}
+    	_this.colors[0] = isgi.infos[ _this.indice].color;
     	_this.colors[1] = shadeColor( _this.colors[0], -.2);
     	_this.colors[2] = shadeColor( _this.colors[0], .1);
     }
+
 
 	function _treatmentData( resp ){
 		
@@ -138,9 +147,13 @@ isgi.Collection = function( resp, indice, id){
 		var nodata = resp.result.meta.get("no_data");
 		data[ _this.indice ] = new Array();
 		data["hidden"] = new Array();
+		//case unreadable data
+		if( data0.collection.length == 0){
+			_this.error = "UNREADABLE DATA";
+		}
 		//nodata ="2018-01-01";
 		//add begin date if not Qdays or Ddays
-		if( data0.collection[0].DATE > resp.query.start){
+		if( data0.collection.length>0 && data0.collection[0].DATE > resp.query.start){
 			// Add 2 days with value 0 at the beginning to begin graph with the start date
 			// and have same scale that others graph
 			var date = Date.parse( resp.query.start + "T00:00:00.000Z");
@@ -157,7 +170,7 @@ isgi.Collection = function( resp, indice, id){
 			data["hidden"].push([date, 0]);
 		});
 		// add last date if not in response
-		if( data0.collection[ data0.collection.length -1].DATE < resp.query.end){
+		if( data0.collection.length>0 && data0.collection[ data0.collection.length -1].DATE < resp.query.end){
 				var date = Date.parse( resp.query.end + "T00:00:00.000Z")
        	  		data["hidden"].push( [date, 0]);
         }
@@ -213,7 +226,7 @@ isgi.Collection = function( resp, indice, id){
 		var data0 = resp.result;
 		data0.collection.forEach( function( item){
 			var date = Date.parse(item.DATE+"T"+item.TIME +"Z"); 
-		    data["indice"].push([date, item[indice]]);
+		    data["indice"].push([date, item[ _this.nameindice ]]);
             if( _this.kp ){
                 data["kp"].push([date, isgi.kp2value( item[ _this.kp])]);
             }
@@ -291,7 +304,7 @@ isgi.Collection = function( resp, indice, id){
 	       	 });
 	       	 break;
 		case "Kp":
-			yAxis.push({ 
+			/*yAxis.push({ 
                 title: {
                     text: indice,
                     style: {
@@ -301,12 +314,12 @@ isgi.Collection = function( resp, indice, id){
                 },
                 tickInterval:3,
                 max: 9});
-		     break;
+		     break;*/
 		case "am":
 		case "aa":
 			 //@todo si moins d'un mois de données uniquement
 			// 2 yAxis (left: linear indice (default), right: Kp in column)
-            
+            if( _this.kp)
             yAxis.push({ 
                 title: {
                     text: _this.kp,
@@ -325,7 +338,7 @@ isgi.Collection = function( resp, indice, id){
                    title: {
                        useHTML: true,
                        text: '<span style="color:'+ _this.colors[1]+'">'+
-                       '<b>'+_this.indice+'</b></span> (' + isgi.infos[_this.indice].unit +')'
+                       '<b>'+_this.nameindice+'</b></span> (' + isgi.infos[_this.indice].unit +')'
                    }
                });
 			
@@ -383,16 +396,17 @@ isgi.Collection = function( resp, indice, id){
              }
              break;
 		case "Kp":
-			  series.push({
+			/*  series.push({
 	                 type: 'column',
 	                 name: _this.kp,
 	                 color: _this.colors[2],
 	                 data: _this.data["kp"]
 	                });
-			  break;
+			  break;*/
 		case "aa":
 		case "am":
 			//@todo only if less than 1 month
+			if( _this.kp){
 			 series.push({
                  type: 'column',
                  name: _this.kp,
@@ -401,10 +415,11 @@ isgi.Collection = function( resp, indice, id){
                  zIndex: 1,
                  data: _this.data["kp"]
                 });
+			}
         default:
         	 series.unshift({
                  type: 'line',
-                 name: _this.indice,
+                 name: _this.nameindice,
                  color: _this.colors[1],
                  zIndex: 2,
                  data: _this.data["indice"]
@@ -426,7 +441,7 @@ isgi.Collection = function( resp, indice, id){
                  var s =  Highcharts.dateFormat('%Y-%m-%d', this.x) ;
 
                  this.points.forEach(function(point, i) {
-                	 if(point.y>0)
+                	 if(point.y>0 && point.series.name == _this.indice)
                      s += '<br/><span style="color:'+ point.series.color +'">\u25AC</span> '+ point.series.name  ;
                      
                  });
@@ -440,6 +455,7 @@ isgi.Collection = function( resp, indice, id){
 		             var s =  Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) ;
 		
 		             this.points.forEach(function(point, i) {
+		            	 if( point.series.name == _this.indice)
 		                 s += '<br/><span style="color:'+ point.series.color +'">\u25AC</span> '+ point.series.name ;
 		             });
 		             return s;
@@ -475,7 +491,7 @@ isgi.Collection = function( resp, indice, id){
                 pointPadding: 0,
                 groupPadding: 0,
                 borderWidth: 1,
-                shadow: true
+               // shadow: true
             }
         }
 		if( ["SC", "SFE"].indexOf(_this.indice)>= 0){
@@ -532,6 +548,7 @@ isgi.Collection = function( resp, indice, id){
 	this.destroy = function(){
 		this.data = null;
 		this.indice = null;
+		this.error = null;
 		this.kp = null;
 		this.colors = null;
 		if( this.chart ){

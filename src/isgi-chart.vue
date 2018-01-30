@@ -77,6 +77,7 @@ export default {
    		windowResizeListener:null,
    		chart:null,
    		data: null,
+   		mainWidth:null,
    		infos:null,
    		collection:null,
    		width:null,
@@ -107,21 +108,36 @@ export default {
         	 return;
          }
          this.treatmentData(evt);
-         var container = this.$el.querySelector(".chart-container");
-         if( this.collection )
-         this.collection.createChart( container, this.width);
+         if(this.collection && !this.error && this.collection.error){
+        	 this.error = this.collection.error;
+        	 return;
+         }
+       
+         if( this.collection && !this.collection.error){
+        	  var container = this.$el.querySelector(".chart-container");
+        	   this.collection.createChart( container, this.width);
+        	   this.resize();
+         }
          return;
       },
+
       resize( evt){
     	   switch( this.indice){
            case "aa":
            case "am":
-               var margin = 15;
+        	   if( this.collection && this.collection.kp ){
+        		   var margin = 15;
+        	   }else{
+        		   var margin = 65;
+        	   }
                break;
            default:
                var margin = 65;
            }
-           this.width = evt.detail.mainWidth -margin;
+    	   if( evt){
+    		    this.mainWidth = evt.detail.mainWidth;
+    	   }
+           this.width = this.mainWidth -margin;
     	 
            if(this.collection){
            

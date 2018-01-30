@@ -104,7 +104,6 @@ export default {
 		  
 	},
 	dateChange: function(evt){
-		console.log("date change in child");
 		this.$emit("input");
 	},
 	  

@@ -41,10 +41,7 @@
      <footer>
     </footer>
     </formater-layout>
-   
-  
-  
-    
+
     </span>
 </template>
 <script>
@@ -59,14 +56,18 @@ export default {
 		return{
 			indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'Qdays', 'SC'/*, 'SFE', 'Qdays', 'CKdays'*/],
 			windowResizeListener: null,
+			windowScrollListener: null,
 			aerisThemeListener:null,
 			mainWidth:300
 		}
 	},
 	methods:{
-		emitMainWidth(){
+		resize(){
+			
 			this.computeMainWidth();
+	         this.computeMaxHeight();
 			var event = new CustomEvent('isgiResize', { detail:{mainWidth:this.mainWidth}});
+
 			document.dispatchEvent(event);
 		},
 		computeMainWidth(){
@@ -76,6 +77,22 @@ export default {
 	        this.mainWidth = width;
 			
 			 return width;
+		},
+		computeMaxHeight(){
+			if( this.$el && this.$el.querySelector){
+				//window height
+				var wh = window.innerHeight;
+				//position top
+				//var position = this.$el.querySelector("formater-layout").getBoundingClientRect();
+				//scroll
+				//var scroll = document.body.scrollTop;
+		
+				var maxHeight = Math.round( wh - 60 ) +"px";
+
+				this.$el.querySelector("aside").style.maxHeight = maxHeight;
+				this.$el.querySelector("main").style.maxHeight = maxHeight;
+				
+			}
 		},
 		addWidth( evt){
 			evt.detail.mainWidth = this.computeMainWidth();
@@ -90,7 +107,9 @@ export default {
 //     },
     created(){
         this.$i18n.locale = this.lang;
-        this.windowResizeListener = this.emitMainWidth.bind( this);
+        this.windowScrollListener = this.computeMaxHeight.bind( this);
+        window.addEventListener('scroll', this.windowScrollListener);
+        this.windowResizeListener = this.resize.bind( this);
         window.addEventListener('resize', this.windowResizeListener);
         this.aerisThemeListener = this.addWidth.bind( this);
         document.addEventListener('aerisTheme', this.aerisThemeListener);
@@ -99,12 +118,15 @@ export default {
     },
     mounted(){
     	this.computeMainWidth();
+    	this.computeMaxHeight();
     	
     },
     destroyed(){
+    	window.removeEventListener( 'scroll', this.windowScrollListener);
+        this.windowScrollListener = null;
     	 window.removeEventListener( 'resize', this.windowResizeListener);
          this.windowResizeListener = null;
-         document.removeAerisThemeListener('aerisTheme', this.aerisThemeListener);
+         document.removeEventListener('aerisTheme', this.aerisThemeListener);
          this.aerisThemeListener =null
     }
 }
@@ -116,9 +138,9 @@ export default {
 	-webkit-box-flex: 1;
 	-ms-flex: 1 1 auto;
 	flex: 1 1 auto;
-	    flex-grow: 1;
-	    flex-shrink: 1;
-	    flex-basis: auto;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
@@ -127,6 +149,8 @@ export default {
 	-ms-flex-direction: row;
 	flex-direction: row;
 	vertical-align:bottom;
+	box-shadow: 0 2px 5px rgba(0,0,0,.2);
+	 margin-bottom: 3px;
 }
 .isgi-layout > header img.isgi-logo{
     width:200px;
@@ -138,5 +162,17 @@ export default {
 .isgi-layout > header div.isgi-description{
     margin-top:80px;
     margin-left:20px;
+    }
+    .isgi-layout .formater-wrapper > aside{
+    min-height:400px;
+    overflow-y:auto;
+    width:300px;
+    overflow-x:hidden;
+    }
+    .isgi-layout .formater-wrapper > main{
+    min-height:400px;
+    overflow-y:auto;
+    overflow-x:hidden;
+    margin-bottom:20px;
     }
 </style>
