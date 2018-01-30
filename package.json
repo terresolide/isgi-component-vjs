@@ -1,6 +1,6 @@
 {
   "name": "isgi-component-vjs",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Connexion isgi Webservice for Web component",
   "preproduction": {
     "url": "https://rawgit.com/terresolide/"
