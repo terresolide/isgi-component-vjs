@@ -66,8 +66,8 @@ export default {
       },
       url:{
           type: String,
-      	 // default: 'http://api.formater/cds/isgi/data'
-          default: 'http://formater.art-sciences.fr/cds/isgi/data'
+      	  default: 'http://api.formater/cds/isgi/data'
+         // default: 'http://formater.art-sciences.fr/cds/isgi/data'
           
       },
      indices:{
@@ -193,7 +193,7 @@ export default {
   created: function(){
       this.$i18n.locale = this.lang;
       //search user used for request
-     
+      console.log(this.indices);
       this.aerisThemeListener = this.handleTheme.bind(this) 
       document.addEventListener('aerisTheme', this.aerisThemeListener);
  

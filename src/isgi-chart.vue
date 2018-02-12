@@ -16,9 +16,9 @@
         } 
 </i18n>
 
-<template> <span class="isgi-chart"
-	:class="{hidden: !data && !error, showBody: isdeployed}"> <header
-		class="box-heading">
+<template> 
+<span class="isgi-chart" :class="{hidden: !data && !error, showBody: isdeployed}"> 
+	<header class="box-heading">
 		<div class="box-title">
 			<h4>{{$t("indice")}} {{indice}}</h4>
 		</div>
@@ -88,6 +88,9 @@ export default {
   },
   methods: {
 	  treatmentData( evt){
+		  	if(this.collection){
+		  		this.collection.destroy();
+		  	}
 	         var id = this.id;
 	         
 	         if( evt.detail.result.error ){
@@ -108,6 +111,7 @@ export default {
         	 return;
          }
          this.treatmentData(evt);
+       
          if(this.collection && !this.error && this.collection.error){
         	 this.error = this.collection.error;
         	 return;
@@ -125,14 +129,15 @@ export default {
     	   switch( this.indice){
            case "aa":
            case "am":
+           case "Kp":
         	   if( this.collection && this.collection.kp ){
-        		   var margin = 15;
+        		   var margin = 20;
         	   }else{
-        		   var margin = 65;
+        		   var margin = 70;
         	   }
                break;
            default:
-               var margin = 65;
+               var margin = 70;
            }
     	   if( evt){
     		    this.mainWidth = evt.detail.mainWidth;

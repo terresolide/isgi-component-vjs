@@ -10,7 +10,7 @@
    },
    "fr":{
          "isgi": "Service International des Indices Géomagnétiques",
-          "description":"<b>ISGI</b> est le service de référence de l'Association Internationale de Géomagnétisme et Aéronomie (IAGA) pour la validation, la diffusion et la gestion des indices géomagnétiques (avec la collaboration de 6 Instituts Internationaux) à travers leur portail web. <br /><br /><b>ISGI</b> est le service officiel français du <b>CNRS-INSU</b> disposant d'une double étiquette, à la fois présent dans le &laquo;Pôle Terre Solide&raquo; <b>TS‑ANO4</b> (Observation National en Magnétisme) et dans  &laquo;Astronomie-Astrophysiques&raquo; <b>AA‑ANO6</b> (Surveillance du Soleil et de l'Espace Environnant la Terre)."
+          "description":"<b>ISGI</b> est le service de référence de l'Association Internationale de Géomagnétisme et Aéronomie (IAGA) pour la validation, la diffusion et la gestion des indices géomagnétiques (avec la collaboration de 6 Instituts Internationaux) à travers leur portail web. <br /><br /><b>ISGI</b> est le service officiel français du <b>CNRS-INSU</b> disposant d'une double étiquette, à la fois présent dans  &laquo;Terre Solide&raquo; <b>TS‑ANO4</b> (Observation National en Magnétisme) et dans  &laquo;Astronomie-Astrophysiques&raquo; <b>AA‑ANO6</b> (Surveillance du Soleil et de l'Espace Environnant la Terre)."
       
    }
 }
@@ -54,7 +54,7 @@ export default {
 	},
 	data(){
 		return{
-			indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'Qdays', 'SC'/*, 'SFE', 'Qdays', 'CKdays'*/],
+			indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'Qdays', 'SC', 'SFE'/*, 'Qdays', 'CKdays'*/],
 			windowResizeListener: null,
 			windowScrollListener: null,
 			aerisThemeListener:null,
@@ -114,6 +114,7 @@ export default {
         this.aerisThemeListener = this.addWidth.bind( this);
         document.addEventListener('aerisTheme', this.aerisThemeListener);
         if( isgi ) this.indices = isgi.indices();
+    
         
     },
     mounted(){

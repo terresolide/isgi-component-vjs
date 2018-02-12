@@ -29,13 +29,15 @@ isgi.infos={
 		PC: { unit: "mV/m", color: "#3366ff", url:"http://isgi.unistra.fr/indices_pc.php"},
 		AE: { unit: "nT", color: "#ff0000", url:"http://isgi.unistra.fr/indices_ae.php"},
 		Qdays: {unit: "", color:"#ff0000", url:"http://isgi.unistra.fr/events_qdays.php"},
-		SC: {unit: "", color: "#669933" , url:"http://isgi.unistra.fr/events_sc.php"}
+		SC: {unit: "", color: "#669933" , url:"http://isgi.unistra.fr/events_sc.php"},
+		SFE: {unit: "", color: "#FF8000" , url:"http://isgi.unistra.fr/events_sfe.php"}
 		
 }
 
 isgi.red = "#DB1702";
 isgi.green = "#32CD32";
 isgi.kpgreen ="#339933";
+isgi.grey = "#929292";
 
 isgi.indices = function(){
 	return Object.keys( this.infos);
@@ -75,7 +77,7 @@ isgi.getUrl= function( resp ){
 	return resp.result.meta.get("isgi_url");
 }
 
-isgi.Collection = function( resp, indice, id){
+isgi.Collection = function( resp, indice, id, lang){
 	this.indice = indice;
 	this.nameindice = indice == "Kp"? "ap":indice;
 	this.id = id;
@@ -84,6 +86,7 @@ isgi.Collection = function( resp, indice, id){
 	this.error = null;
 	this.colors = new Array();
     var _this = this;
+    var _provisional = false;
 
     _initColors( id );
     this.data = _treatmentData( resp);
@@ -145,15 +148,18 @@ isgi.Collection = function( resp, indice, id){
 	
 		var data0 = resp.result;
 		var nodata = resp.result.meta.get("no_data");
+		_provisional = resp.result.meta.get("provisional");
 		data[ _this.indice ] = new Array();
 		data["hidden"] = new Array();
-		//case unreadable data
-		if( data0.collection.length == 0){
-			_this.error = "UNREADABLE DATA";
+		data["noData"] = new Array();
+		if(_provisional){
+			data["PROVI"] = new Array();
 		}
-		//nodata ="2018-01-01";
+		
+
 		//add begin date if not Qdays or Ddays
-		if( data0.collection.length>0 && data0.collection[0].DATE > resp.query.start){
+		if(data0.collection.length == 0 ||
+				data0.collection[0].DATE > resp.query.start){
 			// Add 2 days with value 0 at the beginning to begin graph with the start date
 			// and have same scale that others graph
 			var date = Date.parse( resp.query.start + "T00:00:00.000Z");
@@ -164,15 +170,30 @@ isgi.Collection = function( resp, indice, id){
 		
 		data0.collection.forEach( function( item){
 			 var date = Date.parse(item.DATE+"T"+item.TIME + "Z"); 
-			 
-			data[ _this.indice ].push( [date, 1]);
+			 if(item.PROVI){
+				 data[ "PROVI" ].push( [date, 1]);
+			 }else{
+				 data[ _this.indice ].push( [date, 1]);
+			 }
 			
 			data["hidden"].push([date, 0]);
 		});
 		// add last date if not in response
-		if( data0.collection.length>0 && data0.collection[ data0.collection.length -1].DATE < resp.query.end){
-				var date = Date.parse( resp.query.end + "T00:00:00.000Z")
-       	  		data["hidden"].push( [date, 0]);
+		// add last date if not Qdays or Ddays
+		if( data0.collection.length == 0 || data0.collection[ data0.collection.length -1].DATE < resp.query.end){
+			if( nodata){
+			
+				var date = Date.parse( nodata);
+				data["noData"] =  new Array();
+				data["noData"].push([ date  , 1]);
+				var date = Date.parse( resp.query.end + "T23:59:00.000Z") ;
+				
+	       	  	data["noData"].push( [date, 1]);
+			}else{
+				var date = Date.parse( resp.query.end + "T23:59:00.000Z");
+				data["hidden"].push([date,0]);
+			}
+       	  	
         }
 		
 		return data;
@@ -192,6 +213,7 @@ isgi.Collection = function( resp, indice, id){
 		data0.collection.forEach( function( item){
 			var date = Date.parse(item.DATE + "T12:00:00.000Z"); 
 			if( item.DAYS.indexOf("D") >=0){
+				
 				data["Ddays"].push([date, 1]);
 			}else{
 				data["Qdays"].push([date, 1]);
@@ -279,8 +301,16 @@ isgi.Collection = function( resp, indice, id){
         	 });
         	 break;
 		case "SC":
-			var html = '<span style="color:'+_this.colors[1]+';">'+
+		case "SFE":
+			var html = "";
+			html += '<span style="color:'+_this.colors[1]+';">'+
             '<b>'+ _this.indice + '</b></span> ';
+			
+			//case provisional data
+			if(_provisional){
+				html += ' / <span style="color:'+isgi.grey+';">'+
+            '<b>Provisional Data</b></span> ';
+			}
 	       	 yAxis.push({
 	       		 title:{
 	       			 useHTML: true,
@@ -362,16 +392,34 @@ isgi.Collection = function( resp, indice, id){
 	                data: _this.data["PCS"]});
 			 break;
 		case "SC":
+		case "SFE":
+			if(_this.data[_this.indice].length>0)
 			 series.push({
         		 name: _this.indice,
         		 color: _this.colors[2],
         		 data:_this.data[ _this.indice],
         	 });
+			 if( _provisional && _this.data["PROVI"].length>0){
+				 series.push({
+	        		 name: _this.indice + " provisional",
+	        		 color: isgi.grey,
+	        		 data:_this.data["PROVI"],
+	        	 });
+			 }
+			 if( _this.data["hidden"].length)
 			 series.push({
-        		 name: "",
+        		 name: "hidden",
         		 color: "#fff",
         		 data:_this.data["hidden"],
         	 });
+			 if( _this.data["noData"].length){
+	             series.push({
+	            	 name: "no data",
+	            	 type: "area",
+	            	 color: "#cccccc",
+	            	 data: _this.data["noData"]
+	             })
+             }
 			 break;
 		case "Qdays":
 			 series.push({
@@ -441,8 +489,9 @@ isgi.Collection = function( resp, indice, id){
                  var s =  Highcharts.dateFormat('%Y-%m-%d', this.x) ;
 
                  this.points.forEach(function(point, i) {
-                	 if(point.y>0 && point.series.name == _this.indice)
+                	 if(point.y>0)
                      s += '<br/><span style="color:'+ point.series.color +'">\u25AC</span> '+ point.series.name  ;
+                	 
                      
                  });
 
@@ -455,8 +504,9 @@ isgi.Collection = function( resp, indice, id){
 		             var s =  Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) ;
 		
 		             this.points.forEach(function(point, i) {
-		            	 if( point.series.name == _this.indice)
+		            	 if( point.series.name != "hidden")
 		                 s += '<br/><span style="color:'+ point.series.color +'">\u25AC</span> '+ point.series.name ;
+		            	 
 		             });
 		             return s;
 	             }
@@ -495,7 +545,7 @@ isgi.Collection = function( resp, indice, id){
             }
         }
 		if( ["SC", "SFE"].indexOf(_this.indice)>= 0){
-			plotOptions.column = { pointWidth:3 }
+			plotOptions.column = { pointWidth:4 }
 		}
 		return plotOptions;
 	}
