@@ -24,7 +24,7 @@
 	
 	<form id="isgi-form" >
 		<formater-search-box header-icon-class="fa fa-bars" :title="$t('indices')" :value="index" @input="index = $event.target.value" deployed="true">
-			<formater-select width="260px" name="index" multiple="true" :options="indices"  ></formater-select>
+			<formater-select width="260px" name="index" multiple="true" type="associative" :options="indices"  ></formater-select>
 		</formater-search-box>
 		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true" >	
 			 <isgi-temporal-search :lang="lang" ></isgi-temporal-search>
@@ -71,7 +71,7 @@ export default {
           
       },
      indices:{
-    	  default:"aa,am,Kp,Dst,PC,AE,SC,SFE,Qdays,CKdays"
+    	  default:"aa,am,Kp,Dst,PC,AE,SC,SFE,Qdays"
      }
       
   },
@@ -109,15 +109,18 @@ export default {
 	          return;
 	      }
 	  },
-	  callApi(e){	     
-	       this.call( e.detail,0);
+	  callApi(e){	
+		  // reset if dates change
+		  
+		  this.call( e.detail,0);
 	  },
 	  /**
 	   * recursive request to api.formater
 	   */
 	  call( detail, i){
 		  if( i < detail.index.length){
-			  var url = this.url +"/"+ detail.index[i];
+			  var index = isgi.name2index(detail.index[i]);
+			  var url = this.url +"/"+ index;
 	          var data = {}
 	          if(detail.start){
 	              data.start = detail.start;
@@ -193,7 +196,7 @@ export default {
   created: function(){
       this.$i18n.locale = this.lang;
       //search user used for request
-      console.log(this.indices);
+    
       this.aerisThemeListener = this.handleTheme.bind(this) 
       document.addEventListener('aerisTheme', this.aerisThemeListener);
  

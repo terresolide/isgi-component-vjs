@@ -31,7 +31,7 @@
     
     <div class="formater-wrapper">
         <aside>
-            <isgi-form :lang="lang" :indices="indices"></isgi-form>   
+            <isgi-form :lang="lang" :indices="JSON.stringify(indices)"></isgi-form>   
         </aside>
         <main>
             <isgi-chart :lang="lang" v-for="(indice, id) in indices" :indice="indice" :key="id" :width="mainWidth"  :id="id" ></isgi-chart>
@@ -114,6 +114,22 @@ export default {
         this.aerisThemeListener = this.addWidth.bind( this);
         document.addEventListener('aerisTheme', this.aerisThemeListener);
         if( isgi ) this.indices = isgi.indices();
+        if(this.lang == "fr"){
+            Highcharts.setOptions({
+                lang: {
+                    months: [
+                        'Janvier', 'Février', 'Mars', 'Avril',
+                        'Mai', 'Juin', 'Juillet', 'Août',
+                        'Septembre', 'Octobre', 'Novembre', 'Décembre'
+                    ],
+                    weekdays: [
+                        'Dimanche', 'Lundi', 'Mardi', 'Mercredi',
+                        'Jeudi', 'Vendredi', 'Samedi'
+                    ],
+                    shortMonths: ["Jan" , "Fév" , "Mar" , "Apr" , "Mai" , "Jun" , "Jul" , "Aut" , "Sep" , "Oct" , "Nov" , "Déc"]
+                }
+            });
+         }
     
         
     },

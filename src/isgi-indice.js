@@ -22,27 +22,53 @@ function shadeColor(color, percent) {
 var isgi = isgi || {}
 
 isgi.infos={
-		aa: { unit: "nT", color: "#336699", url:"http://isgi.unistra.fr/indices_aa.php"},
-		am: { unit: "nT", color:"#cc33cc", url:"http://isgi.unistra.fr/indices_am.php"},
-		Kp: { unit: "2nT", color:"#339933",  url:"http://isgi.unistra.fr/indices_kp.php"},
-		Dst: { unit: "nT", color: "#ff6633", url:"http://isgi.unistra.fr/indices_dst.php"},
-		PC: { unit: "mV/m", color: "#3366ff", url:"http://isgi.unistra.fr/indices_pc.php"},
-		AE: { unit: "nT", color: "#ff0000", url:"http://isgi.unistra.fr/indices_ae.php"},
-		Qdays: {unit: "", color:"#ff0000", url:"http://isgi.unistra.fr/events_qdays.php"},
-		SC: {unit: "", color: "#669933" , url:"http://isgi.unistra.fr/events_sc.php"},
-		SFE: {unit: "", color: "#FF8000" , url:"http://isgi.unistra.fr/events_sfe.php"}
+		aa: { name: "aa", unit: "nT", color: "#336699", url:"http://isgi.unistra.fr/indices_aa.php"},
+		am: { name: "am", unit: "nT", color:"#cc33cc", url:"http://isgi.unistra.fr/indices_am.php"},
+		Kp: { name: "Kp", unit: "2nT", color:"#339933",  url:"http://isgi.unistra.fr/indices_kp.php"},
+		Dst: { name: "Dst", unit: "nT", color: "#ff6633", url:"http://isgi.unistra.fr/indices_dst.php"},
+		PC: { name: "PC", unit: "mV/m", color: "#3366ff", url:"http://isgi.unistra.fr/indices_pc.php"},
+		AE: { name: "AE", unit: "nT", color: "#ff0000", url:"http://isgi.unistra.fr/indices_ae.php"},
+		Qdays: { name: "Qdays", unit: "", color:"#ff0000", url:"http://isgi.unistra.fr/events_qdays.php"},
+		SC: { name: "SC", unit: "", color: "#669933" , url:"http://isgi.unistra.fr/events_sc.php"},
+		SFE: { name: "SFE", unit: "", color: "#FF8000" , url:"http://isgi.unistra.fr/events_sfe.php"},
+		asigma: {name: "a&sigma;", unit: "nT", color:"", url:"http://isgi.unistra.fr/indices_asigma.php"}
 		
 }
 
-isgi.red = "#DB1702";
-isgi.green = "#32CD32";
-isgi.kpgreen ="#339933";
-isgi.grey = "#929292";
+/**define some colors*/
+isgi.colors ={
+		red :	"#DB1702",
+		green : "#32CD32",
+		kpgreen :"#339933",
+		grey :	"#929292",
+		dawn :	"#32cd32",
+		noon :  "#ff3333",
+		dusk :	"#6666ff",
+		midnight: "#ff8000"
+};
+
+["dawn", "noon", "dusk", "midnight"].forEach( function(key){
+	//lighten colors for provisional serie (width id dawn_P, noon_P ...etc)
+	isgi.colors[ key + "_P"]= shadeColor( isgi.colors[key],0.3);
+});
+
 
 isgi.indices = function(){
-	return Object.keys( this.infos);
-}
 
+	var indices = {};
+	for( var key in isgi.infos){
+	     indices[key] = isgi.infos[key].name;
+	}
+	
+	return indices;
+}
+isgi.name2index = function(name){
+	if(name == "a&sigma;"){
+		return "asigma";
+	}else{
+		return name;
+	}
+}
 
 /**
  * prepare data for highcharts
@@ -76,6 +102,34 @@ isgi.getKpName = function( obj ){
 isgi.getUrl= function( resp ){
 	return resp.result.meta.get("isgi_url");
 }
+isgi.tr = {
+		fr:{
+			provisional: "provisoire",
+			provisional_data: "Données provisoires",
+			dawn: "dawn",
+			noon: "noon",
+			dusk: "dusk",
+			midnight: "midnight",
+			dawn_P: "dawn provisoire",
+			noon_P: "noon provisoire",
+			dusk_P: "dusk provisoire",
+			midnight_P: "midnight provisoire",
+			
+		},
+		en:{
+			provisional: "provisional",
+			provisional_data: "Provisional Data",
+			dawn: "dawn",
+			noon: "noon",
+			dusk: "dusk",
+			midnight: "midnight",
+			dawn_P: "provisional dawn",
+			noon_P: "provisional noon",
+			dusk_P: "provisional dusk",
+			midnight_P: "provisional midnight"
+		}
+		
+}
 
 isgi.Collection = function( resp, indice, id, lang){
 	this.indice = indice;
@@ -95,19 +149,20 @@ isgi.Collection = function( resp, indice, id, lang){
     	
     	//@todo can choose my own colors
     	if( _this.indice == "Kp"){
-    		_this.colors[0] = isgi.kpgreen;
+    		_this.colors[0] = isgi.colors.kpgreen;
     	}else{
     		_this.colors[0] = Highcharts.getOptions().colors[id];
     	}
-    	_this.colors[0] = isgi.infos[ _this.indice].color;
+    	_this.colors[0] = isgi.infos[ _this.id].color;
     	_this.colors[1] = shadeColor( _this.colors[0], -.2);
     	_this.colors[2] = shadeColor( _this.colors[0], .1);
     }
 
 
 	function _treatmentData( resp ){
-		
-		switch(_this.indice){
+	
+
+		switch(_this.id){
 		case "PC":
 	    	 var data = _treatmentDataPC( resp);
 			break;
@@ -117,6 +172,10 @@ isgi.Collection = function( resp, indice, id, lang){
 			break;
 		case "Qdays":
 			var data = _treatmentDataQdays( resp );
+			break;
+			
+		case "asigma":
+			var data = _treatmentDataAsigma(resp);
 			break;
 	    default:
 	    	var data = _treatmentDataDefault(resp );
@@ -156,18 +215,15 @@ isgi.Collection = function( resp, indice, id, lang){
 			data["PROVI"] = new Array();
 		}
 		
-
-		//add begin date if not Qdays or Ddays
-		if(data0.collection.length == 0 ||
-				data0.collection[0].DATE > resp.query.start){
-			// Add 2 days with value 0 at the beginning to begin graph with the start date
-			// and have same scale that others graph
-			var date = Date.parse( resp.query.start + "T00:00:00.000Z");
-			data["hidden"].push( [date, 0]);
-			var next = Date.parse( resp.query.start + "T23:59:59.999Z");
-			data["hidden"].push( [date, 0]);
-		}
+		//begining of graph need have value to zero
+		var date = Date.parse( resp.query.start + "T00:00:00.000Z");
+		data["hidden"].push( [date, 0]);
 		
+		date += 24*3600*1000;
+		data["hidden"].push( [date, 0]);
+		
+
+	
 		data0.collection.forEach( function( item){
 			 var date = Date.parse(item.DATE+"T"+item.TIME + "Z"); 
 			 if(item.PROVI){
@@ -238,6 +294,28 @@ isgi.Collection = function( resp, indice, id, lang){
 		
 		return data;
 	}
+	function _treatmentDataAsigma(resp){
+		var data = new Array();
+		["dawn", "noon", "dusk", "midnight", "dawn_P", "noon_P", "dusk_P", "midnight_P"].forEach(function( field){
+		   data[field] =  new Array();
+		})
+		data["hidden"]= new Array();
+		
+		var data0 = resp.result;
+	    data0.collection.forEach( function( item){
+             var date = Date.parse(item.DATE+"T"+item.TIME+"Z"); 
+             ["dawn", "noon", "dusk", "midnight", "dawn_P", "noon_P", "dusk_P", "midnight_P"].forEach(function( field){
+            	 if( item[field]){
+            		 data[field].push([date, item[field]]);
+            	 }
+             })
+           	 
+	    });
+	    var date = Date.parse( resp.query.end );
+		data["hidden"].push([date,0]);
+	    return data;
+		
+	}
 	function _treatmentDataDefault( resp ){
 		
 		var data = new Array();
@@ -256,6 +334,7 @@ isgi.Collection = function( resp, indice, id, lang){
 		 return data;
 		
 	}
+
 
 	function _chart( width){
 		  var chart = {
@@ -287,12 +366,12 @@ isgi.Collection = function( resp, indice, id, lang){
 	}
 	function _yAxis(  ){
 		var yAxis = new Array();
-		switch( _this.indice ){
+		switch( _this.id ){
 		case "PC":
 			 //only one axis 
 			 var html = '<span style="color:'+ _this.colors[1]+'">'+
              '<b>PCN</b></span> / <span style="color:'+
-             isgi.red +';"><b>PCS</b></span> (' + isgi.infos.PC.unit+ ')';
+             isgi.colors.red +';"><b>PCS</b></span> (' + isgi.infos.PC.unit+ ')';
         	 yAxis.push({ 
                      title: {
                         useHTML: true,
@@ -308,8 +387,8 @@ isgi.Collection = function( resp, indice, id, lang){
 			
 			//case provisional data
 			if(_provisional){
-				html += ' / <span style="color:'+isgi.grey+';">'+
-            '<b>Provisional Data</b></span> ';
+				html += ' / <span style="color:'+isgi.colors.grey+';">'+
+            '<b>'+ isgi.tr[ lang ].provisional_data +'</b></span> ';
 			}
 	       	 yAxis.push({
 	       		 title:{
@@ -321,9 +400,9 @@ isgi.Collection = function( resp, indice, id, lang){
 	       	 });
 	       	 break;
 		case "Qdays":
-			var html = '<span style="color:'+isgi.red +';">'+
+			var html = '<span style="color:'+isgi.colors.red +';">'+
             '<b>Ddays</b></span> / <span style="color:'+
-            isgi.green +'"><b>Qdays</b></span>';
+            isgi.colors.green +'"><b>Qdays</b></span>';
 	       	 yAxis.push({
 	       		 title:{
 	       			 useHTML: true,
@@ -333,18 +412,20 @@ isgi.Collection = function( resp, indice, id, lang){
 	             tickInterval:1
 	       	 });
 	       	 break;
+		case "asigma":
+			var html = '';
+			["dawn", "noon", "dusk", "midnight"].forEach( function(key){
+				html += '<span style="color:'+isgi.colors[key] +';">'+
+	            '<b>'+ key + '</b></span> ';
+			});
+			html += "(" + isgi.infos[ _this.id ].unit +")";
+	       	 yAxis.push({
+	       		 title:{
+	       			 useHTML: true,
+	       			 text:html}
+	       	 });
+	       	 break;
 		case "Kp":
-			/*yAxis.push({ 
-                title: {
-                    text: indice,
-                    style: {
-                        color: _this.colors[2],
-                        fontWeight: 'bold'
-                    }
-                },
-                tickInterval:3,
-                max: 9});
-		     break;*/
 		case "am":
 		case "aa":
 			 //@todo si moins d'un mois de données uniquement
@@ -368,7 +449,7 @@ isgi.Collection = function( resp, indice, id, lang){
                    title: {
                        useHTML: true,
                        text: '<span style="color:'+ _this.colors[1]+'">'+
-                       '<b>'+_this.nameindice+'</b></span> (' + isgi.infos[_this.indice].unit +')'
+                       '<b>'+_this.nameindice+'</b></span> (' + isgi.infos[_this.id].unit +')'
                    }
                });
 			
@@ -378,7 +459,7 @@ isgi.Collection = function( resp, indice, id, lang){
 	}
 	function _series( ){
 		var series = new Array();
-		switch( _this.indice ){
+		switch( _this.id ){
 		case "PC":
 			 series.push({
                  type: 'line',
@@ -388,8 +469,27 @@ isgi.Collection = function( resp, indice, id, lang){
 			 series.push({
 	                type: 'line',
 	                name: 'PCS',
-	                color: isgi.red,
+	                color: isgi.colors.red,
 	                data: _this.data["PCS"]});
+			 break;
+		case "asigma":
+
+			["dawn", "noon", "dusk", "midnight", "dawn_P", "noon_P", "dusk_P", "midnight_P"].forEach(function(key){
+				if(_this.data[key] && _this.data[key].length > 0)
+				series.push({
+	                type: 'line',
+	                name: isgi.tr[lang][key],
+	                color: isgi.colors[key],
+	                data: _this.data[key] }
+				);
+			})
+			series.push({
+                type: 'column',
+                name: "hidden",
+                color: "#ffffff",
+                data: _this.data["hidden"] }
+			);
+		
 			 break;
 		case "SC":
 		case "SFE":
@@ -401,8 +501,8 @@ isgi.Collection = function( resp, indice, id, lang){
         	 });
 			 if( _provisional && _this.data["PROVI"].length>0){
 				 series.push({
-	        		 name: _this.indice + " provisional",
-	        		 color: isgi.grey,
+	        		 name: _this.id+ " "+ isgi.tr[lang].provisional,
+	        		 color: isgi.colors.grey,
 	        		 data:_this.data["PROVI"],
 	        	 });
 			 }
@@ -424,13 +524,13 @@ isgi.Collection = function( resp, indice, id, lang){
 		case "Qdays":
 			 series.push({
         		 name: "Ddays",
-        		 color: isgi.red,
+        		 color: isgi.colors.red,
         		 data:_this.data["Ddays"],
         		 stack: "Days"
         	 });
         	 series.push({
         		 name: "Qdays",
-        		 color: isgi.green,
+        		 color: isgi.colors.green,
                  data:_this.data["Qdays"],
                  stack: "Days"
              })
@@ -486,7 +586,7 @@ isgi.Collection = function( resp, indice, id, lang){
 		 case "Qdays":
 			 tooltip.borderColor = "#ccc";
              tooltip.formatter = function() {
-                 var s =  Highcharts.dateFormat('%Y-%m-%d', this.x) ;
+                 var s =  Highcharts.dateFormat('%e %b %Y', this.x) ;
 
                  this.points.forEach(function(point, i) {
                 	 if(point.y>0)
@@ -501,7 +601,7 @@ isgi.Collection = function( resp, indice, id, lang){
 		 case "SC":
 		 case "SFE":
 				 tooltip.formatter = function() {
-		             var s =  Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) ;
+		             var s =  Highcharts.dateFormat('%e %b %Y %H:%M', this.x) ;
 		
 		             this.points.forEach(function(point, i) {
 		            	 if( point.series.name != "hidden")
@@ -513,11 +613,13 @@ isgi.Collection = function( resp, indice, id, lang){
 			 break;
 		  default:
 			 tooltip.formatter = function() {
-	             var s =  Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) ;
+	             var s =  Highcharts.dateFormat('%e %b %Y %H:%M', this.x) ;
 	
 	             this.points.forEach(function(point, i) {
+	            	 if( point.series.name != "hidden")
 	                 s += '<br/><span style="color:'+ point.series.color +'">\u25AC</span> '+ point.series.name +': ' ;
 	                 if (point.series.type=='column') {
+	                	 //Kp values
 	                     if ((point.y - Math.floor(point.y))==0) { s+= Math.floor(point.y) +'o'; }
 	                     if (((point.y - Math.floor(point.y))>0) && ((point.y - Math.floor(point.y))<0.4)) { s+= Math.floor(point.y) +'+'; }
 	                     if ((point.y - Math.floor(point.y))>0.6) { s+= Math.round(point.y) +'-'; }
@@ -552,10 +654,7 @@ isgi.Collection = function( resp, indice, id, lang){
 
 	this.createChart = function( container, width){
 		var events = {}
-		events.load = function(){
-			console.log( "load");
-			console.log( this);
-		}
+		
 		this.chart = Highcharts.chart(container, {
 	           
             chart:_chart(width),

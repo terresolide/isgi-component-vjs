@@ -5,14 +5,14 @@
         "download": "Download", 
         "delete": "Remove", 
         "reduce": "Reduce",
-        "extend": "Extend" }, 
+        "extend": "Extend"}, 
      "fr": { 
         "indice": "indice", 
         "about_indice": "A propos de cet indice", 
         "download": "Télécharger", 
         "delete": "Supprimer",
         "reduce": "Réduire", 
-        "extend": "Déployer" } 
+        "extend": "Déployer"} 
         } 
 </i18n>
 
@@ -20,12 +20,12 @@
 <span class="isgi-chart" :class="{hidden: !data && !error, showBody: isdeployed}"> 
 	<header class="box-heading">
 		<div class="box-title">
-			<h4>{{$t("indice")}} {{indice}}</h4>
+			<h4>{{$t("indice")}} <span v-html="indice"></span></h4>
 		</div>
 		<div class="box-heading-buttons">
 			<a :href="isgi_url" v-if="isgi_url" :title="$t('download')"> <i
 				class="fa fa-download isgi-white"></i>
-			</a> <a :href="infos[indice].url" :title="$t('about_indice')"
+			</a> <a :href="infos[id].url" :title="$t('about_indice')"
 				target="_blank"> <i class="fa fa-question isgi-white"></i>
 			</a> <span :title="isdeployed? $t('reduce'):$t('extend')"
 				@click="isdeployed = !isdeployed"> <i class="chevron"
@@ -54,8 +54,8 @@ export default {
     	default:null
     },
     id:{
-    	type: Number,
-    	default:0
+    	type: String,
+    	default:""
     },
     openIconClass:  {
         type: String,
@@ -97,17 +97,19 @@ export default {
 	        	 this.error = evt.detail.result.error;
 
 	        	 return false;
+	         }else{
+	        	 this.error = null;
 	         }
 	         if(isgi){
 		         this.isgi_url = isgi.getUrl(evt.detail);
-	             this.collection = new isgi.Collection( evt.detail, this.indice, this.id);
+	             this.collection = new isgi.Collection( evt.detail, this.indice, this.id, this.lang);
 	             if( this.collection){
 	            	   this.data = this.collection.data;
 		         }
 	         }
 	  },
       createChart(evt){
-         if( evt.detail.query.index != this.indice ){
+         if( evt.detail.query.index != this.id ){
         	 return;
          }
          this.treatmentData(evt);
