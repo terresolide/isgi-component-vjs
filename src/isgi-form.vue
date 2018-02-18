@@ -121,18 +121,18 @@ export default {
 		  if( i < detail.index.length){
 			  var index = isgi.name2index(detail.index[i]);
 			  var url = this.url +"/"+ index;
-	          var data = {}
+	          var data = {};
+	          var now = moment();
+	         
+	          if(detail.end && detail.end < now.format("YYYY-MM-DD")){
+	        		  data.end = detail.end;
+	          }else{
+	        	  data.end = now.format("YYYY-MM-DD");
+	          }
 	          if(detail.start){
 	              data.start = detail.start;
-	          }
-	          if(detail.end){
-	        	  var now = new Date().toISOString().slice(0,10);
-
-	        	  if( detail.end > now){
-	        		  data.end = now;
-	        	  }else{
-	        		  data.end = detail.end;
-	        	  }
+	          }else{
+	        	  data.start =  now.subtract(7, "days").format("YYYY-MM-DD");
 	          }
 	          var query = data;
 	          query.index = detail.index[i];

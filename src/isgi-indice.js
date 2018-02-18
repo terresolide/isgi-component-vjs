@@ -28,6 +28,7 @@ isgi.infos={
 		Dst: { name: "Dst", unit: "nT", color: "#ff6633", url:"http://isgi.unistra.fr/indices_dst.php"},
 		PC: { name: "PC", unit: "mV/m", color: "#3366ff", url:"http://isgi.unistra.fr/indices_pc.php"},
 		AE: { name: "AE", unit: "nT", color: "#ff0000", url:"http://isgi.unistra.fr/indices_ae.php"},
+		CKdays: { name: "CKdays", unit: "", color:"#ff0000", url:"http://isgi.unistra.fr/events_ckdays.php"},
 		Qdays: { name: "Qdays", unit: "", color:"#ff0000", url:"http://isgi.unistra.fr/events_qdays.php"},
 		SC: { name: "SC", unit: "", color: "#669933" , url:"http://isgi.unistra.fr/events_sc.php"},
 		SFE: { name: "SFE", unit: "", color: "#FF8000" , url:"http://isgi.unistra.fr/events_sfe.php"},
@@ -181,8 +182,21 @@ isgi.Collection = function( resp, indice, id, lang){
 	    	var data = _treatmentDataDefault(resp );
 		
 		}
+		console.log(data.hidden);
 		return data;
 		
+	}
+	function _addHidden( data, query){
+
+		data.hidden = new Array();
+		
+		var date = Date.parse( query.start + "T00:00:00.000Z");
+	    data.hidden.push([date, 0]);
+	    date += 24*3600*1000;
+		data.hidden.push( [date, 0]);
+	    var date = Date.parse( query.end + "T23:59:00.000Z");
+		data.hidden.push([date,0]);
+		return data;
 	}
 	function _treatmentDataPC(resp){
 		var data = new Array();
@@ -199,6 +213,7 @@ isgi.Collection = function( resp, indice, id, lang){
                  data.PCN.push([date, item.PCN]);
              }
 	    });
+	    data = _addHidden(data, resp.query);
 	    return data;
 		
 	}
@@ -209,20 +224,10 @@ isgi.Collection = function( resp, indice, id, lang){
 		var nodata = resp.result.meta.get("no_data");
 		_provisional = resp.result.meta.get("provisional");
 		data[ _this.indice ] = new Array();
-		data["hidden"] = new Array();
 		data["noData"] = new Array();
 		if(_provisional){
 			data["PROVI"] = new Array();
 		}
-		
-		//begining of graph need have value to zero
-		var date = Date.parse( resp.query.start + "T00:00:00.000Z");
-		data["hidden"].push( [date, 0]);
-		
-		date += 24*3600*1000;
-		data["hidden"].push( [date, 0]);
-		
-
 	
 		data0.collection.forEach( function( item){
 			 var date = Date.parse(item.DATE+"T"+item.TIME + "Z"); 
@@ -232,7 +237,7 @@ isgi.Collection = function( resp, indice, id, lang){
 				 data[ _this.indice ].push( [date, 1]);
 			 }
 			
-			data["hidden"].push([date, 0]);
+			//data["hidden"].push([date, 0]);
 		});
 		// add last date if not in response
 		// add last date if not Qdays or Ddays
@@ -246,12 +251,12 @@ isgi.Collection = function( resp, indice, id, lang){
 				
 	       	  	data["noData"].push( [date, 1]);
 			}else{
-				var date = Date.parse( resp.query.end + "T23:59:00.000Z");
-				data["hidden"].push([date,0]);
+				//var date = Date.parse( resp.query.end + "T23:59:00.000Z");
+				//data["hidden"].push([date,0]);
 			}
        	  	
         }
-		
+		data = _addHidden( data, resp.query);
 		return data;
 	}
 	function _treatmentDataQdays(resp ){
@@ -286,12 +291,12 @@ isgi.Collection = function( resp, indice, id, lang){
 				
 	       	  	data["noData"].push( [date, 1]);
 			}else{
-				var date = Date.parse( resp.query.end + "T23:59:00.000Z");
-				data["Qdays"].push([date,0]);
+				//var date = Date.parse( resp.query.end + "T23:59:00.000Z");
+				//data["Qdays"].push([date,0]);
 			}
        	  	
         }
-		
+		data = _addHidden( data, resp.query);
 		return data;
 	}
 	function _treatmentDataAsigma(resp){
@@ -299,7 +304,7 @@ isgi.Collection = function( resp, indice, id, lang){
 		["dawn", "noon", "dusk", "midnight", "dawn_P", "noon_P", "dusk_P", "midnight_P"].forEach(function( field){
 		   data[field] =  new Array();
 		})
-		data["hidden"]= new Array();
+		//data["hidden"]= new Array();
 		
 		var data0 = resp.result;
 	    data0.collection.forEach( function( item){
@@ -311,8 +316,9 @@ isgi.Collection = function( resp, indice, id, lang){
              })
            	 
 	    });
-	    var date = Date.parse( resp.query.end );
-		data["hidden"].push([date,0]);
+	  //  var date = Date.parse( resp.query.end );
+		//data["hidden"].push([date,0]);
+	    data = _addHiddent(data, resp.query);
 	    return data;
 		
 	}
@@ -331,6 +337,8 @@ isgi.Collection = function( resp, indice, id, lang){
                 data["kp"].push([date, isgi.kp2value( item[ _this.kp])]);
             }
 		 });
+		console.log(resp.query);
+		data = _addHidden(data, resp.query);
 		 return data;
 		
 	}
@@ -342,7 +350,9 @@ isgi.Collection = function( resp, indice, id, lang){
 		             width: width,
 		             defaultSeriesType: 'areaspline',
 		             plotBorderColor: '#666666',
-		             plotBorderWidth: 1
+		             plotBorderWidth: 1,
+		             spacingLeft:0,
+		             spacingRight:0
 		  }
 		  if( ["SC", "SFE", "Qdays"].indexOf( _this.indice)>=0 ){
 			  chart.type = "column";
@@ -483,12 +493,6 @@ isgi.Collection = function( resp, indice, id, lang){
 	                data: _this.data[key] }
 				);
 			})
-			series.push({
-                type: 'column',
-                name: "hidden",
-                color: "#ffffff",
-                data: _this.data["hidden"] }
-			);
 		
 			 break;
 		case "SC":
@@ -506,12 +510,7 @@ isgi.Collection = function( resp, indice, id, lang){
 	        		 data:_this.data["PROVI"],
 	        	 });
 			 }
-			 if( _this.data["hidden"].length)
-			 series.push({
-        		 name: "hidden",
-        		 color: "#fff",
-        		 data:_this.data["hidden"],
-        	 });
+		
 			 if( _this.data["noData"].length){
 	             series.push({
 	            	 name: "no data",
@@ -521,6 +520,8 @@ isgi.Collection = function( resp, indice, id, lang){
 	             })
              }
 			 break;
+		case "CKdays":
+			break;
 		case "Qdays":
 			 series.push({
         		 name: "Ddays",
@@ -544,13 +545,6 @@ isgi.Collection = function( resp, indice, id, lang){
              }
              break;
 		case "Kp":
-			/*  series.push({
-	                 type: 'column',
-	                 name: _this.kp,
-	                 color: _this.colors[2],
-	                 data: _this.data["kp"]
-	                });
-			  break;*/
 		case "aa":
 		case "am":
 			//@todo only if less than 1 month
@@ -575,6 +569,15 @@ isgi.Collection = function( resp, indice, id, lang){
 			
 			 
 		}
+		 if( _this.data["hidden"].length){
+			 series.push({
+        		 name: "hidden",
+        		 color: "rgba(255, 255, 255, 0.1)",
+        		 data:_this.data["hidden"],
+        	 });
+			 console.log("serie hidden");
+		 }
+			
 		return series;
 	}
 	function _tooltip(){
