@@ -28,7 +28,7 @@ isgi.infos={
 		Dst: { name: "Dst", unit: "nT", color: "#ff6633", url:"http://isgi.unistra.fr/indices_dst.php"},
 		PC: { name: "PC", unit: "mV/m", color: "#3366ff", url:"http://isgi.unistra.fr/indices_pc.php"},
 		AE: { name: "AE", unit: "nT", color: "#ff0000", url:"http://isgi.unistra.fr/indices_ae.php"},
-		CKdays: { name: "CKdays", unit: "", color:"#ff0000", url:"http://isgi.unistra.fr/events_ckdays.php"},
+		CKdays: { name: "CKdays", unit: "", color:"#32CD32", url:"http://isgi.unistra.fr/events_ckdays.php"},
 		Qdays: { name: "Qdays", unit: "", color:"#ff0000", url:"http://isgi.unistra.fr/events_qdays.php"},
 		SC: { name: "SC", unit: "", color: "#669933" , url:"http://isgi.unistra.fr/events_sc.php"},
 		SFE: { name: "SFE", unit: "", color: "#FF8000" , url:"http://isgi.unistra.fr/events_sfe.php"},
@@ -171,6 +171,9 @@ isgi.Collection = function( resp, indice, id, lang){
 		case "SFE":
 			var data = _treatmentDataSC(resp);
 			break;
+		case "CKdays":
+			var data = _treatmentDataCKdays( resp );
+			break;
 		case "Qdays":
 			var data = _treatmentDataQdays( resp );
 			break;
@@ -259,24 +262,54 @@ isgi.Collection = function( resp, indice, id, lang){
 		data = _addHidden( data, resp.query);
 		return data;
 	}
+	function _treatmentDataCKdays(resp ){
+		var data = new Array();
+		data["CK24"] = new Array();
+		data["CK48"] = new Array();
+		var data0 = resp.result;
+		var nodata = resp.result.meta.get("no_data");
+	
+		data0.collection.forEach( function( item){
+			var date = Date.parse(item.DATE + "T12:00:00.000Z"); 
+			console.log(item);
+			if( item.CK24 != "-"){
+				
+				data["CK24"].push([date, 1]);
+			}
+			if( item.CK48 != "-" ){
+				data["CK48"].push([date, 1]);
+			}
+		});
+		console.log(data);
+		// add last date if not Qdays or Ddays
+		if( data0.collection[ data0.collection.length -1].DATE < resp.query.end){
+			if( nodata){
+			
+				var date = Date.parse( nodata);
+				data["noData"] =  new Array();
+				data["noData"].push([ date  , 1]);
+				var date = Date.parse( resp.query.end + "T23:59:00.000Z") ;
+				
+	       	  	data["noData"].push( [date, 1]);
+			}
+       	  	
+        }
+		data = _addHidden( data, resp.query);
+		return data;
+	}
 	function _treatmentDataQdays(resp ){
 		var data = new Array();
 		data.Qdays = new Array();
 		data.Ddays = new Array();
 		var data0 = resp.result;
 		var nodata = resp.result.meta.get("no_data");
-		//nodata ="2018-01-01";
-		//add begin date if not Qdays or Ddays
-		if( data0.collection[0].DATE > resp.query.start){
-			var date = Date.parse( resp.query.start + "T12:00:00.000Z");
-			data["Qdays"].push( [date, 0]);
-		}
+	
 		data0.collection.forEach( function( item){
 			var date = Date.parse(item.DATE + "T12:00:00.000Z"); 
 			if( item.DAYS.indexOf("D") >=0){
 				
 				data["Ddays"].push([date, 1]);
-			}else{
+			}else if( item.DAYS.indexOf("Q") >=0 ){
 				data["Qdays"].push([date, 1]);
 			}
 		});
@@ -337,7 +370,6 @@ isgi.Collection = function( resp, indice, id, lang){
                 data["kp"].push([date, isgi.kp2value( item[ _this.kp])]);
             }
 		 });
-		console.log(resp.query);
 		data = _addHidden(data, resp.query);
 		 return data;
 		
@@ -351,8 +383,8 @@ isgi.Collection = function( resp, indice, id, lang){
 		             defaultSeriesType: 'areaspline',
 		             plotBorderColor: '#666666',
 		             plotBorderWidth: 1,
-		             spacingLeft:0,
-		             spacingRight:0
+		            // spacingLeft:0,
+		            // spacingRight:0
 		  }
 		  if( ["SC", "SFE", "Qdays"].indexOf( _this.indice)>=0 ){
 			  chart.type = "column";
@@ -406,6 +438,19 @@ isgi.Collection = function( resp, indice, id, lang){
 	       			 text:html},
 	       		 min:0,
 	             max:1,
+	             tickInterval:1
+	       	 });
+	       	 break;
+		case "CKdays":
+			var html = '<span style="color:'+ _this.colors[1] +';">'+
+            '<b>CK24</b></span> / <span style="color:'+
+            _this.colors[0] +'"><b>CK48</b></span>';
+	       	 yAxis.push({
+	       		 title:{
+	       			 useHTML: true,
+	       			 text:html},
+	       		 min:0,
+	             max:2,
 	             tickInterval:1
 	       	 });
 	       	 break;
@@ -521,16 +566,40 @@ isgi.Collection = function( resp, indice, id, lang){
              }
 			 break;
 		case "CKdays":
+			 series.push({
+        		 name: "CK24",
+        		 type: "column",
+        		 color: _this.colors[1],
+        		 data:_this.data["CK24"],
+        		 stack: "CKDays"
+        	 });
+        	 series.push({
+        		 name: "CK48",
+        		 type: "column",
+        		 color: _this.colors[0],
+                 data:_this.data["CK48"],
+                 stack: "CKDays"
+             })
+             if( _this.data["noData"]){
+	             series.push({
+	            	 name: "no data",
+	            	 type: "area",
+	            	 color: "#cccccc",
+	            	 data: _this.data["noData"]
+	             })
+             }
 			break;
 		case "Qdays":
 			 series.push({
         		 name: "Ddays",
+        		 type: "column",
         		 color: isgi.colors.red,
         		 data:_this.data["Ddays"],
         		 stack: "Days"
         	 });
         	 series.push({
         		 name: "Qdays",
+        		 type: "column",
         		 color: isgi.colors.green,
                  data:_this.data["Qdays"],
                  stack: "Days"
@@ -586,6 +655,7 @@ isgi.Collection = function( resp, indice, id, lang){
 	             crosshairs: [true, false, false]
 	         }
 		 switch( _this.indice ){
+		 case "CKdays":
 		 case "Qdays":
 			 tooltip.borderColor = "#ccc";
              tooltip.formatter = function() {
