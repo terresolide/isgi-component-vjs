@@ -370,7 +370,7 @@ isgi.Collection = function( resp, indice, id, lang){
 	    });
 	  //  var date = Date.parse( resp.query.end );
 		//data["hidden"].push([date,0]);
-	    data = _addHiddent(data, resp.query);
+	    data = _addHidden(data, resp.query);
 	    return data;
 		
 	}
