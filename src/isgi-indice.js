@@ -40,6 +40,7 @@ isgi.infos={
 isgi.colors ={
 		red :	"#DB1702",
 		green : "#32CD32",
+		ckgreen: "#00cc00",
 		kpgreen :"#339933",
 		grey :	"#929292",
 		dawn :	"#32cd32",
@@ -47,13 +48,28 @@ isgi.colors ={
 		dusk :	"#6666ff",
 		midnight: "#ff8000"
 };
-
+isgi.colors.lightgreen = shadeColor( isgi.colors.green, -0.2);
 ["dawn", "noon", "dusk", "midnight"].forEach( function(key){
 	//lighten colors for provisional serie (width id dawn_P, noon_P ...etc)
 	isgi.colors[ key + "_P"]= shadeColor( isgi.colors[key],0.3);
 });
 
-
+isgi.CK =  ["CC", "KC", "CK", "KK", "C-", "K-" , "-C", "-K"];
+isgi.CK2tooltip = function( ck , color){
+	//var s = '<br /><span style="fill:'+color +';width:20px;height:15px;">\u25AC</span>';
+	var ck24 = ck.substr(0,1);
+	var ck48 = ck.substr(1,1);
+   // s += '<br /><span style="color:'+isgi.colors.lightgreen+';">\u25AC</span> CK24 : ' + ck24;
+   // s += '<br /><span style="color:'+isgi.colors.green+';">\u25AC</span> CK48 : ' + ck48;
+	s = '<br /><span style="color:'+ color +';">\u25AC</span> CK24 : ' + ck24;
+    s += '<br /><span style="color:'+ color +';">\u25AC</span> CK48 : ' + ck48;
+	return s;
+}
+var i=0;
+isgi.CK.forEach( function( ck ){
+	isgi.colors[ ck ] = shadeColor( isgi.colors.ckgreen, 0.1*i);
+	i++;
+})
 isgi.indices = function(){
 
 	var indices = {};
@@ -185,7 +201,6 @@ isgi.Collection = function( resp, indice, id, lang){
 	    	var data = _treatmentDataDefault(resp );
 		
 		}
-		console.log(data.hidden);
 		return data;
 		
 	}
@@ -264,23 +279,27 @@ isgi.Collection = function( resp, indice, id, lang){
 	}
 	function _treatmentDataCKdays(resp ){
 		var data = new Array();
-		data["CK24"] = new Array();
-		data["CK48"] = new Array();
+		//data["CK24"] = new Array();
+		//data["CK48"] = new Array();
+		
+		isgi.CK.forEach( function( value ){
+			data[value] = new Array();
+		})
 		var data0 = resp.result;
 		var nodata = resp.result.meta.get("no_data");
 	
 		data0.collection.forEach( function( item){
 			var date = Date.parse(item.DATE + "T12:00:00.000Z"); 
-			console.log(item);
-			if( item.CK24 != "-"){
+			var value = item.CK24+item.CK48;
+			/*if( item.CK24 != "-"){
 				
 				data["CK24"].push([date, 0.5]);
 			}
 			if( item.CK48 != "-" ){
 				data["CK48"].push([date, 0.5]);
-			}
+			}*/
+			data[value].push([date, 1]);
 		});
-		console.log(data);
 		// add last date if not Qdays or Ddays
 		if( data0.collection[ data0.collection.length -1].DATE < resp.query.end){
 			if( nodata){
@@ -442,7 +461,7 @@ isgi.Collection = function( resp, indice, id, lang){
 	       	 });
 	       	 break;
 		case "CKdays":
-			var html = '<span style="color:'+ _this.colors[1] +';">'+
+			var html = '<span style="color:'+ _this.colors[0] +';">'+
             '<b>CK24</b></span> / <span style="color:'+
             _this.colors[0] +'"><b>CK48</b></span>';
 	       	 yAxis.push({
@@ -566,8 +585,18 @@ isgi.Collection = function( resp, indice, id, lang){
              }
 			 break;
 		case "CKdays":
-			
-        	 series.push({
+			isgi.CK.forEach( function( ck ){
+				if( _this.data[ ck ].length>0){
+					 series.push({
+        		 name: ck,
+        		 type: "column",
+        		 color: isgi.colors[ ck ],
+                 data:_this.data[ ck ],
+                 stack: "CKDays"
+             });
+				}
+			})
+        	/* series.push({
         		 name: "CK48",
         		 type: "column",
         		 color: _this.colors[0],
@@ -580,7 +609,7 @@ isgi.Collection = function( resp, indice, id, lang){
         		 color: _this.colors[1],
         		 data:_this.data["CK24"],
         		 stack: "CKDays"
-        	 });
+        	 });*/
              if( _this.data["noData"]){
 	             series.push({
 	            	 name: "no data",
@@ -645,7 +674,6 @@ isgi.Collection = function( resp, indice, id, lang){
         		 color: "rgba(255, 255, 255, 0.1)",
         		 data:_this.data["hidden"],
         	 });
-			 console.log("serie hidden");
 		 }
 			
 		return series;
@@ -657,6 +685,20 @@ isgi.Collection = function( resp, indice, id, lang){
 	         }
 		 switch( _this.indice ){
 		 case "CKdays":
+			 tooltip.borderColor = "#ccc";
+             tooltip.formatter = function() {
+                 var s =  Highcharts.dateFormat('%e %b %Y', this.x) ;
+
+                 this.points.forEach(function(point, i) {
+                	 if(point.y>0)
+                     s += isgi.CK2tooltip( point.series.name, point.series.color );
+                	 
+                     
+                 });
+
+                 return s;
+             }
+             break;
 		 case "Qdays":
 			 tooltip.borderColor = "#ccc";
              tooltip.formatter = function() {

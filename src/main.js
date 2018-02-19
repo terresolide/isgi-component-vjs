@@ -31,8 +31,8 @@ ljs.addAliases({
 		'https://code.highcharts.com/highcharts.src.js',
 		// isgi function
 		//---------------
-		'/src/isgi-indice.js',
-		//'https://cdn.rawgit.com/terresolide/isgi-component-vjs/0.0.7/src/isgi-indice.js',
+		//'/src/isgi-indice.js',
+		'https://cdn.rawgit.com/terresolide/isgi-component-vjs/0.0.8/src/isgi-indice.js',
 	    //dev version for formater-commons-components-vjs
 		//----------------------------------------------
 		//'http://localhost:8080/dist/build.js',
