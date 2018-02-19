@@ -36,7 +36,7 @@
 		</div>
 	</header> <main class="box-collapsable-part">
 	<div class="error" v-if="error">{{error}}</div>
-	<div class="chart-container" v-else></div>
+	<div class="chart-container"></div>
 	</main>
 </span> </template>
 
@@ -112,6 +112,7 @@ export default {
          if( evt.detail.query.index != this.id ){
         	 return;
          }
+         this.handleReset();
          this.treatmentData(evt);
        
          if(this.collection && !this.error && this.collection.error){
@@ -121,6 +122,7 @@ export default {
        
          if( this.collection && !this.collection.error){
         	  var container = this.$el.querySelector(".chart-container");
+        	  
         	   this.collection.createChart( container, this.width);
         	   this.resize();
          }
