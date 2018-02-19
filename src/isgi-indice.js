@@ -274,10 +274,10 @@ isgi.Collection = function( resp, indice, id, lang){
 			console.log(item);
 			if( item.CK24 != "-"){
 				
-				data["CK24"].push([date, 1]);
+				data["CK24"].push([date, 0.5]);
 			}
 			if( item.CK48 != "-" ){
-				data["CK48"].push([date, 1]);
+				data["CK48"].push([date, 0.5]);
 			}
 		});
 		console.log(data);
@@ -386,7 +386,7 @@ isgi.Collection = function( resp, indice, id, lang){
 		            // spacingLeft:0,
 		            // spacingRight:0
 		  }
-		  if( ["SC", "SFE", "Qdays"].indexOf( _this.indice)>=0 ){
+		  if( ["SC", "SFE"/*, "Qdays", "CKdays"*/].indexOf( _this.indice)>=0 ){
 			  chart.type = "column";
 		  }
 		 /* chart.events = {
@@ -450,7 +450,7 @@ isgi.Collection = function( resp, indice, id, lang){
 	       			 useHTML: true,
 	       			 text:html},
 	       		 min:0,
-	             max:2,
+	             max:1,
 	             tickInterval:1
 	       	 });
 	       	 break;
@@ -566,20 +566,21 @@ isgi.Collection = function( resp, indice, id, lang){
              }
 			 break;
 		case "CKdays":
-			 series.push({
-        		 name: "CK24",
-        		 type: "column",
-        		 color: _this.colors[1],
-        		 data:_this.data["CK24"],
-        		 stack: "CKDays"
-        	 });
+			
         	 series.push({
         		 name: "CK48",
         		 type: "column",
         		 color: _this.colors[0],
                  data:_this.data["CK48"],
                  stack: "CKDays"
-             })
+             });
+        	 series.push({
+        		 name: "CK24",
+        		 type: "column",
+        		 color: _this.colors[1],
+        		 data:_this.data["CK24"],
+        		 stack: "CKDays"
+        	 });
              if( _this.data["noData"]){
 	             series.push({
 	            	 name: "no data",
