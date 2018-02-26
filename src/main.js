@@ -32,7 +32,7 @@ ljs.addAliases({
 		// isgi function
 		//---------------
 		//'/src/isgi-indice.js',
-		'https://cdn.rawgit.com/terresolide/isgi-component-vjs/0.1.1/js/isgi-indice-min.js',
+		'https://cdn.rawgit.com/terresolide/isgi-component-vjs/0.1.2/js/isgi-indice-min.js',
 	    //dev version for formater-commons-components-vjs
 		//----------------------------------------------
 		//'http://localhost:8080/dist/build.js',

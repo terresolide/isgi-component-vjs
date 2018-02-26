@@ -27,14 +27,14 @@
  </div>
 <div class="isgi-input-group" v-show="!last">
    <span class="right">{{$t('from')}}</span>
-  <input id="from" v-model="from" @click="errorMessage = null" @change="dateChange"/>
+  <input id="from" v-model="from"  @click="errorMessage = null" @change="dateChange"/>
 </div>
-<aeris-datepicker for="input#from" :format="format" @change="dateChange"></aeris-datepicker>
+<aeris-datepicker for="input#from" :format="format" @change="dateChange" daymin="1900-01-01" daymax="now"></aeris-datepicker>
 <div class="isgi-input-group" v-show="!last">
 	<span class="right">{{$t('to')}}</span>
 	<input id="to" v-model="to" @click="errorMessage = null" @change="dateChange">
 </div>
-  <aeris-datepicker for="input#to" :format="format" @change="dateChange"></aeris-datepicker> 
+  <aeris-datepicker for="input#to" :format="format" @change="dateChange" daymin="1900-01-01" daymax="now"></aeris-datepicker> 
 <span class="error-message" v-if="errorMessage">{{errorMessage}}</span>
 
 </span>
