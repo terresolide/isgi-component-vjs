@@ -32,14 +32,14 @@ ljs.addAliases({
 		// isgi function
 		//---------------
 		//'/src/isgi-indice.js',
-		'https://cdn.rawgit.com/terresolide/isgi-component-vjs/0.1.0/js/isgi-indice-min.js',
+		'https://cdn.rawgit.com/terresolide/isgi-component-vjs/0.1.1/js/isgi-indice-min.js',
 	    //dev version for formater-commons-components-vjs
 		//----------------------------------------------
 		//'http://localhost:8080/dist/build.js',
 		//pre prod 
 	    //'https://rawgit.com/terresolide/formater-commons-components-vjs/master/dist0/formater-commons-components-vjs.js' ,
 		//prod
-		'https://cdn.rawgit.com/terresolide/formater-commons-components-vjs/0.1.2/dist/formater-commons-components-vjs.js' ,
+		'https://cdn.rawgit.com/terresolide/formater-commons-components-vjs/0.1.3/dist/formater-commons-components-vjs.js' ,
 	
 	    ]
 })
