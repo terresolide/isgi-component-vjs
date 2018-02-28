@@ -1,5 +1,5 @@
 require("exports-loader?!./l.min.js");
-
+var pjson = require("../package.json")
 import Vue from 'vue';
 
 import vueCustomElement from 'vue-custom-element';
@@ -19,10 +19,15 @@ Vue.use(IsgiTools);
 import IsgiForm from './isgi-form.vue';
 import IsgiTemporalSearch from './isgi-temporal-search.vue';
 import IsgiChart from './isgi-chart.vue';
-import IsgiLayout from './isgi-layout.vue';
+import IsgiComponent from './isgi-component.vue';
 
 
-
+//define file if build or dev
+//if( dev){
+//	var isgiFile = "/src/build.js";
+//}else{
+//	var isgiFile = 'https://cdn.rawgit.com/terresolide/isgi-component-vjs/' + pjson.version + '/js/isgi-indice-min.js';
+//}
 
 ljs.addAliases({
 	dep: [
@@ -74,7 +79,7 @@ ljs.load('dep', function() {
         registerElement('isgi-temporal-search',IsgiTemporalSearch);
         registerElement('isgi-form', IsgiForm);
         registerElement('isgi-chart', IsgiChart);
-        registerElement('isgi-layout',IsgiLayout);
+        registerElement('isgi-component',IsgiComponent);
 	
 	}
 

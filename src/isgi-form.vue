@@ -147,7 +147,7 @@ export default {
 	                	  var next = function(){
 	                		    _this.call( detail, i+1);
 	                	  }
-	                	  setTimeout( next, 1000);
+	                	  setTimeout( next, 10);
 	                  },
 	                  response => {
 	                	  _this.handleError( response , query);

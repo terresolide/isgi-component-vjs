@@ -31,7 +31,7 @@
     
     <div class="formater-wrapper">
         <aside>
-            <isgi-form :lang="lang" :indices="JSON.stringify(indices)"></isgi-form>   
+            <isgi-form :lang="lang" :indices="JSON.stringify(indices)" :url="url"></isgi-form>   
         </aside>
         <main>
             <isgi-chart :lang="lang" v-for="(indice, id) in indices" :indice="indice" :key="id" :width="mainWidth"  :id="id" ></isgi-chart>
@@ -45,11 +45,17 @@
     </span>
 </template>
 <script>
+//var Highcharts = require('highcharts');
+//import isgi from 'isgi-indice.js';
+
 export default {
 	 props:{
 	        lang: {
 	            type:String,
 	            default:'fr'
+	        },
+	        url:{
+	        	type:String
 	        }
 	},
 	data(){
