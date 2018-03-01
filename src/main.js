@@ -1,6 +1,7 @@
 require("exports-loader?!./l.min.js");
 var pjson = require("../package.json")
 import Vue from 'vue';
+//import isgi from './isgi-indice_module.js';
 
 import vueCustomElement from 'vue-custom-element';
 Vue.use(vueCustomElement);
@@ -20,7 +21,7 @@ import IsgiForm from './isgi-form.vue';
 import IsgiTemporalSearch from './isgi-temporal-search.vue';
 import IsgiChart from './isgi-chart.vue';
 import IsgiComponent from './isgi-component.vue';
-
+//import isgi from './isgi-indice_module.js';
 
 //define file if build or dev
 //if( dev){
@@ -33,11 +34,11 @@ ljs.addAliases({
 	dep: [
 		// lib for highchart
 		//------------------
-		'https://code.highcharts.com/highcharts.src.js',
+		//'https://code.highcharts.com/highcharts.src.js',
 		// isgi function
 		//---------------
 		//'/src/isgi-indice.js',
-		'https://cdn.rawgit.com/terresolide/isgi-component-vjs/0.1.2/js/isgi-indice-min.js',
+		//'https://cdn.rawgit.com/terresolide/isgi-component-vjs/0.1.2/js/isgi-indice-min.js',
 	    //dev version for formater-commons-components-vjs
 		//----------------------------------------------
 		//'http://localhost:8080/dist/build.js',
