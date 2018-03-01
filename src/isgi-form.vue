@@ -42,7 +42,7 @@
 	    <a id="download" href="#" style="display=none;" download="wsigi_data.zip"></a>
 	    <div class= "isgi-buttons" >
 	    <input class="isgi-reset-button" type="button" :value="$t('reset')" @click="reset"/>
-	    <input class="isgi-search-button" type="button" :value="$t('search')" @click="search"/>
+	    <input class="isgi-search-button" type="button" :value="$t('search')" @click="search" :disabled="serverStatus?false:true" />
 	    </div>
 	</form>
 	</div>
@@ -82,9 +82,11 @@ export default {
 	              aerisThemeListener:null,
 	              theme:null,
 	              index:null,
-	              format:null
+	              format:null,
+	              serverStatus:1
       }
   },
+ 
   methods: {
 	
     reset(){
@@ -141,20 +143,29 @@ export default {
 	          var _this = this;
 	          this.$http.get( url,{params: data}).then( 
 	                  response => {
-	                	  _this.handleSuccess( response, query);
+	                	
 	                	  //add Timeout, to not have the same timestamp
 	                	  //create trouble to isgi server
-	                	  var next = function(){
-	                		    _this.call( detail, i+1);
-	                	  }
-	                	  setTimeout( next, 10);
+	                	  //check if no server error
+	                	  if( response.body.error == "FAILED SERVER ISGI"){
+	                		  _this.handleError( response , query);
+	                		  return;
+	                	  }else{
+	                		  _this.handleSuccess( response, query);
+		                	  var next = function(){
+		                		    _this.call( detail, i+1);
+		                	  }
+		                	  setTimeout( next, 10);
+	                  	  }
 	                  },
 	                  response => {
 	                	  _this.handleError( response , query);
-	                	  var next = function(){
-	                	  _this.call( detail, i+1);
-	                	  setTimeout(next, 10);
-	                	  }
+	                	 
+	                	 // var next = function(){
+	                	//  _this.call( detail, i+1);
+	                	  
+	                	 // }
+	                	//  setTimeout(next, 10);
 	                  });
 		  }
 	  },
@@ -168,7 +179,8 @@ export default {
 	            
 		},
 		handleError: function(rep, query){
-			 var event = new CustomEvent("errorSearchIndiceEvent", {detail: {result:rep.body , query: query}});
+			this.serverStatus = 0;
+			 var event = new CustomEvent("errorSearchIndiceEvent", {detail: {error: rep.body.error}});
 	            document.dispatchEvent(event);
 	            
 		},
@@ -260,6 +272,9 @@ export default {
 	text-transform: uppercase;
 }
 
-
+.isgi-container input[type="button"]:disabled{
+    opacity:0.5;
+	cursor:not-allowed;
+}
 
 </style>

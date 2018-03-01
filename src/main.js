@@ -16,7 +16,7 @@ Vue.use(VueResource);
 import IsgiTools from './isgi-tools.js';
 Vue.use(IsgiTools);
 
-
+import IsgiError from './isgi-error.vue';
 import IsgiForm from './isgi-form.vue';
 import IsgiTemporalSearch from './isgi-temporal-search.vue';
 import IsgiChart from './isgi-chart.vue';
@@ -77,6 +77,7 @@ ljs.load('dep', function() {
 	 }, 100);
      function load(){
        // registerElement('isgi-qdays',IsgiQdays);
+    	 registerElement('isgi-error',IsgiError);
         registerElement('isgi-temporal-search',IsgiTemporalSearch);
         registerElement('isgi-form', IsgiForm);
         registerElement('isgi-chart', IsgiChart);

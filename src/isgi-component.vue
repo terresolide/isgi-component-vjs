@@ -34,6 +34,7 @@
             <isgi-form :lang="lang" :indices="JSON.stringify(indices)" :url="url"></isgi-form>   
         </aside>
         <main>
+        	<isgi-error :lang="lang" :width="mainWidth"></isgi-error>
             <isgi-chart :lang="lang" v-for="(indice, id) in indices" :indice="indice" :key="id" :width="mainWidth"  :id="id" ></isgi-chart>
         </main>
          </div>
@@ -138,9 +139,9 @@ export default {
         window.addEventListener('resize', this.windowResizeListener);
         this.aerisThemeListener = this.addWidth.bind( this);
         document.addEventListener('aerisTheme', this.aerisThemeListener);
-        if( isgi ) {
+       if( isgi ) {
         	this.indices = isgi.indices();
-        	   isgi.setLang( this.lang);
+        	isgi.setLang( this.lang);
         }
      
        
