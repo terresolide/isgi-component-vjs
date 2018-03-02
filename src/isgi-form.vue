@@ -147,7 +147,7 @@ export default {
 	                	  //add Timeout, to not have the same timestamp
 	                	  //create trouble to isgi server
 	                	  //check if no server error
-	                	  if( response.body.error == "FAILED SERVER ISGI"){
+	                	  if( response.body.error == "SERVER_ISGI_HS"){
 	                		  _this.handleError( response , query);
 	                		  return;
 	                	  }else{
@@ -180,7 +180,13 @@ export default {
 		},
 		handleError: function(rep, query){
 			this.serverStatus = 0;
-			 var event = new CustomEvent("errorSearchIndiceEvent", {detail: {error: rep.body.error}});
+			if( rep && rep.body && rep.body.error){
+				var error = rep.body.error;
+			}else{
+				var error = "SERVER_FORMATER_HS";
+			}
+			this.reset();
+			 var event = new CustomEvent("errorSearchIndiceEvent", {detail: {error: error}});
 	            document.dispatchEvent(event);
 	            
 		},
