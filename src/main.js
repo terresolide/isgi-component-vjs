@@ -70,7 +70,6 @@ ljs.load('dep', function() {
 	        return window.registredAerisElements.indexOf(cpt)>-1;
 	    })
 	     console.log("wait loading");
-	    console.log( window.ftTools);
 	    if ( result.length == componentUsed.length && window.ftTools != "undefined") {
 	       console.log("Isgi : used components loaded");
 	       load();

@@ -167,7 +167,7 @@ export default {
 			}
 	  	
 	  },
-	  handleReset() {
+	  handleReset(e ) {
 		    this.data = null;
 		    this.error = null,
 		    this.isgi_url = null;

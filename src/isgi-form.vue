@@ -83,7 +83,9 @@ export default {
 	              theme:null,
 	              index:null,
 	              format:null,
-	              serverStatus:1
+	              serverStatus:1,
+	              from:null,
+	              to:null
       }
   },
  
@@ -92,6 +94,10 @@ export default {
     reset(){
     	  var e = new CustomEvent("aerisResetEvent", { detail: {}});
           document.dispatchEvent(e);
+    },
+    resetCharts( msg){
+    	var e = new CustomEvent("chartResetEvent", { detail: { msg: msg}});
+        document.dispatchEvent(e);
     },
     search(){
 
@@ -112,33 +118,51 @@ export default {
 	          return;
 	      }
 	  },
-	  callApi(e){	
-		  // reset if dates change
+	  prepareRequest( e){
+		  var query = {};
+		  var now = moment();
+	      
+          if(e.detail.end && e.detail.end < now.format("YYYY-MM-DD")){
+        		  query.end = e.detail.end;
+          }else{
+        	  query.end = now.format("YYYY-MM-DD");
+          }
+          if(e.detail.start){
+              query.start = e.detail.start;
+          }else{
+        	  query.start =  now.subtract(7, "days").format("YYYY-MM-DD");
+          }
+          if( this.from != query.start || this.to != query.end){
+        	  this.resetCharts("date change");
+          }
+        //  this.from = query.start;
+        //  console.log( this.from);
+    	//  this.end = query.end;
+          return query;
 		  
-		  this.call( e.detail,0);
+	  },
+	  callApi(e){	
+		  //prepare request
+		  var query = this.prepareRequest( e);
+		  this.from = query.start;
+		  this.to = query.end;
+		  
+		  this.call( query, e.detail.index,0);
 	  },
 	  /**
 	   * recursive request to api.formater
 	   */
-	  call( detail, i){
-		  if( i < detail.index.length){
-			  var index = isgi.name2index(detail.index[i]);
+	  call( query, indexes , i){
+		  if( i < indexes.length){
+			  var index = isgi.name2index( indexes[i]);
 			  var url = this.url +"/"+ index;
-	          var data = {};
-	          var now = moment();
+	          var data = {
+	        		  start: query.start,
+	        		  end: query.end
+	          };
+	          
 	         
-	          if(detail.end && detail.end < now.format("YYYY-MM-DD")){
-	        		  data.end = detail.end;
-	          }else{
-	        	  data.end = now.format("YYYY-MM-DD");
-	          }
-	          if(detail.start){
-	              data.start = detail.start;
-	          }else{
-	        	  data.start =  now.subtract(7, "days").format("YYYY-MM-DD");
-	          }
-	          var query = data;
-	          query.index = detail.index[i];
+	          data.index = indexes[i];
 	        
 	          var _this = this;
 	          this.$http.get( url,{params: data}).then( 
@@ -148,12 +172,12 @@ export default {
 	                	  //create trouble to isgi server
 	                	  //check if no server error
 	                	  if( response.body.error == "SERVER_ISGI_HS"){
-	                		  _this.handleError( response , query);
+	                		  _this.handleError( response , data);
 	                		  return;
 	                	  }else{
-	                		  _this.handleSuccess( response, query);
+	                		  _this.handleSuccess( response, data);
 		                	  var next = function(){
-		                		    _this.call( detail, i+1);
+		                		    _this.call( query, indexes, i+1);
 		                	  }
 		                	  setTimeout( next, 10);
 	                  	  }
