@@ -182,6 +182,9 @@ position:relative;
 	position:absolute;
     bottom:5px;
     left:200px;
+    padding-right: 20px;
+	line-height: 1.1;
+	padding-bottom: 20px;
     }
     .isgi-layout .formater-wrapper > aside{
     min-height:400px;
