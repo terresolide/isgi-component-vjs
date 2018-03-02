@@ -159,7 +159,7 @@ export default {
 	  	
 	 ensureTheme: function() {
 	  	if ((this.$el) && (this.$el.querySelector)) {
-	  		var color3 =  this.$shadeColor( this.theme.primary, 0.8);
+	  		var color3 =  ftTools.shadeColor( this.theme.primary, 0.8);
 	  		var nodes= this.$el.querySelectorAll(".isgi-input-group");
 	  		[].forEach.call(nodes, function(node){
 	  		    node.style.backgroundColor = color3;

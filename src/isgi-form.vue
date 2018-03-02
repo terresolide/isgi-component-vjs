@@ -29,7 +29,7 @@
 		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true" >	
 			 <isgi-temporal-search :lang="lang" ></isgi-temporal-search>
 		</formater-search-box>
-		  <formater-search-box header-icon-class="fa fa-legal" :title="$t('license')" deployed="false" > 
+		  <formater-search-box header-icon-class="fa fa-legal" :title="$t('license')" deployed="false" main-class="isgi-main-license"> 
 		  <span> 
             <a href="https://creativecommons.org/licenses/by-nc/4.0/" title="Creative Commons NonCommercial 4.0" target="_blank">
             <img src="https://cdn.rawgit.com/terresolide/isgi-component-vjs/0.0.4/images/license_ccbync.png" height="60"/>
@@ -192,8 +192,8 @@ export default {
 		ensureTheme: function() {
 		  	if ((this.$el) && (this.$el.querySelector)) {
 		  		var nodes = this.$el.querySelectorAll(".isgi-buttons input[type='button']");
-		  	  var color1 = this.$shadeColor( this.theme.primary, 0.1); //lightcolor
-              var color2 = this.$shadeColor( this.theme.primary, -.1); //dark color
+		  	  var color1 = ftTools.shadeColor( this.theme.primary, 0.1); //lightcolor
+              var color2 = ftTools.shadeColor( this.theme.primary, -.1); //dark color
               var theme = this.theme;
               [].forEach.call( nodes, function(node){
 		  			node.style.background= theme.primary;
@@ -236,11 +236,18 @@ export default {
     color: #fff;
 }
 
+
 .isgi-container #isgi-form{
 	width:280px;
 	height:auto;
 }
-
+.isgi-container #isgi-form .isgi-main-license{
+	text-align: center;
+}
+.isgi-container #isgi-form img{
+  max-height:60px;
+  width: auto;
+}
 .isgi-container .isgi-buttons{
     margin-top:10px;
 	text-align:right;

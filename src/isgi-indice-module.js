@@ -2,15 +2,9 @@
  * 
  */
 /** useful for extract value in object type {name: "xxx", content: "zzzzz"}*/
-function Isgi() {
+function Isgi(){
 var Highcharts = require('highcharts');
-
-// @todo pass properly this function in all componsant
-function shadeColor(color, percent) {  
-		 var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
-		 // return "red";
-		 return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
-}
+window.ftTools = window.ftTools || {shadeColor: function(color){ return color;}}
 var isgi = isgi || {}
 
 isgi.infos={
@@ -40,10 +34,10 @@ isgi.colors ={
 		dusk :	"#6666ff",
 		midnight: "#ff8000"
 };
-isgi.colors.lightgreen = shadeColor( isgi.colors.green, -0.2);
+isgi.colors.lightgreen = ftTools.shadeColor( isgi.colors.green, -0.2);
 ["dawn", "noon", "dusk", "midnight"].forEach( function(key){
 	//lighten colors for provisional serie (width id dawn_P, noon_P ...etc)
-	isgi.colors[ key + "_P"]= shadeColor( isgi.colors[key],0.3);
+	isgi.colors[ key + "_P"]= ftTools.shadeColor( isgi.colors[key],0.3);
 });
 isgi.setLang = function(lang){
 if(lang == "fr"){
@@ -76,7 +70,7 @@ isgi.CK2tooltip = function( ck , color){
 }
 var i=0;
 isgi.CK.forEach( function( ck ){
-	isgi.colors[ ck ] = shadeColor( isgi.colors.ckgreen, 0.1*i);
+	isgi.colors[ ck ] = ftTools.shadeColor( isgi.colors.ckgreen, 0.1*i);
 	i++;
 })
 isgi.indices = function(){
@@ -180,8 +174,8 @@ isgi.Collection = function( resp, indice, id, lang){
     		_this.colors[0] = Highcharts.getOptions().colors[id];
     	}
     	_this.colors[0] = isgi.infos[ _this.id].color;
-    	_this.colors[1] = shadeColor( _this.colors[0], -.2);
-    	_this.colors[2] = shadeColor( _this.colors[0], .1);
+    	_this.colors[1] = ftTools.shadeColor( _this.colors[0], -.2);
+    	_this.colors[2] = ftTools.shadeColor( _this.colors[0], .1);
     }
 
 
@@ -406,7 +400,7 @@ isgi.Collection = function( resp, indice, id, lang){
 
 	function _chart( width){
 		  var chart = {
-		             height:230,
+		             height:200,
 		             width: width,
 		             defaultSeriesType: 'areaspline',
 		             plotBorderColor: '#666666',

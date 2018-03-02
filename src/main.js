@@ -1,5 +1,6 @@
 require("exports-loader?!./l.min.js");
-var pjson = require("../package.json")
+//var pjson = require("../package.json")
+
 import Vue from 'vue';
 //import isgi from './isgi-indice_module.js';
 
@@ -13,8 +14,7 @@ Vue.use(VueI18n);
 import VueResource from 'vue-resource';
 Vue.use(VueResource);
 
-import IsgiTools from './isgi-tools.js';
-Vue.use(IsgiTools);
+
 
 import IsgiError from './isgi-error.vue';
 import IsgiForm from './isgi-form.vue';
@@ -41,11 +41,11 @@ ljs.addAliases({
 		//'https://cdn.rawgit.com/terresolide/isgi-component-vjs/0.1.2/js/isgi-indice-min.js',
 	    //dev version for formater-commons-components-vjs
 		//----------------------------------------------
-		//'http://localhost:8080/dist/build.js',
+		//'http://localhost:8082/dist/build.js',
 		//pre prod 
 	    //'https://rawgit.com/terresolide/formater-commons-components-vjs/master/dist0/formater-commons-components-vjs.js' ,
 		//prod
-		'https://cdn.rawgit.com/terresolide/formater-commons-components-vjs/0.1.3/dist/formater-commons-components-vjs.js' ,
+		'https://cdn.rawgit.com/terresolide/formater-commons-components-vjs/0.1.5/dist/formater-commons-components-vjs.js' ,
 	
 	    ]
 })
@@ -69,15 +69,16 @@ ljs.load('dep', function() {
 	    var result = componentUsed.filter( function( cpt){
 	        return window.registredAerisElements.indexOf(cpt)>-1;
 	    })
-	    if ( result.length == componentUsed.length) {
+	     console.log("wait loading");
+	    console.log( window.ftTools);
+	    if ( result.length == componentUsed.length && window.ftTools != "undefined") {
 	       console.log("Isgi : used components loaded");
 	       load();
 	       clearInterval(loaded);
 	    }
 	 }, 100);
      function load(){
-       // registerElement('isgi-qdays',IsgiQdays);
-    	 registerElement('isgi-error',IsgiError);
+    	registerElement('isgi-error',IsgiError);
         registerElement('isgi-temporal-search',IsgiTemporalSearch);
         registerElement('isgi-form', IsgiForm);
         registerElement('isgi-chart', IsgiChart);

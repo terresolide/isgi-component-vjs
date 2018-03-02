@@ -19,7 +19,7 @@
 <span class="isgi-layout">
   <header>
     <div>
-    <a href="http://isgi.unistra.fr" :title="$t('isgi')">
+    <a href="http://isgi.unistra.fr" :title="$t('isgi')" target="_blank">
     <img class="isgi-logo" src="https://rawgit.com/terresolide/isgi-component-vjs/master/images/logo_ISGI.gif" alt="ISGI"/>
     </a>
     </div>
@@ -34,6 +34,7 @@
             <isgi-form :lang="lang" :indices="JSON.stringify(indices)" :url="url"></isgi-form>   
         </aside>
         <main>
+        	
         	<isgi-error :lang="lang" :width="mainWidth"></isgi-error>
             <isgi-chart :lang="lang" v-for="(indice, id) in indices" :indice="indice" :key="id" :width="mainWidth"  :id="id" ></isgi-chart>
         </main>
@@ -46,24 +47,8 @@
     </span>
 </template>
 <script>
-//@todo pass properly this function in all componsant
-Array.prototype.get= function( name ){
-    var i=0;
-    find = false;
-    while( !find && i< this.length){
-        if( this[i].name == name){
-            find = this[i].content;
-        }
-        i++;
-    }
-    return find;
-}
 
-function shadeColor(color, percent) {  
-		 var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
-		 // return "red";
-		 return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
-}
+
 
 import isgi from './isgi-indice-module.js';
 window.isgi = isgi;
@@ -84,7 +69,8 @@ export default {
 			windowResizeListener: null,
 			windowScrollListener: null,
 			aerisThemeListener:null,
-			mainWidth:300
+			mainWidth:300,
+			theme:null
 		}
 	},
 	methods:{
@@ -113,17 +99,27 @@ export default {
 				//scroll
 				//var scroll = document.body.scrollTop;
 		
-				var maxHeight = Math.round( wh - 60 ) +"px";
+				var maxHeight = Math.round( wh -60 ) +"px";
 
-				this.$el.querySelector("aside").style.maxHeight = maxHeight;
-				this.$el.querySelector("main").style.maxHeight = maxHeight;
+				this.$el.querySelector(".formater-wrapper > aside").style.maxHeight = maxHeight;
+				this.$el.querySelector(".formater-wrapper > main").style.maxHeight = maxHeight;
 				
 			}
 		},
 		addWidth( evt){
 			evt.detail.mainWidth = this.computeMainWidth();
+			this.styleMain(evt);
+           
 			
-		}
+		},
+		  	
+		styleMain(evt) {
+			if ((this.$el) && (this.$el.querySelector) ){
+				var color =  ftTools.shadeColor( evt.detail.primary, 0.8);
+				this.$el.querySelector(".formater-wrapper > main").style.background = color;	  		
+			}
+		  	
+		},
 	},
 //     computed:{
 //     	mainWidth(){
@@ -149,8 +145,10 @@ export default {
         
     },
     mounted(){
-    	this.computeMainWidth();
-    	this.computeMaxHeight();
+    	//this.computeMainWidth();
+    	//this.computeMaxHeight();
+    	var event = new CustomEvent('aerisThemeRequest', {});
+		document.dispatchEvent(event);
     	
     },
     destroyed(){
@@ -165,35 +163,25 @@ export default {
 </script>
 <style>
 .isgi-layout > header{
+position:relative;
     background-color:#fff;
     display: block;
-	-webkit-box-flex: 1;
-	-ms-flex: 1 1 auto;
-	flex: 1 1 auto;
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: auto;
-	display: -webkit-box;
-	display: -ms-flexbox;
-	display: flex;
-	-webkit-box-orient: horizontal;
-	-webkit-box-direction: normal;
-	-ms-flex-direction: row;
-	flex-direction: row;
-	vertical-align:bottom;
+
 	box-shadow: 0 2px 5px rgba(0,0,0,.2);
 	 margin-bottom: 3px;
 }
 .isgi-layout > header img.isgi-logo{
-    width:200px;
+   
+    max-height:180px;
 }
 .isgi-layout > header div{
     display: block;
     vertical-align: bottom;
 }
 .isgi-layout > header div.isgi-description{
-    margin-top:80px;
-    margin-left:20px;
+	position:absolute;
+    bottom:5px;
+    left:200px;
     }
     .isgi-layout .formater-wrapper > aside{
     min-height:400px;
@@ -206,5 +194,12 @@ export default {
     overflow-y:auto;
     overflow-x:hidden;
     margin-bottom:20px;
+    background:rgba(0,0,0,0.1);
+    }
+    @media screen and (max-width:850px){
+    	.isgi-layout > header{
+    		height: 250px;
+    		max-height: 250px;
+    	}
     }
 </style>

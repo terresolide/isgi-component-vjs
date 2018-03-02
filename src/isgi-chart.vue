@@ -150,7 +150,7 @@ export default {
     	 
            if(this.collection){
            
-    	    this.collection.resizeChart( this.width);
+    	    this.collection.resizeChart( this.width -5);
     	   }
       },
       handleTheme(theme) {
@@ -238,22 +238,25 @@ export default {
 .isgi-chart .chart-container {
 	width: 100%;
 	max-width: 100%;
+	background: #fff;
+    padding-bottom: 1px;
 }
 
 .isgi-chart .error {
 	padding: 10px;
 	color: red;
+	background: #fff;
 }
 
 .isgi-chart header {
-	margin: 0 0 10px 0;
+	margin:  0;
 }
 
 .isgi-chart header h4 {
 	color: #fff !important;
 	padding: 0;
 	margin: 0;
-	text-shadow: 0px 0px 1px rgba(26, 20, 20, 1);
+	/*text-shadow: 0px 0px 1px rgba(26, 20, 20, 1);*/
 }
 
 .isgi-chart header h4::first-letter {
@@ -264,7 +267,8 @@ export default {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 10px;
+	line-height: 1;
+	padding: 10px 10px;
 	color: #fff !important;
 	background-color: #f5f5f5;
 	border: none;
