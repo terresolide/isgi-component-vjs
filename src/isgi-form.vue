@@ -42,7 +42,7 @@
 	    <a id="download" href="#" style="display=none;" download="wsigi_data.zip"></a>
 	    <div class= "isgi-buttons" >
 	    <input class="isgi-reset-button" type="button" :value="$t('reset')" @click="reset"/>
-	    <input class="isgi-search-button" type="button" :value="$t('search')" @click="search" :disabled="serverStatus?false:true" />
+	    <input class="isgi-search-button" type="button" :value="$t('search')" @click="search" :disabled="serverStatus==READY?false:true" />
 	    </div>
 	</form>
 	</div>
@@ -83,9 +83,12 @@ export default {
 	              theme:null,
 	              index:null,
 	              format:null,
-	              serverStatus:1,
+	              serverStatus:2,
 	              from:null,
-	              to:null
+	              to:null,
+	              SERVER_HS:0,
+	              SEARCHING:1,
+	              READY:2
       }
   },
  
@@ -153,6 +156,7 @@ export default {
 	   * recursive request to api.formater
 	   */
 	  call( query, indexes , i){
+		  this.serverStatus = this.SEARCHING;
 		  if( i < indexes.length){
 			  var index = isgi.name2index( indexes[i]);
 			  var url = this.url +"/"+ index;
@@ -191,11 +195,13 @@ export default {
 	                	 // }
 	                	//  setTimeout(next, 10);
 	                  });
+		  }else{
+			  if( this.serverStatus != this.SERVER_HS){
+				  this.serverStatus = this.READY;
+			  }
 		  }
 	  },
-		isValid: function (query){
-		    
-		},
+		
 		handleSuccess: function(rep, query){
 			//if rep.body.error!!! this.handleError();
 			 var event = new CustomEvent("findDataIndiceEvent", {detail: {result:rep.body , query: query}});
@@ -203,7 +209,7 @@ export default {
 	            
 		},
 		handleError: function(rep, query){
-			this.serverStatus = 0;
+			this.serverStatus = this.SERVER_HS;
 			if( rep && rep.body && rep.body.error){
 				var error = rep.body.error;
 			}else{

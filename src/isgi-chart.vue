@@ -189,13 +189,7 @@ export default {
 			this.aerisThemeListener = null;
 			window.removeEventListener( 'isgiResize', this.windowResizeListener);
 			this.windowResizeListener = null;
-			// load isgi script if not exists
-// 			 var recaptchaScript = document.createElement('script')
-//     recaptchaScript.setAttribute('src', 'https://code.highcharts.com/highcharts.src.js');
-//     document.head.appendChild(recaptchaScript);
-//     var recaptchaScript = document.createElement('script')
-//     recaptchaScript.setAttribute('src', '/src/isgi-indice.js');
-//     document.head.appendChild(recaptchaScript);
+
   },
   
   created() {

@@ -19,32 +19,14 @@ Vue.use(VueResource);
 import IsgiError from './isgi-error.vue';
 import IsgiForm from './isgi-form.vue';
 import IsgiTemporalSearch from './isgi-temporal-search.vue';
+import IsgiButtons from './isgi-buttons.vue';
 import IsgiChart from './isgi-chart.vue';
 import IsgiComponent from './isgi-component.vue';
-//import isgi from './isgi-indice_module.js';
 
-//define file if build or dev
-//if( dev){
-//	var isgiFile = "/src/build.js";
-//}else{
-//	var isgiFile = 'https://cdn.rawgit.com/terresolide/isgi-component-vjs/' + pjson.version + '/js/isgi-indice-min.js';
-//}
+
 
 ljs.addAliases({
 	dep: [
-		// lib for highchart
-		//------------------
-		//'https://code.highcharts.com/highcharts.src.js',
-		// isgi function
-		//---------------
-		//'/src/isgi-indice.js',
-		//'https://cdn.rawgit.com/terresolide/isgi-component-vjs/0.1.2/js/isgi-indice-min.js',
-	    //dev version for formater-commons-components-vjs
-		//----------------------------------------------
-		//'http://localhost:8082/dist/build.js',
-		//pre prod 
-	    //'https://rawgit.com/terresolide/formater-commons-components-vjs/master/dist0/formater-commons-components-vjs.js' ,
-		//prod
 		'https://cdn.rawgit.com/terresolide/formater-commons-components-vjs/0.1.5/dist/formater-commons-components-vjs.js' ,
 	
 	    ]
@@ -79,12 +61,11 @@ ljs.load('dep', function() {
      function load(){
     	registerElement('isgi-error',IsgiError);
         registerElement('isgi-temporal-search',IsgiTemporalSearch);
+        registerElement('isgi-buttons', IsgiButtons);
         registerElement('isgi-form', IsgiForm);
         registerElement('isgi-chart', IsgiChart);
         registerElement('isgi-component',IsgiComponent);
-	
 	}
-
 	
 })
 

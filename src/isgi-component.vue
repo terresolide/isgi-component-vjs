@@ -121,12 +121,7 @@ export default {
 		  	
 		},
 	},
-//     computed:{
-//     	mainWidth(){
-//     		var left = this.$el.querySelector("aside").offsetWidth;
-//     		return "width: 300px;";
-//     	}
-//     },
+
     created(){
         this.$i18n.locale = this.lang;
         this.windowScrollListener = this.computeMaxHeight.bind( this);
@@ -145,8 +140,6 @@ export default {
         
     },
     mounted(){
-    	//this.computeMainWidth();
-    	//this.computeMaxHeight();
     	var event = new CustomEvent('aerisThemeRequest', {});
 		document.dispatchEvent(event);
     	
