@@ -207,7 +207,7 @@ isgi.Collection = function( resp, indice, id, lang){
 			var data = _treatmentDataAsigma(resp);
 			break;
 	    default:
-	    	var data = _treatmentDataDefault(resp );
+	    	var data = _treatmentDataDefault(resp , _this.id);
 		
 		}
 		return data;
@@ -383,7 +383,7 @@ isgi.Collection = function( resp, indice, id, lang){
 	    return data;
 		
 	}
-	function _treatmentDataDefault( resp ){
+	function _treatmentDataDefault( resp, indice ){
 		
 		var data = new Array();
 		data["indice"] =  new Array();
@@ -392,7 +392,12 @@ isgi.Collection = function( resp, indice, id, lang){
         }
 		var data0 = resp.result;
 		data0.collection.forEach( function( item){
-			var date = Date.parse(item.DATE+"T"+item.TIME +"Z"); 
+			//add 1h30 for Kp aa am
+			var date =  Date.parse(item.DATE+"T"+item.TIME +"Z") 
+			if( ["aa", "am", "Kp"].indexOf( indice)>=0){
+				date += 5400000;
+			} 
+			
 		    data["indice"].push([date, item[ _this.nameindice ]]);
             if( _this.kp ){
                 data["kp"].push([date, isgi.kp2value( item[ _this.kp])]);
