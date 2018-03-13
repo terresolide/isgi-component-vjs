@@ -369,7 +369,7 @@ isgi.Collection = function( resp, indice, id, lang){
 		
 		var data0 = resp.result;
 	    data0.collection.forEach( function( item){
-             var date = Date.parse(item.DATE+"T"+item.TIME+"Z"); 
+             var date = Date.parse(item.DATE+"T"+item.TIME+"Z") + 5400000; 
              ["dawn", "noon", "dusk", "midnight", "dawn_P", "noon_P", "dusk_P", "midnight_P"].forEach(function( field){
             	 if( item[field]){
             		 data[field].push([date, item[field]]);
