@@ -38,7 +38,7 @@ isgi.colors ={
 		dawn :	"#32cd32",
 		noon :  "#ff3333",
 		dusk :	"#6666ff",
-		midnight: "#ff8000"
+		midnight: "#000000"
 };
 isgi.colors.lightgreen = shadeColor( isgi.colors.green, -0.2);
 ["dawn", "noon", "dusk", "midnight"].forEach( function(key){
@@ -505,7 +505,8 @@ isgi.Collection = function( resp, indice, id, lang){
 	       	 yAxis.push({
 	       		 title:{
 	       			 useHTML: true,
-	       			 text:html}
+	       			 text:html},
+	       		
 	       	 });
 	       	 break;
 		case "Kp":
@@ -546,11 +547,13 @@ isgi.Collection = function( resp, indice, id, lang){
 		case "PC":
 			 series.push({
                  type: 'line',
+                 stacking:null,
                  name: 'PCN',
                  color: _this.colors[1],
                  data: _this.data["PCN"] });
 			 series.push({
 	                type: 'line',
+	                stacking:null,
 	                name: 'PCS',
 	                color: isgi.colors.red,
 	                data: _this.data["PCS"]});
@@ -561,6 +564,7 @@ isgi.Collection = function( resp, indice, id, lang){
 				if(_this.data[key] && _this.data[key].length > 0)
 				series.push({
 	                type: 'line',
+	                stacking:null,
 	                name: isgi.tr[lang][key],
 	                color: isgi.colors[key],
 	                data: _this.data[key] }
