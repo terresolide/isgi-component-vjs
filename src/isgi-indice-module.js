@@ -2,8 +2,9 @@
  * 
  */
 /** useful for extract value in object type {name: "xxx", content: "zzzzz"}*/
-function Isgi(){
 var Highcharts = require('highcharts');
+function Isgi(){
+
 
 function shadeColor( color, percent ){
 	 var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
@@ -158,6 +159,7 @@ isgi.tr = {
 }
 
 isgi.Collection = function( resp, indice, id, lang){
+    console.log( id);
 	this.indice = indice;
 	this.nameindice = indice == "Kp"? "ap":indice;
 	this.id = id;
@@ -207,6 +209,7 @@ isgi.Collection = function( resp, indice, id, lang){
 			var data = _treatmentDataAsigma(resp);
 			break;
 	    default:
+	    	
 	    	var data = _treatmentDataDefault(resp , _this.id);
 		
 		}
@@ -821,6 +824,7 @@ isgi.Collection = function( resp, indice, id, lang){
             tooltip: _tooltip(),
             series: _series()
         });
+		return true;
 	}
 	this.resizeChart = function( width ){
 		if( this.chart){
