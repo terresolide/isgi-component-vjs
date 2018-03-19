@@ -49,9 +49,10 @@
 <script>
 
 
+var Highcharts = require('highcharts');
 
-import isgi from './isgi-indice-module.js';
-window.isgi = isgi;
+import Isgi from './isgi-indice-module.js';
+window.isgi = new Isgi(Highcharts);
 
 export default {
 	 props:{

@@ -2,8 +2,8 @@
  * 
  */
 /** useful for extract value in object type {name: "xxx", content: "zzzzz"}*/
-var Highcharts = require('highcharts');
-function Isgi(){
+//var Highcharts = require('highcharts');
+module.exports=function( Highcharts){
 
 
 function shadeColor( color, percent ){
@@ -848,5 +848,5 @@ isgi.Collection = function( resp, indice, id, lang){
 }
  return isgi;
 }
-module.exports = new Isgi();
+
 	       
