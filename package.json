@@ -1,7 +1,7 @@
 {
   "name": "isgi-component-vjs",
-  "version": "0.2.9",
-  "description": "Connexion isgi Webservice for Web component",
+  "version": "0.2.10",
+  "description": "Webcomponent - Connexion isgi Webservice ",
   "preproduction": {
        "url": "https://api.poleterresolide.fr/"
   },
@@ -13,7 +13,7 @@
     "url": "git+https://github.com/terresolide/isgi-component-vjs.git"
   },
   "keywords": [
-    "vue.js"
+    "vue.js", "isgi", "highcarts"
   ],
   "private": false,
   "author": "epointal",
