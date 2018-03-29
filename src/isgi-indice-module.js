@@ -181,9 +181,11 @@ isgi.Collection = function( resp, indice, id, lang){
     	}else{
     		_this.colors[0] = Highcharts.getOptions().colors[id];
     	}
-    	_this.colors[0] = isgi.infos[ _this.id].color;
-    	_this.colors[1] = shadeColor( _this.colors[0], -.2);
-    	_this.colors[2] = shadeColor( _this.colors[0], .1);
+    	if( isgi.infos[ _this.id]){
+	    	_this.colors[0] = isgi.infos[ _this.id].color;
+	    	_this.colors[1] = shadeColor( _this.colors[0], -.2);
+	    	_this.colors[2] = shadeColor( _this.colors[0], .1);
+    	}
     }
 
 
