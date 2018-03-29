@@ -27,8 +27,8 @@ import IsgiComponent from './isgi-component.vue';
 
 ljs.addAliases({
 	dep: [
-		'https://cdn.rawgit.com/terresolide/formater-commons-components-vjs/0.1.5/dist/formater-commons-components-vjs.js' ,
-	
+		//'https://cdn.rawgit.com/terresolide/formater-commons-components-vjs/0.1.5/dist/formater-commons-components-vjs.js' ,
+		 "https://api.poleterresolide.fr/webcomponents/formater-commons-components-vjs_0.1.7.js" 
 	    ]
 })
 ljs.load('dep', function() {
