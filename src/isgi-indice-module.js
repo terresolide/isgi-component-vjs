@@ -158,8 +158,9 @@ isgi.tr = {
 		
 }
 
-isgi.Collection = function( resp, indice, id, lang){
-    console.log( id);
+isgi.Collection = function( resp, indice, id, lang, plateform){
+    //this.plateform = typeof plateform == "undefined" ?  "service" : plateform;
+   
 	this.indice = indice;
 	this.nameindice = indice == "Kp"? "ap":indice;
 	this.id = id;
@@ -169,7 +170,7 @@ isgi.Collection = function( resp, indice, id, lang){
 	this.colors = new Array();
     var _this = this;
     var _provisional = false;
-
+    var _plateform = (typeof plateform == "undefined") ?  "service" : plateform;
     _initColors( id );
     this.data = _treatmentData( resp);
     
@@ -218,9 +219,14 @@ isgi.Collection = function( resp, indice, id, lang){
 		return data;
 		
 	}
+	
 	function _addHidden( data, query){
-
 		data.hidden = new Array();
+		
+		if( _plateform != "service"){
+			return data;
+		}
+		
 		
 		var date = Date.parse( query.start + "T00:00:00.000Z");
 	    data.hidden.push([date, 0]);
@@ -279,7 +285,9 @@ isgi.Collection = function( resp, indice, id, lang){
 				var date = Date.parse( nodata);
 				data["noData"] =  new Array();
 				data["noData"].push([ date  , 1]);
-				var date = Date.parse( resp.query.end + "T23:59:00.000Z") ;
+				if( _plateform == "service"){
+					var date = Date.parse( resp.query.end + "T23:59:00.000Z") ;
+				}
 				
 	       	  	data["noData"].push( [date, 1]);
 			}else{
@@ -321,8 +329,9 @@ isgi.Collection = function( resp, indice, id, lang){
 				var date = Date.parse( nodata);
 				data["noData"] =  new Array();
 				data["noData"].push([ date  , 1]);
-				var date = Date.parse( resp.query.end + "T23:59:00.000Z") ;
-				
+				if( _plateform == "service"){
+					var date = Date.parse( resp.query.end + "T23:59:00.000Z") ;
+				}
 	       	  	data["noData"].push( [date, 1]);
 			}
        	  	
@@ -353,6 +362,7 @@ isgi.Collection = function( resp, indice, id, lang){
 				var date = Date.parse( nodata);
 				data["noData"] =  new Array();
 				data["noData"].push([ date  , 1]);
+				if(_plateform == "service")
 				var date = Date.parse( resp.query.end + "T23:59:00.000Z") ;
 				
 	       	  	data["noData"].push( [date, 1]);
