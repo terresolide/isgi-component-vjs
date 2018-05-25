@@ -169,7 +169,8 @@ export default {
 	          data.index = indexes[i];
 	        
 	          var _this = this;
-	          this.$http.get( url,{params: data}).then( 
+
+	          this.$http.get( url,{params: data, withCredentials: true}).then( 
 	                  response => {
 	                	
 	                	  //add Timeout, to not have the same timestamp

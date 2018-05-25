@@ -803,7 +803,7 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
 
 	this.createChart = function( container, width){
 		var events = {}
-		
+
 		this.chart = Highcharts.chart(container, {
 	           
             chart:_chart(width),

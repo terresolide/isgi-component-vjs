@@ -24,6 +24,12 @@ import IsgiChart from './isgi-chart.vue';
 import IsgiComponent from './isgi-component.vue';
 
 
+/**
+ * ajoute withCredentials: true pour "identifier", suivre l'utilisateur 
+ * au cours de ses différentes requêtes
+ */
+Vue.http.options.xhr = { withCredentials: true };
+//Vue.http.options.emulateJSON = true;
 
 ljs.addAliases({
 	dep: [
