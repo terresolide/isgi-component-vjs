@@ -188,6 +188,8 @@ export default {
 	                  	  }
 	                  },
 	                  response => {
+	                	  console.log( "handle error");
+	                       
 	                	  _this.handleError( response , query);
 	                	 
 	                	 // var next = function(){
@@ -211,10 +213,19 @@ export default {
 		},
 		handleError: function(rep, query){
 			this.serverStatus = this.SERVER_HS;
+			
 			if( rep && rep.body && rep.body.error){
 				var error = rep.body.error;
 			}else{
-				var error = "SERVER_FORMATER_HS";
+				switch( rep.status){
+					case 403:
+						var error = "ACCESS_SERVER_FORBIDDEN";
+						break;
+					default:
+						var error = "SERVER_FORMATER_HS";
+					
+				}
+				
 			}
 			this.reset();
 			 var event = new CustomEvent("errorSearchIndiceEvent", {detail: {error: error}});

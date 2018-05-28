@@ -5,11 +5,13 @@
 {
    "en":{
     "SERVER_ISGI_HS": "The ISGI server is actually shut down.<br />Please try again later.",
-    "SERVER_FORMATER_HS": "The ForM@Ter server is actually shut down.<br />Please try again later."
+    "SERVER_FORMATER_HS": "The ForM@Ter server is actually shut down.<br />Please try again later.",
+    "ACCESS_SERVER_FORBIDDEN": "Your session has expired. Access to the server is no longer allowed. Reload the page"
    },
    "fr":{
    "SERVER_ISGI_HS": "Le service ISGI est actuellement éteint.<br />Veuillez rééssayer ultérieurement.",
-    "SERVER_FORMATER_HS": "Le serveur de ForM@Ter est actuellement éteint.<br />Veuillez rééssayer ultérieurement."
+    "SERVER_FORMATER_HS": "Le serveur de ForM@Ter est actuellement éteint.<br />Veuillez rééssayer ultérieurement.",
+    "ACCESS_SERVER_FORBIDDEN": "Votre session a expiré. L'accès au serveur n'est plus autorisé. Veuillez recharger la page."
    }
 }
 </i18n>
