@@ -20,7 +20,7 @@ isgi.infos={
 		Kp: { name: "Kp", unit: "2nT", color:"#339933",  url:"http://isgi.unistra.fr/indices_kp.php"},
 		Dst: { name: "Dst", unit: "nT", color: "#ff6633", url:"http://isgi.unistra.fr/indices_dst.php"},
 		PC: { name: "PC", unit: "mV/m", color: "#3366ff", url:"http://isgi.unistra.fr/indices_pc.php"},
-		AE: { name: "AE", unit: "nT", color: "#ff0000", url:"http://isgi.unistra.fr/indices_ae.php"},
+		AE: { name: "AE", unit: "nT", color: "#cc3366", url:"http://isgi.unistra.fr/indices_ae.php"},
 		CKdays: { name: "CKdays", unit: "", color:"#32CD32", url:"http://isgi.unistra.fr/events_ckdays.php"},
 		Qdays: { name: "Qdays", unit: "", color:"#ff0000", url:"http://isgi.unistra.fr/events_qdays.php"},
 		SC: { name: "SC", unit: "", color: "#669933" , url:"http://isgi.unistra.fr/events_sc.php"},
@@ -39,7 +39,12 @@ isgi.colors ={
 		dawn :	"#32cd32",
 		noon :  "#ff3333",
 		dusk :	"#6666ff",
-		midnight: "#000000"
+		midnight: "#000000",
+		AE: "#cc3366",
+		AU: "#cccc66",
+		AL: "#6699ff",
+		AO: "#ff9966"
+		
 };
 isgi.colors.lightgreen = shadeColor( isgi.colors.green, -0.2);
 ["dawn", "noon", "dusk", "midnight"].forEach( function(key){
@@ -141,6 +146,10 @@ isgi.tr = {
 			noon_P: "noon provisoire",
 			dusk_P: "dusk provisoire",
 			midnight_P: "midnight provisoire",
+			AE:"AE",
+			AU:"AU",
+			AO:"AO",
+			AL:"AL"
 			
 		},
 		en:{
@@ -153,7 +162,11 @@ isgi.tr = {
 			dawn_P: "provisional dawn",
 			noon_P: "provisional noon",
 			dusk_P: "provisional dusk",
-			midnight_P: "provisional midnight"
+			midnight_P: "provisional midnight",
+			AE:"AE",
+			AU:"AU",
+			AO:"AO",
+			AL:"AL"
 		}
 		
 }
@@ -161,9 +174,9 @@ isgi.tr = {
 isgi.Collection = function( resp, indice, id, lang, plateform){
     //this.plateform = typeof plateform == "undefined" ?  "service" : plateform;
    
-	this.indice = indice;
-	this.nameindice = indice == "Kp"? "ap":indice;
-	this.id = id;
+	this.indice = indice; //global indice name: a&sigma for example; 
+	this.nameindice = indice == "Kp"? "ap":indice; // derived name indice, for kp
+	this.id = id; //code indice : asigma
 	this.kp = isgi.getKpName( resp.result.collection[0]);
 	this.chart = null;
 	this.error = null;
@@ -172,6 +185,11 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
     var _provisional = false;
     var _plateform = (typeof plateform == "undefined") ?  "service" : plateform;
     _initColors( id );
+    var _fields = {
+    		asigma: ["dawn", "noon", "dusk", "midnight", "dawn_P", "noon_P", "dusk_P", "midnight_P"],
+    		AE:[ "AE","AU", "AL", "AO"]
+    }
+   
     this.data = _treatmentData( resp);
     
     function _initColors( id ){
@@ -209,8 +227,10 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
 			break;
 			
 		case "asigma":
-			var data = _treatmentDataAsigma(resp);
+		case "AE":
+			var data = _treatmentDataAsigmaAE(resp, _this.id);
 			break;
+		
 	    default:
 	    	
 	    	var data = _treatmentDataDefault(resp , _this.id);
@@ -375,9 +395,11 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
 		data = _addHidden( data, resp.query);
 		return data;
 	}
-	function _treatmentDataAsigma(resp){
+	function _treatmentDataAsigmaAE(resp, indice){
 		var data = new Array();
-		["dawn", "noon", "dusk", "midnight", "dawn_P", "noon_P", "dusk_P", "midnight_P"].forEach(function( field){
+		
+		console.log( indice);
+		_fields[indice].forEach(function( field){
 		   data[field] =  new Array();
 		})
 		//data["hidden"]= new Array();
@@ -385,8 +407,9 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
 		var data0 = resp.result;
 	    data0.collection.forEach( function( item){
              var date = Date.parse(item.DATE+"T"+item.TIME+"Z") + 5400000; 
-             ["dawn", "noon", "dusk", "midnight", "dawn_P", "noon_P", "dusk_P", "midnight_P"].forEach(function( field){
+             _fields[indice].forEach(function( field){
             	 if( item[field]){
+            		 if(item[field] != "9999")
             		 data[field].push([date, item[field]]);
             	 }
              })
@@ -398,6 +421,7 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
 	    return data;
 		
 	}
+	
 	function _treatmentDataDefault( resp, indice ){
 		
 		var data = new Array();
@@ -529,6 +553,22 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
 	       		
 	       	 });
 	       	 break;
+		case "AE":
+			var html = '';
+			_fields["AE"].forEach( function(field){
+				if( _this.data[field].length > 0){
+					html += '<span style="color:'+isgi.colors[field] +';">'+
+		            '<b>'+ field + '</b></span> ';
+				}
+			});
+			html += "(" + isgi.infos[ _this.id ].unit +")";
+	       	 yAxis.push({
+	       		 title:{
+	       			 useHTML: true,
+	       			 text:html},
+	       		
+	       	 });
+	       	 break;
 		case "Kp":
 		case "am":
 		case "aa":
@@ -579,8 +619,8 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
 	                data: _this.data["PCS"]});
 			 break;
 		case "asigma":
-
-			["dawn", "noon", "dusk", "midnight", "dawn_P", "noon_P", "dusk_P", "midnight_P"].forEach(function(key){
+		case "AE":
+			_fields[_this.id].forEach(function(key){
 				if(_this.data[key] && _this.data[key].length > 0)
 				series.push({
 	                type: 'line',
