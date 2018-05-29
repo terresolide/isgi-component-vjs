@@ -1,6 +1,6 @@
 {
   "name": "isgi-component-vjs",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Webcomponent - Connexion isgi Webservice ",
   "preproduction": {
     "url": "https://api.poleterresolide.fr/"
