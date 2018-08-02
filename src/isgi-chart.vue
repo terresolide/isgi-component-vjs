@@ -150,7 +150,7 @@ export default {
     	 
            if(this.collection){
            
-    	    this.collection.resizeChart( this.width -5);
+    	    this.collection.resizeChart( this.width - 5);
     	   }
       },
       handleTheme(theme) {
