@@ -454,7 +454,8 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
 		             width: width,
 		             defaultSeriesType: 'areaspline',
 		             plotBorderColor: '#666666',
-		             plotBorderWidth: 1,
+		             plotBorderWidth: 1
+		          //   marginLeft: 100
 		            // spacingLeft:0,
 		            // spacingRight:0
 		  }
@@ -488,6 +489,7 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
              isgi.colors.red +';"><b>PCS</b></span> (' + isgi.infos.PC.unit+ ')';
         	 yAxis.push({ 
                      title: {
+                        margin: 45,
                         useHTML: true,
                         text: html
                      }
@@ -506,11 +508,12 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
 			}
 	       	 yAxis.push({
 	       		 title:{
+	       		   margin: 45,
 	       			 useHTML: true,
 	       			 text:html},
 	       		 min:0,
-	             max:1,
-	             tickInterval:1
+	           max:1,
+	           tickInterval:1
 	       	 });
 	       	 break;
 		case "CKdays":
@@ -519,11 +522,12 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
             _this.colors[0] +'"><b>CK48</b></span>';
 	       	 yAxis.push({
 	       		 title:{
+	       		   margin: 45,
 	       			 useHTML: true,
 	       			 text:html},
 	       		 min:0,
-	             max:1,
-	             tickInterval:1
+	           max:1,
+	           tickInterval:1
 	       	 });
 	       	 break;
 		case "Qdays":
@@ -532,11 +536,12 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
             isgi.colors.green +'"><b>Qdays</b></span>';
 	       	 yAxis.push({
 	       		 title:{
+	       		   margin: 45,
 	       			 useHTML: true,
 	       			 text:html},
 	       		 min:0,
-	             max:1,
-	             tickInterval:1
+	           max:1,
+	           tickInterval:1
 	       	 });
 	       	 break;
 		case "asigma":
@@ -548,6 +553,7 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
 			html += "(" + isgi.infos[ _this.id ].unit +")";
 	       	 yAxis.push({
 	       		 title:{
+	       		   margin: 45,
 	       			 useHTML: true,
 	       			 text:html},
 	       		
@@ -564,6 +570,8 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
 			html += "(" + isgi.infos[ _this.id ].unit +")";
 	       	 yAxis.push({
 	       		 title:{
+	       		   reserveSpace:true,
+	       		   margin:45,
 	       			 useHTML: true,
 	       			 text:html},
 	       		
@@ -577,6 +585,7 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
             if( _this.kp)
             yAxis.push({ 
                 title: {
+                
                     text: _this.kp,
                     style: {
                         color: _this.colors[2],
@@ -591,6 +600,7 @@ isgi.Collection = function( resp, indice, id, lang, plateform){
              // only 1 yAxis linear
               yAxis.unshift({ 
                    title: {
+                       margin: 45,
                        useHTML: true,
                        text: '<span style="color:'+ _this.colors[1]+'">'+
                        '<b>'+_this.nameindice+'</b></span> (' + isgi.infos[_this.id].unit +')'
