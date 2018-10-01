@@ -50,11 +50,21 @@
 
 
 var Highcharts = require('highcharts');
-
+import {FormaterLayout} from 'formater-commons-components-vjs'
+import ftTools from 'formater-commons-components-vjs/src/formater-tools.js'
 import Isgi from './isgi-indice-module.js';
+import IsgiError from './isgi-error.vue';
+import IsgiForm from './isgi-form.vue';
+import IsgiChart from './isgi-chart.vue';
 window.isgi = new Isgi(Highcharts);
 
 export default {
+     components: {
+       FormaterLayout,
+       IsgiError,
+       IsgiChart,
+       IsgiForm
+     },
 	 props:{
 	        lang: {
 	            type:String,

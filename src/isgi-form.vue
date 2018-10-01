@@ -23,13 +23,13 @@
 	<div class="isgi-container">
 	
 	<form id="isgi-form" >
-		<formater-search-box header-icon-class="fa fa-bars" :title="$t('indices')" :value="index" @input="index = $event.target.value" deployed="true">
-			<formater-select width="260px" name="index" multiple="true" type="associative" :options="indices"  ></formater-select>
+		<formater-search-box header-icon-class="fa fa-bars" :title="$t('indices')" :value="index" @input="index = $event.target.value" :deployed="true">
+			<formater-select width="260px" name="index" :multiple="true" type="associative" :options="indices"  ></formater-select>
 		</formater-search-box>
-		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" deployed="true" >	
+		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" :deployed="true" >	
 			 <isgi-temporal-search :lang="lang" ></isgi-temporal-search>
 		</formater-search-box>
-		  <formater-search-box header-icon-class="fa fa-legal" :title="$t('license')" deployed="false" main-class="isgi-main-license"> 
+		  <formater-search-box header-icon-class="fa fa-legal" :title="$t('license')" :deployed="false" main-class="isgi-main-license"> 
 		  <span> 
             <a href="https://creativecommons.org/licenses/by-nc/4.0/" title="Creative Commons NonCommercial 4.0" target="_blank">
             <img src="https://cdn.rawgit.com/terresolide/isgi-component-vjs/0.0.4/images/license_ccbync.png" height="60"/>
@@ -52,10 +52,16 @@
 
 <script>
 //console.log("script in form");
-
+import {FormaterSearchBox, FormaterSelect} from 'formater-commons-components-vjs'
+import IsgiTemporalSearch from './isgi-temporal-search.vue'
+import ftTools from 'formater-commons-components-vjs/src/formater-tools.js'
 
 export default {
-
+  components: {
+    FormaterSearchBox,
+    FormaterSelect,
+    IsgiTemporalSearch
+  },
   props:{
 	  info:{
 	      type:String,
