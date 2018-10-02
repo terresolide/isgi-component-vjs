@@ -24,7 +24,7 @@
 	
 	<form id="isgi-form" >
 		<formater-search-box header-icon-class="fa fa-bars" :title="$t('indices')" :value="index" @input="index = $event.target.value" :deployed="true">
-			<formater-select width="260px" name="index" :multiple="true" type="associative" :options="indices"  ></formater-select>
+			<formater-select width="260px" name="index" :multiple="true" type="associative" :options="indices" :defaut="defaut" ></formater-select>
 		</formater-search-box>
 		<formater-search-box header-icon-class="fa fa-calendar" :title="$t('time_slot')" :deployed="true" >	
 			 <isgi-temporal-search :lang="lang" ></isgi-temporal-search>
@@ -73,12 +73,19 @@ export default {
       },
       url:{
           type: String,
-		  //default: 'http://api.formater/cds/isgi/data'
-          default: 'http://formater.art-sciences.fr/cds/isgi/data'
+		  default: 'https://api.poleterresolide.fr/cds/isgi/data'
+          // default: 'http://formater.art-sciences.fr/cds/isgi/data'
           
       },
+     // ISGI Indices (string)
      indices:{
-    	  default:"aa,am,Kp,Dst,PC,AE,SC,SFE,Qdays"
+          type: String,
+    	  default:""
+     },
+     // the default indices
+     defaut: {
+       type: String,
+       default: ""
      }
       
   },
@@ -110,7 +117,7 @@ export default {
     },
     search(){
 
-		 
+		 console.log('search')
 		  var e = new CustomEvent("aerisSearchEvent", { detail: {}});
 	      document.dispatchEvent(e);
 	      
@@ -276,6 +283,8 @@ export default {
   mounted: function(){
       var event = new CustomEvent('aerisThemeRequest', {});
       document.dispatchEvent(event);
+      this.search()
+    //  this.callApi({detail:{format:'IAGA2002', index:['aa', 'am']}})
   },
   destroyed: function(){
       document.removeEventListener('aerisTheme', this.aerisThemeListener);

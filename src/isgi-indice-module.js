@@ -94,6 +94,7 @@ isgi.indices = function(){
 	
 	return indices;
 }
+ isgi.defautIndices = "aa,am"
 isgi.name2index = function(name){
 	if(name == "a&sigma;"){
 		return "asigma";

@@ -31,7 +31,7 @@
     
     <div class="formater-wrapper">
         <aside>
-            <isgi-form :lang="lang" :indices="JSON.stringify(indices)" :url="url"></isgi-form>   
+            <isgi-form :lang="lang" :indices="JSON.stringify(indices)" :defaut="defautIndices" :url="url"></isgi-form>   
         </aside>
         <main>
         	
@@ -52,7 +52,7 @@
 var Highcharts = require('highcharts');
 import {FormaterLayout} from 'formater-commons-components-vjs'
 import ftTools from 'formater-commons-components-vjs/src/formater-tools.js'
-import Isgi from './isgi-indice-module.js';
+import Isgi from './isgi-indice-module.js'; // content list of indices, and colors for graph and function for graph
 import IsgiError from './isgi-error.vue';
 import IsgiForm from './isgi-form.vue';
 import IsgiChart from './isgi-chart.vue';
@@ -76,7 +76,9 @@ export default {
 	},
 	data(){
 		return{
-			indices: ['aa', 'am', 'Kp', 'Dst', 'PC', 'AE', 'Qdays', 'SC', 'SFE'/*, 'Qdays', 'CKdays'*/],
+		   // come from isgi-indice-module.js and  directly injected in isgi-form
+			indices: [],
+			defautIndices: "",
 			windowResizeListener: null,
 			windowScrollListener: null,
 			aerisThemeListener:null,
@@ -143,6 +145,7 @@ export default {
         document.addEventListener('aerisTheme', this.aerisThemeListener);
        if( isgi ) {
         	this.indices = isgi.indices();
+        	this.defautIndices = isgi.defautIndices;
         	isgi.setLang( this.lang);
         }
      
