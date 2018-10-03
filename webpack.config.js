@@ -42,10 +42,11 @@ module.exports = {
           loader: 'style!css!sass'
       },
       {
-        test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        loader: 'url-loader',
         options: {
-          name: '[name].[ext]?[hash]'
+          limit: 10000,
+          name: 'assets/img/[name].[hash:7].[ext]'
         }
       }
     ]
