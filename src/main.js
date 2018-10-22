@@ -14,6 +14,8 @@ Vue.use(VueI18n);
 import VueResource from 'vue-resource';
 Vue.use(VueResource);
 
+import {VueTools} from 'formater-commons-components-vjs'
+Vue.use(VueTools)
 
 import AerisTheme from 'aeris-commons-components-vjs/src/aeris-theme/aeris-theme.vue';
 

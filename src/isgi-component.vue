@@ -51,7 +51,6 @@
 
 var Highcharts = require('highcharts');
 import {FormaterLayout} from 'formater-commons-components-vjs'
-import ftTools from 'formater-commons-components-vjs/src/formater-tools.js'
 import Isgi from './isgi-indice-module.js'; // content list of indices, and colors for graph and function for graph
 import IsgiError from './isgi-error.vue';
 import IsgiForm from './isgi-form.vue';
@@ -128,7 +127,7 @@ export default {
 		  	
 		styleMain(evt) {
 			if ((this.$el) && (this.$el.querySelector) ){
-				var color =  ftTools.shadeColor( evt.detail.primary, 0.8);
+				var color =  this.$shadeColor( evt.detail.primary, 0.8);
 				this.$el.querySelector(".formater-wrapper > main").style.background = color;	  		
 			}
 		  	

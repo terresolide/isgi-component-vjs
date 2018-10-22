@@ -54,7 +54,6 @@
 //console.log("script in form");
 import {FormaterSearchBox, FormaterSelect} from 'formater-commons-components-vjs'
 import IsgiTemporalSearch from './isgi-temporal-search.vue'
-import ftTools from 'formater-commons-components-vjs/src/formater-tools.js'
 
 export default {
   components: {
@@ -258,8 +257,8 @@ export default {
 		ensureTheme: function() {
 		  	if ((this.$el) && (this.$el.querySelector)) {
 		  		var nodes = this.$el.querySelectorAll(".isgi-buttons input[type='button']");
-		  	  var color1 = ftTools.shadeColor( this.theme.primary, 0.1); //lightcolor
-              var color2 = ftTools.shadeColor( this.theme.primary, -.1); //dark color
+		  	  var color1 = this.$shadeColor( this.theme.primary, 0.1); //lightcolor
+              var color2 = this.$shadeColor( this.theme.primary, -.1); //dark color
               var theme = this.theme;
               [].forEach.call( nodes, function(node){
 		  			node.style.background= theme.primary;

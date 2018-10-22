@@ -42,7 +42,6 @@
 
 <script>
 import AerisDatepicker from 'aeris-commons-components-vjs/src/aeris-datepicker/aeris-datepicker.vue';
-import ftTools from 'formater-commons-components-vjs/src/formater-tools.js'
 import moment from 'moment';
 import { extendMoment } from 'moment-range';
 window.momentCst = extendMoment(moment);
@@ -166,7 +165,7 @@ export default {
 	  	
 	 ensureTheme: function() {
 	  	if ((this.$el) && (this.$el.querySelector)) {
-	  		var color3 =  ftTools.shadeColor( this.theme.primary, 0.8);
+	  		var color3 =  this.$shadeColor( this.theme.primary, 0.8);
 	  		var nodes= this.$el.querySelectorAll(".isgi-input-group");
 	  		[].forEach.call(nodes, function(node){
 	  		    node.style.backgroundColor = color3;

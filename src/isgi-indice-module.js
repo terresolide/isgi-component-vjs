@@ -3,8 +3,20 @@
  */
 /** useful for extract value in object type {name: "xxx", content: "zzzzz"}*/
 //var Highcharts = require('highcharts');
-module.exports=function( Highcharts){
+module.exports = function( Highcharts){
 
+//@todo pass properly this function in all componsant
+  Array.prototype.get= function( name ){
+      var i=0;
+      find = false;
+      while( !find && i< this.length){
+          if( this[i].name == name){
+              find = this[i].content;
+          }
+          i++;
+      }
+      return find;
+  }
 
 function shadeColor( color, percent ){
 	 var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
