@@ -142,17 +142,18 @@ export default {
         window.addEventListener('resize', this.windowResizeListener);
         this.aerisThemeListener = this.addWidth.bind( this);
         document.addEventListener('aerisTheme', this.aerisThemeListener);
-       if( isgi ) {
+        if( isgi ) {
         	this.indices = isgi.indices();
         	this.defautIndices = isgi.defautIndices;
         	isgi.setLang( this.lang);
         }
-     
-       
-    
         
     },
     mounted(){
+        var node = document.querySelector('.formater-default');
+        if (node) {
+          node.style.display = 'none';
+        }
     	var event = new CustomEvent('aerisThemeRequest', {});
 		document.dispatchEvent(event);
     	
